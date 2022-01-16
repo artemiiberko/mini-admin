@@ -1,25 +1,25 @@
 {
   "files": {
-    "main.css": "/mini-admin/static/css/main.55fb1aa2.chunk.css",
-    "main.js": "/mini-admin/static/js/main.912026b0.chunk.js",
-    "main.js.map": "/mini-admin/static/js/main.912026b0.chunk.js.map",
-    "runtime-main.js": "/mini-admin/static/js/runtime-main.07eacccf.js",
-    "runtime-main.js.map": "/mini-admin/static/js/runtime-main.07eacccf.js.map",
+    "main.css": "/mini-admin/static/css/main.6743d7dc.chunk.css",
+    "main.js": "/mini-admin/static/js/main.fdc7cf94.chunk.js",
+    "main.js.map": "/mini-admin/static/js/main.fdc7cf94.chunk.js.map",
+    "runtime-main.js": "/mini-admin/static/js/runtime-main.9021ec8a.js",
+    "runtime-main.js.map": "/mini-admin/static/js/runtime-main.9021ec8a.js.map",
     "static/css/2.fe61e19b.chunk.css": "/mini-admin/static/css/2.fe61e19b.chunk.css",
-    "static/js/2.1d69c07f.chunk.js": "/mini-admin/static/js/2.1d69c07f.chunk.js",
-    "static/js/2.1d69c07f.chunk.js.map": "/mini-admin/static/js/2.1d69c07f.chunk.js.map",
-    "static/js/3.c5b75de5.chunk.js": "/mini-admin/static/js/3.c5b75de5.chunk.js",
-    "static/js/3.c5b75de5.chunk.js.map": "/mini-admin/static/js/3.c5b75de5.chunk.js.map",
+    "static/js/2.3c992693.chunk.js": "/mini-admin/static/js/2.3c992693.chunk.js",
+    "static/js/2.3c992693.chunk.js.map": "/mini-admin/static/js/2.3c992693.chunk.js.map",
+    "static/js/3.175f50e5.chunk.js": "/mini-admin/static/js/3.175f50e5.chunk.js",
+    "static/js/3.175f50e5.chunk.js.map": "/mini-admin/static/js/3.175f50e5.chunk.js.map",
     "index.html": "/mini-admin/index.html",
     "static/css/2.fe61e19b.chunk.css.map": "/mini-admin/static/css/2.fe61e19b.chunk.css.map",
-    "static/css/main.55fb1aa2.chunk.css.map": "/mini-admin/static/css/main.55fb1aa2.chunk.css.map",
-    "static/js/2.1d69c07f.chunk.js.LICENSE.txt": "/mini-admin/static/js/2.1d69c07f.chunk.js.LICENSE.txt"
+    "static/css/main.6743d7dc.chunk.css.map": "/mini-admin/static/css/main.6743d7dc.chunk.css.map",
+    "static/js/2.3c992693.chunk.js.LICENSE.txt": "/mini-admin/static/js/2.3c992693.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
-    "static/js/runtime-main.07eacccf.js",
+    "static/js/runtime-main.9021ec8a.js",
     "static/css/2.fe61e19b.chunk.css",
-    "static/js/2.1d69c07f.chunk.js",
-    "static/css/main.55fb1aa2.chunk.css",
-    "static/js/main.912026b0.chunk.js"
+    "static/js/2.3c992693.chunk.js",
+    "static/css/main.6743d7dc.chunk.css",
+    "static/js/main.fdc7cf94.chunk.js"
   ]
 }
