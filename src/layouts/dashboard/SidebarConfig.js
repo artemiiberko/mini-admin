@@ -14,42 +14,42 @@ const getIcon = (name) => <Icon icon={name} width={22} height={22} />;
 const sidebarConfig = [
   {
     title: 'dashboard',
-    path: '/dashboard/app',
+    path: '/dashboard',
     icon: getIcon(pieChart2Fill)
   },
   {
     title: 'attendees',
-    path: '/dashboard/attendees',
+    path: '/attendees',
     icon: getIcon(peopleFill)
   },
   {
     title: 'agendas',
-    path: '/dashboard/agendas',
+    path: '/agendas',
     icon: getIcon(shoppingBagFill)
   },
   {
     title: 'polls',
-    path: '/dashboard/polls',
+    path: '/polls',
     icon: getIcon(fileTextFill)
   },
   {
     title: 'notification',
-    path: '/dashboard/notification',
+    path: '/notification',
     icon: getIcon(fileTextFill)
   },
   {
     title: 'bulkmail',
-    path: '/dashboard/bulkmail',
+    path: '/bulkmail',
     icon: getIcon(fileTextFill)
   },
   {
     title: 'pressroom',
-    path: '/dashboard/pressroom',
+    path: '/pressroom',
     icon: getIcon(fileTextFill)
   },
   {
     title: 'informations',
-    path: '/dashboard/informations',
+    path: '/informations',
     icon: getIcon(fileTextFill)
   },
   {

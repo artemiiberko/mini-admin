@@ -8,7 +8,7 @@ const users = [
     lname: 'Smith',
     email: 'john.smith@mail.com',
     appstatus: 'Link Sent',
-    subdate: '2021-11-10',
+    subdate: '2022-1-16 18:47:18 UTC',
     status: 'Active'
   },
   {
@@ -18,7 +18,7 @@ const users = [
     lname: 'Brown',
     email: 'ewa.brown@mail.com',
     appstatus: 'Link Sent',
-    subdate: '2021-12-10',
+    subdate: '2022-1-16 18:47:18 UTC',
     status: 'Inactive'
   },
   {
@@ -28,7 +28,7 @@ const users = [
     lname: 'Brown',
     email: 'ewa.brown@mail.com',
     appstatus: 'Link Sent',
-    subdate: '2021-12-10',
+    subdate: '2022-1-16 18:47:18 UTC',
     status: 'Active'
   },
   {
@@ -38,59 +38,8 @@ const users = [
     lname: 'Brown',
     email: 'ewa.brown@mail.com',
     appstatus: 'Link Sent',
-    subdate: '2021-12-10',
+    subdate: '2022-1-16 18:47:18 UTC',
     status: 'Inactive'
-  },
-  {
-    id: 5,
-    title: 'Mrs.',
-    name: 'Ewa',
-    lname: 'Brown',
-    email: 'ewa.brown@mail.com',
-    appstatus: 'Link Sent',
-    subdate: '2021-12-10',
-    status: 'Active'
-  },
-  {
-    id: 6,
-    title: 'Mrs.',
-    name: 'Ewa',
-    lname: 'Brown',
-    email: 'ewa.brown@mail.com',
-    appstatus: 'Link Sent',
-    subdate: '2021-12-10',
-    status: 'Active'
-  },
-  {
-    id: 7,
-    title: 'Mrs.',
-    name: 'Ewa',
-    lname: 'Brown',
-    email: 'ewa.brown@mail.com',
-    appstatus: 'Link Sent',
-    subdate: '2021-12-10',
-    status: 'Active'
-  },
-  {
-    id: 8,
-    title: 'Mrs.',
-    name: 'Ewa',
-    lname: 'Brown',
-    email: 'ewa.brown@mail.com',
-    appstatus: 'Link Sent',
-    subdate: '2021-12-10',
-    status: 'Active'
-  },
-
-  {
-    id: 9,
-    title: 'Mrs.',
-    name: 'Ewa',
-    lname: 'Brown',
-    email: 'ewa.brown@mail.com',
-    appstatus: 'Link Sent',
-    subdate: '2021-12-10',
-    status: 'Active'
   }
 ];
 

@@ -3,7 +3,8 @@ import { Icon } from '@iconify/react';
 import { sentenceCase } from 'change-case';
 import { useState } from 'react';
 import plusFill from '@iconify/icons-eva/plus-fill';
-import { Link as RouterLink } from 'react-router-dom';
+import { FormikProvider, Form, useFormik } from 'formik';
+import { Modal } from 'react-bootstrap';
 // material
 import {
   Card,
@@ -20,7 +21,8 @@ import {
   TablePagination,
   Select,
   MenuItem,
-  FormLabel
+  FormLabel,
+  TextField
 } from '@mui/material';
 // components
 import Page from '../components/Page';
@@ -46,6 +48,7 @@ const TABLE_HEAD = [
   { id: '' }
 ];
 const statuslist = ['Active', 'Inactive'];
+const titlelist = ['Mr.', 'Mrs.'];
 const appstatuslist = [
   'Entered',
   'Link Sent',
@@ -120,7 +123,89 @@ export default function Attendees() {
   const [filterRsvp, setFilterRsvp] = useState('');
   const [filterStatus, setFilterStatus] = useState('');
   const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [show, setShow] = useState(false);
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+  const [changeAttendees, setChangeAttendees] = useState(USERLIST);
+  const [addattendeeerror, setAddattendeeerror] = useState('');
 
+  function emailExists(email) {
+    return changeAttendees.some((e) => e.email === email);
+  }
+  const [newAttendee, setNewAttendee] = useState({
+    id: 0,
+    title: '',
+    name: '',
+    lname: '',
+    email: '',
+    appstatus: '',
+    subdate: '',
+    status: ''
+  });
+  const addAttendee = (attendee) => {
+    setChangeAttendees((prevState) => [...prevState, attendee]);
+  };
+  const onAttendeeChange = (e) => {
+    let idPlus = Math.max(...changeAttendees.map((e) => e.id));
+    idPlus += 1;
+    const nowdate = new Date(Date.now());
+    const nowdateyear = nowdate.getUTCFullYear();
+    const nowdatemonth = nowdate.getUTCMonth() + 1;
+    const nowdateday = nowdate.getUTCDate();
+    const nowdatehours = nowdate.getUTCHours() + 1;
+    const nowdateminutes = nowdate.getUTCMinutes() + 1;
+    const nowdateseconds = nowdate.getUTCSeconds() + 1;
+
+    const nowdatestring = `${nowdateyear.toString()}-${nowdatemonth.toString()}-${nowdateday.toString()} ${nowdatehours.toString()}:${nowdateminutes.toString()}:${nowdateseconds.toString()} UTC`;
+    const { name, value } = e.target;
+    setNewAttendee((prevState) => ({
+      ...prevState,
+      [name]: value,
+      id: idPlus,
+      subdate: nowdatestring
+    }));
+  };
+  const handleSubmit = () => {
+    if (
+      newAttendee.name !== '' &&
+      newAttendee.lname !== '' &&
+      newAttendee.email !== '' &&
+      newAttendee.title !== '' &&
+      newAttendee.status !== '' &&
+      newAttendee.appstatus !== ''
+    ) {
+      if (emailExists(newAttendee.email)) {
+        setAddattendeeerror('Email is already exists');
+      } else {
+        setAddattendeeerror('');
+        addAttendee(newAttendee);
+        setNewAttendee({
+          id: 0,
+          title: '',
+          name: '',
+          lname: '',
+          email: '',
+          appstatus: '',
+          subdate: '',
+          status: ''
+        });
+        setShow(false);
+      }
+    } else {
+      setAddattendeeerror('Please fill all fields');
+    }
+  };
+  const formik = useFormik({
+    initialValues: {
+      title: '',
+      name: '',
+      lname: '',
+      email: '',
+      appstatus: '',
+      status: '',
+      remember: false
+    }
+  });
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
@@ -129,18 +214,18 @@ export default function Attendees() {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = USERLIST.map((n) => n.name);
+      const newSelecteds = USERLIST.map((n) => n.id);
       setSelected(newSelecteds);
       return;
     }
     setSelected([]);
   };
 
-  const handleClick = (event, name) => {
-    const selectedIndex = selected.indexOf(name);
+  const handleClick = (event, id) => {
+    const selectedIndex = selected.indexOf(id);
     let newSelected = [];
     if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, name);
+      newSelected = newSelected.concat(selected, id);
     } else if (selectedIndex === 0) {
       newSelected = newSelected.concat(selected.slice(1));
     } else if (selectedIndex === selected.length - 1) {
@@ -191,7 +276,7 @@ export default function Attendees() {
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
 
   const filteredUsers = applySortFilter(
-    USERLIST,
+    changeAttendees,
     getComparator(order, orderBy),
     filter,
     filterStatus,
@@ -207,16 +292,108 @@ export default function Attendees() {
           <Typography variant="h4" gutterBottom>
             Attendees
           </Typography>
-          <Button
-            variant="contained"
-            component={RouterLink}
-            to="#"
-            startIcon={<Icon icon={plusFill} />}
-          >
+          <Button variant="contained" startIcon={<Icon icon={plusFill} />} onClick={handleShow}>
             New Attendee
           </Button>
         </Stack>
-
+        <Modal show={show} onHide={handleClose} size="lg">
+          <Modal.Header closeButton>
+            <Modal.Title>NEW ATTENDEE</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <FormikProvider value={formik}>
+              <Form style={{ display: 'flex', width: '100%' }}>
+                <Stack spacing={3} style={{ flexBasis: '50%', padding: '10px', maxWidth: '50%' }}>
+                  <Typography>Title</Typography>
+                  <Select
+                    displayEmpty
+                    onChange={onAttendeeChange}
+                    value={newAttendee.title}
+                    name="title"
+                  >
+                    <MenuItem key="title" value="" style={{ color: 'grey' }}>
+                      Select title...
+                    </MenuItem>
+                    {titlelist.map((title) => (
+                      <MenuItem key={title} value={title}>
+                        {title}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                  <Typography>First Name</Typography>
+                  <TextField
+                    type="text"
+                    placeholder="First Name"
+                    onChange={onAttendeeChange}
+                    value={newAttendee.name}
+                    name="name"
+                  />
+                  <Typography>Last Name</Typography>
+                  <TextField
+                    type="text"
+                    placeholder="Last Name"
+                    onChange={onAttendeeChange}
+                    value={newAttendee.lname}
+                    name="lname"
+                  />
+                </Stack>
+                <Stack spacing={3} style={{ flexBasis: '50%', padding: '10px', maxWidth: '50%' }}>
+                  <Typography>Email Address</Typography>
+                  <TextField
+                    type="text"
+                    placeholder="Email Address"
+                    onChange={onAttendeeChange}
+                    value={newAttendee.email}
+                    name="email"
+                  />
+                  <Typography>Application Status</Typography>
+                  <Select
+                    displayEmpty
+                    name="appstatus"
+                    onChange={onAttendeeChange}
+                    value={newAttendee.appstatus}
+                  >
+                    <MenuItem key="appstatus" value="" style={{ color: 'grey' }}>
+                      Select Application Status...
+                    </MenuItem>
+                    {appstatuslist.map((appstatus) => (
+                      <MenuItem key={appstatus} value={appstatus}>
+                        {appstatus}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                  <Typography>Status</Typography>
+                  <Select
+                    displayEmpty
+                    name="status"
+                    onChange={onAttendeeChange}
+                    value={newAttendee.status}
+                  >
+                    <MenuItem key="status" value="" style={{ color: 'grey' }}>
+                      Select Status...
+                    </MenuItem>
+                    {statuslist.map((status) => (
+                      <MenuItem key={status} value={status}>
+                        {status}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </Stack>
+              </Form>
+            </FormikProvider>
+            <Typography style={{ color: 'red', fontWeight: '700', padding: '10px' }}>
+              {addattendeeerror}
+            </Typography>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={handleClose}>
+              Close
+            </Button>
+            <Button variant="primary" onClick={handleSubmit}>
+              Add
+            </Button>
+          </Modal.Footer>
+        </Modal>
         <Card>
           <UserListToolbar
             numSelected={selected.length}
@@ -227,14 +404,14 @@ export default function Attendees() {
           />
           <div className="filter">
             <Stack sx={{ flexBasis: '25%', padding: '0px 10px' }}>
-              <FormLabel>Country</FormLabel>
               <Select
+                displayEmpty
                 size="small"
                 onChange={handleFilterCountry}
                 value={filterCountry}
-                style={{ flexBasis: '25%' }}
+                style={{ margin: '5px' }}
               >
-                <MenuItem key="country" value="">
+                <MenuItem key="country" value="" style={{ color: 'grey' }}>
                   All Countries
                 </MenuItem>
                 {countrylist.map((country) => (
@@ -243,14 +420,14 @@ export default function Attendees() {
                   </MenuItem>
                 ))}
               </Select>
-              <FormLabel>Application Status</FormLabel>
               <Select
+                displayEmpty
                 size="small"
                 onChange={handleFilterAppStatus}
                 value={filterAppStatus}
-                style={{ flexBasis: '25%' }}
+                style={{ margin: '5px' }}
               >
-                <MenuItem key="appstatus" value="">
+                <MenuItem key="appstatus" value="" style={{ color: 'grey' }}>
                   All Application Status
                 </MenuItem>
                 {appstatuslist.map((appstatus) => (
@@ -261,14 +438,14 @@ export default function Attendees() {
               </Select>
             </Stack>
             <Stack sx={{ flexBasis: '25%', padding: '0px 10px' }}>
-              <FormLabel>City</FormLabel>
               <Select
+                displayEmpty
                 size="small"
                 onChange={handleFilterCity}
                 value={filterCity}
-                style={{ flexBasis: '25%' }}
+                style={{ margin: '5px' }}
               >
-                <MenuItem key="city" value="">
+                <MenuItem key="city" value="" style={{ color: 'grey' }}>
                   All Cities
                 </MenuItem>
                 {citylist.map((city) => (
@@ -277,14 +454,14 @@ export default function Attendees() {
                   </MenuItem>
                 ))}
               </Select>
-              <FormLabel>Attendee Type</FormLabel>
               <Select
+                displayEmpty
                 size="small"
                 onChange={handleFilterAttendeeType}
                 value={filterAttendeeType}
-                style={{ flexBasis: '25%' }}
+                style={{ margin: '5px' }}
               >
-                <MenuItem key="attendeetype" value="">
+                <MenuItem key="attendeetype" value="" style={{ color: 'grey' }}>
                   All Attendee Types
                 </MenuItem>
                 {attendeetypelist.map((attendeetype) => (
@@ -295,14 +472,14 @@ export default function Attendees() {
               </Select>
             </Stack>
             <Stack sx={{ flexBasis: '25%', padding: '0px 10px' }}>
-              <FormLabel>Role</FormLabel>
               <Select
+                displayEmpty
                 size="small"
                 onChange={handleFilterRole}
                 value={filterRole}
-                style={{ flexBasis: '25%' }}
+                style={{ margin: '5px' }}
               >
-                <MenuItem key="role" value="">
+                <MenuItem key="role" value="" style={{ color: 'grey' }}>
                   All Roles
                 </MenuItem>
                 {rolelist.map((role) => (
@@ -311,14 +488,14 @@ export default function Attendees() {
                   </MenuItem>
                 ))}
               </Select>
-              <FormLabel>Status</FormLabel>
               <Select
+                displayEmpty
                 size="small"
                 onChange={handleFilterStatus}
                 value={filterStatus}
-                style={{ flexBasis: '25%' }}
+                style={{ margin: '5px' }}
               >
-                <MenuItem key="status" value="">
+                <MenuItem key="status" value="" style={{ color: 'grey' }}>
                   All Status
                 </MenuItem>
                 {statuslist.map((status) => (
@@ -329,14 +506,14 @@ export default function Attendees() {
               </Select>
             </Stack>
             <Stack sx={{ flexBasis: '25%', padding: '0px 10px' }}>
-              <FormLabel>RSVP</FormLabel>
               <Select
+                displayEmpty
                 size="small"
                 onChange={handleFilterRsvp}
                 value={filterRsvp}
-                style={{ flexBasis: '25%' }}
+                style={{ margin: '5px' }}
               >
-                <MenuItem key="rsvp" value="">
+                <MenuItem key="rsvp" value="" style={{ color: 'grey' }}>
                   All RSVP
                 </MenuItem>
                 {rsvplist.map((rsvp) => (
@@ -425,7 +602,7 @@ export default function Attendees() {
           <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
             component="div"
-            count={USERLIST.length}
+            count={filteredUsers.length}
             rowsPerPage={rowsPerPage}
             page={page}
             onPageChange={handleChangePage}

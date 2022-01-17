@@ -20,31 +20,32 @@ import Informations from './pages/Informations';
 export default function Router() {
   return useRoutes([
     {
-      path: '/dashboard',
+      path: '/',
       element: <DashboardLayout />,
       children: [
-        { element: <Navigate to="/dashboard/app" replace /> },
-        { path: 'app', element: <DashboardApp /> },
+        { path: '/', element: <Navigate to="/dashboard" /> },
+        { path: 'dashboard', element: <DashboardApp /> },
         { path: 'attendees', element: <Attendees /> },
         { path: 'agendas', element: <Agendas /> },
         { path: 'polls', element: <Polls /> },
         { path: 'notification', element: <Notification /> },
         { path: 'bulkmail', element: <BulkMail /> },
         { path: 'pressroom', element: <Pressroom /> },
-        { path: 'informations', element: <Informations /> }
+        { path: 'informations', element: <Informations /> },
+        { path: '404', element: <NotFound /> }
       ]
     },
-    {
-      path: '/',
-      element: <LogoOnlyLayout />,
-      children: [
-        { path: 'login', element: <Login /> },
-        { path: 'register', element: <Register /> },
-        { path: '404', element: <NotFound /> },
-        { path: '/', element: <Navigate to="/dashboard" /> },
-        { path: '*', element: <Navigate to="/404" /> }
-      ]
-    },
+    // {
+    //   path: '/',
+    //   element: <LogoOnlyLayout />,
+    //   children: [
+    //     { path: 'login', element: <Login /> },
+    //     { path: 'register', element: <Register /> },
+    //     { path: '404', element: <NotFound /> },
+    //     { path: '/', element: <Navigate to="/dashboard" /> },
+    //     { path: '*', element: <Navigate to="/404" /> }
+    //   ]
+    // },
     { path: '*', element: <Navigate to="/404" replace /> }
   ]);
 }
