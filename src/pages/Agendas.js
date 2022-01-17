@@ -3,7 +3,6 @@ import { Icon } from '@iconify/react';
 import { sentenceCase } from 'change-case';
 import { useState } from 'react';
 import plusFill from '@iconify/icons-eva/plus-fill';
-import { FormikProvider, Form, useFormik } from 'formik';
 import { Modal } from 'react-bootstrap';
 // material
 import {
@@ -21,8 +20,8 @@ import {
   TablePagination,
   Select,
   MenuItem,
-  FormLabel,
-  TextField
+  TextField,
+  FormGroup
 } from '@mui/material';
 // components
 import Page from '../components/Page';
@@ -140,16 +139,7 @@ export default function Agendas() {
       setAddagendaerror('Please fill all fields');
     }
   };
-  const formik = useFormik({
-    initialValues: {
-      title: '',
-      description: '',
-      speakers: '',
-      rating: '',
-      status: '',
-      remember: false
-    }
-  });
+
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
@@ -158,7 +148,7 @@ export default function Agendas() {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = AGENDAS.map((n) => n.id);
+      const newSelecteds = changeAgendas.map((n) => n.id);
       setSelected(newSelecteds);
       return;
     }
@@ -226,65 +216,63 @@ export default function Agendas() {
             <Modal.Title>NEW AGENDA</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <FormikProvider value={formik}>
-              <Form style={{ display: 'flex', width: '100%' }}>
-                <Stack spacing={3} style={{ flexBasis: '50%', padding: '10px', maxWidth: '50%' }}>
-                  <Typography>Title</Typography>
-                  <TextField
-                    type="text"
-                    placeholder="Title"
-                    onChange={onAgendaChange}
-                    value={newAgenda.title}
-                    name="title"
-                  />
-                  <Typography>Description</Typography>
-                  <TextField
-                    multiline
-                    minRows={6}
-                    maxRows={6}
-                    type="text"
-                    placeholder="Description"
-                    onChange={onAgendaChange}
-                    value={newAgenda.descripton}
-                    name="description"
-                  />
-                </Stack>
-                <Stack spacing={3} style={{ flexBasis: '50%', padding: '10px', maxWidth: '50%' }}>
-                  <Typography>Speakers</Typography>
-                  <TextField
-                    type="number"
-                    placeholder="Speakers"
-                    onChange={onAgendaChange}
-                    value={newAgenda.speakers}
-                    name="speakers"
-                  />
-                  <Typography>Rating</Typography>
-                  <TextField
-                    type="number"
-                    placeholder="Rating"
-                    onChange={onAgendaChange}
-                    value={newAgenda.rating}
-                    name="rating"
-                  />
-                  <Typography>Status</Typography>
-                  <Select
-                    displayEmpty
-                    name="status"
-                    onChange={onAgendaChange}
-                    value={newAgenda.status}
-                  >
-                    <MenuItem key="status" value="" style={{ color: 'grey' }}>
-                      Select Status...
+            <FormGroup style={{ display: 'flex', width: '100%' }}>
+              <Stack spacing={3} style={{ flexBasis: '50%', padding: '10px', flexShrink: '0' }}>
+                <Typography>Title</Typography>
+                <TextField
+                  type="text"
+                  placeholder="Title"
+                  onChange={onAgendaChange}
+                  value={newAgenda.title}
+                  name="title"
+                />
+                <Typography>Description</Typography>
+                <TextField
+                  multiline
+                  minRows={6}
+                  maxRows={6}
+                  type="text"
+                  placeholder="Description"
+                  onChange={onAgendaChange}
+                  value={newAgenda.descripton}
+                  name="description"
+                />
+              </Stack>
+              <Stack spacing={3} style={{ flexBasis: '50%', padding: '10px', flexShrink: '0' }}>
+                <Typography>Speakers</Typography>
+                <TextField
+                  type="number"
+                  placeholder="Speakers"
+                  onChange={onAgendaChange}
+                  value={newAgenda.speakers}
+                  name="speakers"
+                />
+                <Typography>Rating</Typography>
+                <TextField
+                  type="number"
+                  placeholder="Rating"
+                  onChange={onAgendaChange}
+                  value={newAgenda.rating}
+                  name="rating"
+                />
+                <Typography>Status</Typography>
+                <Select
+                  displayEmpty
+                  name="status"
+                  onChange={onAgendaChange}
+                  value={newAgenda.status}
+                >
+                  <MenuItem key="status" value="" style={{ color: 'grey' }}>
+                    Select Status...
+                  </MenuItem>
+                  {statuslist.map((status) => (
+                    <MenuItem key={status} value={status}>
+                      {status}
                     </MenuItem>
-                    {statuslist.map((status) => (
-                      <MenuItem key={status} value={status}>
-                        {status}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </Stack>
-              </Form>
-            </FormikProvider>
+                  ))}
+                </Select>
+              </Stack>
+            </FormGroup>
             <Typography style={{ color: 'red', fontWeight: '700', padding: '10px' }}>
               {addagendaerror}
             </Typography>
@@ -331,7 +319,7 @@ export default function Agendas() {
                   order={order}
                   orderBy={orderBy}
                   headLabel={TABLE_HEAD}
-                  rowCount={AGENDAS.length}
+                  rowCount={changeAgendas.length}
                   numSelected={selected.length}
                   onRequestSort={handleRequestSort}
                   onSelectAllClick={handleSelectAllClick}

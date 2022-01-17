@@ -8,7 +8,7 @@ const users = [
     lname: 'Smith',
     email: 'john.smith@mail.com',
     appstatus: 'Link Sent',
-    subdate: '2022-1-16 18:47:18 UTC',
+    subdate: '2022-01-16 18:47 UTC',
     status: 'Active'
   },
   {
@@ -18,7 +18,7 @@ const users = [
     lname: 'Brown',
     email: 'ewa.brown@mail.com',
     appstatus: 'Link Sent',
-    subdate: '2022-1-16 18:47:18 UTC',
+    subdate: '2022-01-16 18:47 UTC',
     status: 'Inactive'
   },
   {
@@ -28,7 +28,7 @@ const users = [
     lname: 'Brown',
     email: 'ewa.brown@mail.com',
     appstatus: 'Link Sent',
-    subdate: '2022-1-16 18:47:18 UTC',
+    subdate: '2022-01-16 18:47 UTC',
     status: 'Active'
   },
   {
@@ -38,7 +38,7 @@ const users = [
     lname: 'Brown',
     email: 'ewa.brown@mail.com',
     appstatus: 'Link Sent',
-    subdate: '2022-1-16 18:47:18 UTC',
+    subdate: '2022-01-16 18:47 UTC',
     status: 'Inactive'
   }
 ];

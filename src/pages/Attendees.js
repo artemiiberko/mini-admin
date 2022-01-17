@@ -3,7 +3,6 @@ import { Icon } from '@iconify/react';
 import { sentenceCase } from 'change-case';
 import { useState } from 'react';
 import plusFill from '@iconify/icons-eva/plus-fill';
-import { FormikProvider, Form, useFormik } from 'formik';
 import { Modal } from 'react-bootstrap';
 // material
 import {
@@ -21,8 +20,8 @@ import {
   TablePagination,
   Select,
   MenuItem,
-  FormLabel,
-  TextField
+  TextField,
+  FormGroup
 } from '@mui/material';
 // components
 import Page from '../components/Page';
@@ -154,9 +153,13 @@ export default function Attendees() {
     const nowdateday = nowdate.getUTCDate();
     const nowdatehours = nowdate.getUTCHours() + 1;
     const nowdateminutes = nowdate.getUTCMinutes() + 1;
-    const nowdateseconds = nowdate.getUTCSeconds() + 1;
 
-    const nowdatestring = `${nowdateyear.toString()}-${nowdatemonth.toString()}-${nowdateday.toString()} ${nowdatehours.toString()}:${nowdateminutes.toString()}:${nowdateseconds.toString()} UTC`;
+    const nowdatestring = `${nowdateyear.toString()}-${
+      nowdatemonth > 9 ? nowdatemonth.toString() : `0${nowdatemonth.toString()}`
+    }-${nowdateday > 9 ? nowdateday.toString() : `0${nowdateday.toString()}`} ${
+      nowdatehours > 9 ? nowdatehours.toString() : `0${nowdatehours.toString()}`
+    }:${nowdateminutes > 9 ? nowdateminutes.toString() : `0${nowdateminutes.toString()}`}
+    } UTC`;
     const { name, value } = e.target;
     setNewAttendee((prevState) => ({
       ...prevState,
@@ -195,17 +198,7 @@ export default function Attendees() {
       setAddattendeeerror('Please fill all fields');
     }
   };
-  const formik = useFormik({
-    initialValues: {
-      title: '',
-      name: '',
-      lname: '',
-      email: '',
-      appstatus: '',
-      status: '',
-      remember: false
-    }
-  });
+
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
@@ -301,86 +294,84 @@ export default function Attendees() {
             <Modal.Title>NEW ATTENDEE</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <FormikProvider value={formik}>
-              <Form style={{ display: 'flex', width: '100%' }}>
-                <Stack spacing={3} style={{ flexBasis: '50%', padding: '10px', maxWidth: '50%' }}>
-                  <Typography>Title</Typography>
-                  <Select
-                    displayEmpty
-                    onChange={onAttendeeChange}
-                    value={newAttendee.title}
-                    name="title"
-                  >
-                    <MenuItem key="title" value="" style={{ color: 'grey' }}>
-                      Select title...
+            <FormGroup style={{ display: 'flex', width: '100%' }}>
+              <Stack spacing={3} style={{ flexBasis: '50%', padding: '10px', flexShrink: '0' }}>
+                <Typography>Title</Typography>
+                <Select
+                  displayEmpty
+                  onChange={onAttendeeChange}
+                  value={newAttendee.title}
+                  name="title"
+                >
+                  <MenuItem key="title" value="" style={{ color: 'grey' }}>
+                    Select title...
+                  </MenuItem>
+                  {titlelist.map((title) => (
+                    <MenuItem key={title} value={title}>
+                      {title}
                     </MenuItem>
-                    {titlelist.map((title) => (
-                      <MenuItem key={title} value={title}>
-                        {title}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                  <Typography>First Name</Typography>
-                  <TextField
-                    type="text"
-                    placeholder="First Name"
-                    onChange={onAttendeeChange}
-                    value={newAttendee.name}
-                    name="name"
-                  />
-                  <Typography>Last Name</Typography>
-                  <TextField
-                    type="text"
-                    placeholder="Last Name"
-                    onChange={onAttendeeChange}
-                    value={newAttendee.lname}
-                    name="lname"
-                  />
-                </Stack>
-                <Stack spacing={3} style={{ flexBasis: '50%', padding: '10px', maxWidth: '50%' }}>
-                  <Typography>Email Address</Typography>
-                  <TextField
-                    type="text"
-                    placeholder="Email Address"
-                    onChange={onAttendeeChange}
-                    value={newAttendee.email}
-                    name="email"
-                  />
-                  <Typography>Application Status</Typography>
-                  <Select
-                    displayEmpty
-                    name="appstatus"
-                    onChange={onAttendeeChange}
-                    value={newAttendee.appstatus}
-                  >
-                    <MenuItem key="appstatus" value="" style={{ color: 'grey' }}>
-                      Select Application Status...
+                  ))}
+                </Select>
+                <Typography>First Name</Typography>
+                <TextField
+                  type="text"
+                  placeholder="First Name"
+                  onChange={onAttendeeChange}
+                  value={newAttendee.name}
+                  name="name"
+                />
+                <Typography>Last Name</Typography>
+                <TextField
+                  type="text"
+                  placeholder="Last Name"
+                  onChange={onAttendeeChange}
+                  value={newAttendee.lname}
+                  name="lname"
+                />
+              </Stack>
+              <Stack spacing={3} style={{ flexBasis: '50%', padding: '10px', flexShrink: '0' }}>
+                <Typography>Email Address</Typography>
+                <TextField
+                  type="text"
+                  placeholder="Email Address"
+                  onChange={onAttendeeChange}
+                  value={newAttendee.email}
+                  name="email"
+                />
+                <Typography>Application Status</Typography>
+                <Select
+                  displayEmpty
+                  name="appstatus"
+                  onChange={onAttendeeChange}
+                  value={newAttendee.appstatus}
+                >
+                  <MenuItem key="appstatus" value="" style={{ color: 'grey' }}>
+                    Select Application Status...
+                  </MenuItem>
+                  {appstatuslist.map((appstatus) => (
+                    <MenuItem key={appstatus} value={appstatus}>
+                      {appstatus}
                     </MenuItem>
-                    {appstatuslist.map((appstatus) => (
-                      <MenuItem key={appstatus} value={appstatus}>
-                        {appstatus}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                  <Typography>Status</Typography>
-                  <Select
-                    displayEmpty
-                    name="status"
-                    onChange={onAttendeeChange}
-                    value={newAttendee.status}
-                  >
-                    <MenuItem key="status" value="" style={{ color: 'grey' }}>
-                      Select Status...
+                  ))}
+                </Select>
+                <Typography>Status</Typography>
+                <Select
+                  displayEmpty
+                  name="status"
+                  onChange={onAttendeeChange}
+                  value={newAttendee.status}
+                >
+                  <MenuItem key="status" value="" style={{ color: 'grey' }}>
+                    Select Status...
+                  </MenuItem>
+                  {statuslist.map((status) => (
+                    <MenuItem key={status} value={status}>
+                      {status}
                     </MenuItem>
-                    {statuslist.map((status) => (
-                      <MenuItem key={status} value={status}>
-                        {status}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </Stack>
-              </Form>
-            </FormikProvider>
+                  ))}
+                </Select>
+              </Stack>
+            </FormGroup>
             <Typography style={{ color: 'red', fontWeight: '700', padding: '10px' }}>
               {addattendeeerror}
             </Typography>

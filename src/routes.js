@@ -3,8 +3,6 @@ import { Navigate, useRoutes } from 'react-router-dom';
 import DashboardLayout from './layouts/dashboard';
 import LogoOnlyLayout from './layouts/LogoOnlyLayout';
 //
-import Login from './pages/Login';
-import Register from './pages/Register';
 import DashboardApp from './pages/DashboardApp';
 import Agendas from './pages/Agendas';
 import Polls from './pages/Polls';

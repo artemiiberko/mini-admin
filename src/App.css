@@ -1,6 +1,5 @@
 .filter{
     display: flex;
-    justify-content: space-between;
     padding: 0px 20px;
 }
 
@@ -130,7 +129,7 @@
   
   @media (min-width: 576px) {
     .modal-dialog {
-      max-width: 500px;
+      max-width: 600px;
       margin: 9rem auto;
     }
   
