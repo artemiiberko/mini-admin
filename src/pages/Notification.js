@@ -353,7 +353,11 @@ export default function Notifications() {
                           </TableCell>
 
                           <TableCell align="right">
-                            <UserMoreMenu />
+                            <UserMoreMenu
+                              id={id}
+                              setChangeData={setChangeNotifications}
+                              changeData={changeNotifications}
+                            />
                           </TableCell>
                         </TableRow>
                       );

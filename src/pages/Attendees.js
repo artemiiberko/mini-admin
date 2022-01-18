@@ -144,6 +144,7 @@ export default function Attendees() {
   const addAttendee = (attendee) => {
     setChangeAttendees((prevState) => [...prevState, attendee]);
   };
+
   const onAttendeeChange = (e) => {
     let idPlus = Math.max(...changeAttendees.map((e) => e.id));
     idPlus += 1;
@@ -566,7 +567,11 @@ export default function Attendees() {
                           </TableCell>
 
                           <TableCell align="right">
-                            <UserMoreMenu />
+                            <UserMoreMenu
+                              id={id}
+                              setChangeData={setChangeAttendees}
+                              changeData={changeAttendees}
+                            />
                           </TableCell>
                         </TableRow>
                       );

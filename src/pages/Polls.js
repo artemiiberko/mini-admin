@@ -503,7 +503,11 @@ export default function Agendas() {
                           </TableCell>
 
                           <TableCell align="right">
-                            <UserMoreMenu />
+                            <UserMoreMenu
+                              id={id}
+                              setChangeData={setChangePolls}
+                              changeData={changePolls}
+                            />
                           </TableCell>
                         </TableRow>
                       );

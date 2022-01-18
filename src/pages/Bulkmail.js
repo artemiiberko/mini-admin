@@ -264,7 +264,11 @@ export default function Notifications() {
                           <TableCell align="left">{email}</TableCell>
 
                           <TableCell align="right">
-                            <UserMoreMenu />
+                            <UserMoreMenu
+                              id={id}
+                              setChangeData={setChangeBulkmails}
+                              changeData={changeBulkmails}
+                            />
                           </TableCell>
                         </TableRow>
                       );

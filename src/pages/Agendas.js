@@ -361,7 +361,11 @@ export default function Agendas() {
                           </TableCell>
 
                           <TableCell align="right">
-                            <UserMoreMenu />
+                            <UserMoreMenu
+                              id={id}
+                              setChangeData={setChangeAgendas}
+                              changeData={changeAgendas}
+                            />
                           </TableCell>
                         </TableRow>
                       );
