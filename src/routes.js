@@ -11,7 +11,10 @@ import NotFound from './pages/Page404';
 import Notification from './pages/Notification';
 import BulkMail from './pages/Bulkmail';
 import Pressroom from './pages/Pressroom';
-import Informations from './pages/Informations';
+import Epcvideos from './pages/Epcvideo';
+import Agendadocs from './pages/Agendadocs';
+import Mediapartners from './pages/Mediapartners';
+import Guestspeechdocs from './pages/Guestspeechdocs';
 
 // ----------------------------------------------------------------------
 
@@ -29,10 +32,43 @@ export default function Router() {
         { path: 'notification', element: <Notification /> },
         { path: 'bulkmail', element: <BulkMail /> },
         { path: 'pressroom', element: <Pressroom /> },
-        { path: 'informations', element: <Informations /> },
         { path: '404', element: <NotFound /> }
       ]
     },
+    {
+      path: '/',
+      element: <DashboardLayout />,
+      children: [
+        { path: 'aboutadsd', element: <DashboardApp /> },
+        { path: 'aboutus', element: <Attendees /> },
+        { path: 'epccontact', element: <Agendas /> },
+        { path: 'eventregistration', element: <Polls /> },
+        { path: 'dinner', element: <Notification /> },
+        { path: 'map', element: <BulkMail /> },
+        { path: 'abudhabiattractions', element: <Pressroom /> },
+        { path: 'adsdheldesk', element: <Pressroom /> },
+        { path: 'wificredentials', element: <NotFound /> },
+        { path: 'howtousethemic', element: <NotFound /> },
+        { path: 'socialmedialinks', element: <NotFound /> },
+        { path: 'codeofconduct', element: <NotFound /> },
+        { path: 'partners', element: <NotFound /> },
+        { path: 'appversion', element: <NotFound /> }
+      ]
+    },
+    {
+      path: '/',
+      element: <DashboardLayout />,
+      children: [
+        { path: 'epcvideo', element: <Epcvideos /> },
+        { path: 'agendadocs', element: <Agendadocs /> },
+        { path: 'mediapartners', element: <Mediapartners /> },
+        { path: 'guestspeechdocs', element: <Guestspeechdocs /> }
+      ]
+    },
+    {
+      path: '*',
+      element: <DashboardLayout />
+    }
     // {
     //   path: '/',
     //   element: <LogoOnlyLayout />,
@@ -44,6 +80,5 @@ export default function Router() {
     //     { path: '*', element: <Navigate to="/404" /> }
     //   ]
     // },
-    { path: '*', element: <Navigate to="/404" replace /> }
   ]);
 }

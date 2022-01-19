@@ -44,12 +44,34 @@ const sidebarConfig = [
   {
     title: 'pressroom',
     path: '/pressroom',
-    icon: getIcon(peopleFill)
+    icon: getIcon(peopleFill),
+    children: [
+      { title: 'EPC Video', path: 'epcvideo' },
+      { title: 'Agenda Docs', path: 'agendadocs' },
+      { title: 'Media Partners', path: 'mediapartners' },
+      { title: 'Guest Speech Docs', path: 'guestspeechdocs' }
+    ]
   },
   {
     title: 'informations',
     path: '/informations',
-    icon: getIcon(infoFill)
+    icon: getIcon(infoFill),
+    children: [
+      { title: 'About ADSD', path: 'aboutadsd' },
+      { title: 'About Us', path: 'aboutus' },
+      { title: 'EPC Contact', path: 'epccontact' },
+      { title: 'Event Registration', path: 'eventregistration' },
+      { title: 'Dinner', path: 'dinner' },
+      { title: 'Map', path: 'map' },
+      { title: 'Abu Dhabi Attractions', path: 'abudhabiattractions' },
+      { title: 'ADSD Helpdesk', path: 'adsdheldesk' },
+      { title: 'WIFI Credentials', path: 'wificredentials' },
+      { title: 'How to use the Mic', path: 'howtousethemic' },
+      { title: 'Social Media Links', path: 'socialmedialinks' },
+      { title: 'Code of Conduct', path: 'codeofconduct' },
+      { title: 'Partners', path: 'partners' },
+      { title: 'App Version', path: 'appversion' }
+    ]
   }
 ];
 
