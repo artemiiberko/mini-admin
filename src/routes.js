@@ -1,8 +1,6 @@
 import { Navigate, useRoutes } from 'react-router-dom';
 // layouts
 import DashboardLayout from './layouts/dashboard';
-import LogoOnlyLayout from './layouts/LogoOnlyLayout';
-//
 import DashboardApp from './pages/DashboardApp';
 import Agendas from './pages/Agendas';
 import Polls from './pages/Polls';
@@ -15,6 +13,20 @@ import Epcvideos from './pages/Epcvideo';
 import Agendadocs from './pages/Agendadocs';
 import Mediapartners from './pages/Mediapartners';
 import Guestspeechdocs from './pages/Guestspeechdocs';
+import Eventregistration from './pages/Eventregistration';
+import Dinner from './pages/Dinner';
+import Maps from './pages/Map';
+import Attractions from './pages/Attractions';
+import Helpdesks from './pages/Helpdesk';
+import Wifis from './pages/Wifi';
+import Partners from './pages/Partners';
+import Aboutadsd from './pages/Aboutadsd';
+import Aboutus from './pages/Aboutus';
+import Contacts from './pages/Contact';
+import Mic from './pages/Mic';
+import Socialmedia from './pages/Socialmedia';
+import Code from './pages/Code';
+import Appversion from './pages/Appversion';
 
 // ----------------------------------------------------------------------
 
@@ -39,20 +51,20 @@ export default function Router() {
       path: '/',
       element: <DashboardLayout />,
       children: [
-        { path: 'aboutadsd', element: <DashboardApp /> },
-        { path: 'aboutus', element: <Attendees /> },
-        { path: 'epccontact', element: <Agendas /> },
-        { path: 'eventregistration', element: <Polls /> },
-        { path: 'dinner', element: <Notification /> },
-        { path: 'map', element: <BulkMail /> },
-        { path: 'abudhabiattractions', element: <Pressroom /> },
-        { path: 'adsdheldesk', element: <Pressroom /> },
-        { path: 'wificredentials', element: <NotFound /> },
-        { path: 'howtousethemic', element: <NotFound /> },
-        { path: 'socialmedialinks', element: <NotFound /> },
-        { path: 'codeofconduct', element: <NotFound /> },
-        { path: 'partners', element: <NotFound /> },
-        { path: 'appversion', element: <NotFound /> }
+        { path: 'aboutadsd', element: <Aboutadsd /> },
+        { path: 'aboutus', element: <Aboutus /> },
+        { path: 'epccontact', element: <Contacts /> },
+        { path: 'eventregistration', element: <Eventregistration /> },
+        { path: 'dinner', element: <Dinner /> },
+        { path: 'map', element: <Maps /> },
+        { path: 'abudhabiattractions', element: <Attractions /> },
+        { path: 'adsdheldesk', element: <Helpdesks /> },
+        { path: 'wificredentials', element: <Wifis /> },
+        { path: 'howtousethemic', element: <Mic /> },
+        { path: 'socialmedialinks', element: <Socialmedia /> },
+        { path: 'codeofconduct', element: <Code /> },
+        { path: 'partners', element: <Partners /> },
+        { path: 'appversion', element: <Appversion /> }
       ]
     },
     {

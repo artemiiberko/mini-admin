@@ -1,5 +1,6 @@
 import { filter } from 'lodash';
 import { Icon } from '@iconify/react';
+import { sentenceCase } from 'change-case';
 import { useState } from 'react';
 import plusFill from '@iconify/icons-eva/plus-fill';
 import { Modal } from 'react-bootstrap';
@@ -17,24 +18,34 @@ import {
   Typography,
   TableContainer,
   TablePagination,
+  Select,
+  MenuItem,
   TextField,
   FormGroup
 } from '@mui/material';
+
 // components
 import Page from '../components/Page';
+import Label from '../components/Label';
 import Scrollbar from '../components/Scrollbar';
 import SearchNotFound from '../components/SearchNotFound';
 import { UserListHead, UserListToolbar, UserMoreMenu } from '../components/_dashboard/user';
 //
-import BULKMAILS from '../_mocks_/bulkmails';
+import DINERS from '../_mocks_/dinner';
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
   { id: 'id', label: 'ID', alignRight: false },
-  { id: 'name', label: 'Name', alignRight: false },
-  { id: 'email', label: 'Email', alignRight: false },
+  { id: 'title', label: 'Title', alignRight: false },
+  { id: 'location', label: 'Location', alignRight: false },
+  { id: 'description', label: 'Description', alignRight: false },
+  { id: 'date', label: 'Date', alignRight: false },
+  { id: 'fromtime', label: 'From Time', alignRight: false },
+  { id: 'totime', label: 'To Time', alignRight: false },
+  { id: 'status', label: 'status', alignRight: false },
   { id: '' }
 ];
+const statuslist = ['Active', 'Inactive'];
 
 // ----------------------------------------------------------------------
 
@@ -54,66 +65,102 @@ function getComparator(order, orderBy) {
     : (a, b) => -descendingComparator(a, b, orderBy);
 }
 
-function applySortFilter(array, comparator, query) {
+function applySortFilter(array, comparator, query, status) {
   const stabilizedThis = array.map((el, index) => [el, index]);
   stabilizedThis.sort((a, b) => {
     const order = comparator(a[0], b[0]);
     if (order !== 0) return order;
     return a[1] - b[1];
   });
-  if (query) {
+  if (query || status) {
     return filter(
       array,
-      (bulkmail) => bulkmail.name.toLowerCase().indexOf(query.toLowerCase()) !== -1
+      (dinners) =>
+        dinners.title.toLowerCase().indexOf(query.toLowerCase()) !== -1 &&
+        dinners.status.indexOf(status) !== -1
     );
   }
   return stabilizedThis.map((el) => el[0]);
 }
 
-export default function Bulkmail() {
+export default function Dinner() {
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc');
   const [selected, setSelected] = useState([]);
   const [orderBy, setOrderBy] = useState('id');
   const [filter, setFilter] = useState('');
+  const [filterStatus, setFilterStatus] = useState('');
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
-  const [changeBulkmails, setChangeBulkmails] = useState(BULKMAILS);
-  const [addbulkmailerror, setAddbulkmailerror] = useState('');
+  const [changeDinners, setChangeDinners] = useState(DINERS);
+  const [adddinnererror, setAdddinnererror] = useState('');
 
-  const [newBulkmail, setNewBulkmail] = useState({
+  const [newDinner, setNewDinner] = useState({
     id: 0,
-    name: '',
-    email: ''
+    title: '',
+    location: '',
+    description: '',
+    date: '',
+    fromtime: '',
+    totime: '',
+    status: ''
   });
-  const addBulkmail = (bulkmail) => {
-    setChangeBulkmails((prevState) => [...prevState, bulkmail]);
+  const addDinner = (dinner) => {
+    setChangeDinners((prevState) => [...prevState, dinner]);
   };
-  const onBulkmailChange = (e) => {
-    let idPlus = Math.max(...changeBulkmails.map((e) => e.id));
+  const onDinnerChange = (e) => {
+    let idPlus = Math.max(...changeDinners.map((e) => e.id));
     idPlus += 1;
-
+    let datestring = newDinner.date;
+    if (e.target.name === 'date') {
+      datestring = `${e.target.value} UTC`;
+    }
+    let fromtimestring = newDinner.fromtime;
+    if (e.target.name === 'fromtime') {
+      fromtimestring = `${e.target.value} UTC`;
+    }
+    let totimestring = newDinner.totime;
+    if (e.target.name === 'totime') {
+      totimestring = `${e.target.value} UTC`;
+    }
     const { name, value } = e.target;
-    setNewBulkmail((prevState) => ({
+    setNewDinner((prevState) => ({
       ...prevState,
       [name]: value,
-      id: idPlus
+      id: idPlus,
+      date: datestring,
+      fromtime: fromtimestring,
+      totime: totimestring
     }));
+    console.log(newDinner);
   };
   const handleSubmit = () => {
-    if (newBulkmail.name !== '' && newBulkmail.email !== '') {
-      setAddbulkmailerror('');
-      addBulkmail(newBulkmail);
-      setNewBulkmail({
+    if (
+      newDinner.title !== '' &&
+      newDinner.location !== '' &&
+      newDinner.description !== '' &&
+      newDinner.date !== '' &&
+      newDinner.fromtime !== '' &&
+      newDinner.totime !== '' &&
+      newDinner.status !== ''
+    ) {
+      setAdddinnererror('');
+      addDinner(newDinner);
+      setNewDinner({
         id: 0,
-        name: '',
-        email: ''
+        title: '',
+        location: '',
+        description: '',
+        date: '',
+        fromtime: '',
+        totime: '',
+        status: ''
       });
       setShow(false);
     } else {
-      setAddbulkmailerror('Please fill all fields');
+      setAdddinnererror('Please fill all fields');
     }
   };
   const handleRequestSort = (event, property) => {
@@ -124,7 +171,7 @@ export default function Bulkmail() {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = changeBulkmails.map((n) => n.id);
+      const newSelecteds = changeDinners.map((n) => n.id);
       setSelected(newSelecteds);
       return;
     }
@@ -161,52 +208,100 @@ export default function Bulkmail() {
   const handleFilter = (event) => {
     setFilter(event.target.value);
   };
+  const handleFilterStatus = (event) => {
+    setFilterStatus(event.target.value);
+  };
+  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - DINERS.length) : 0;
 
-  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - BULKMAILS.length) : 0;
+  const filteredDinners = applySortFilter(
+    changeDinners,
+    getComparator(order, orderBy),
+    filter,
+    filterStatus
+  );
 
-  const filteredBulkmails = applySortFilter(changeBulkmails, getComparator(order, orderBy), filter);
-
-  const isBulkmailNotFound = filteredBulkmails.length === 0;
+  const isDinnerNotFound = filteredDinners.length === 0;
 
   return (
-    <Page title="Bulkmail">
+    <Page title="Dinner">
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4" gutterBottom>
-            Bulkmail
+            Dinner
           </Typography>
           <Button variant="contained" startIcon={<Icon icon={plusFill} />} onClick={handleShow}>
-            Send Mail
+            New Dinner
           </Button>
         </Stack>
         <Modal show={show} onHide={handleClose} size="lg">
           <Modal.Header closeButton>
-            <Modal.Title>Bulk Mail Send</Modal.Title>
+            <Modal.Title>NEW DINNER</Modal.Title>
           </Modal.Header>
           <Modal.Body>
             <FormGroup style={{ display: 'flex', width: '100%' }}>
               <Stack spacing={3} style={{ flexBasis: '50%', padding: '10px', flexShrink: '0' }}>
-                <Typography>Name</Typography>
+                <Typography>Title</Typography>
                 <TextField
                   type="text"
                   placeholder="Title"
-                  onChange={onBulkmailChange}
-                  value={newBulkmail.name}
-                  name="name"
+                  onChange={onDinnerChange}
+                  value={newDinner.title}
+                  name="title"
                 />
-
-                <Typography>Email</Typography>
+                <Typography>Location</Typography>
                 <TextField
                   type="text"
-                  placeholder="Email"
-                  onChange={onBulkmailChange}
-                  value={newBulkmail.emal}
-                  name="email"
+                  placeholder="Location"
+                  onChange={onDinnerChange}
+                  value={newDinner.location}
+                  name="location"
+                />
+                <Typography>Description</Typography>
+                <TextField
+                  type="text"
+                  placeholder="Description"
+                  onChange={onDinnerChange}
+                  value={newDinner.description}
+                  name="description"
+                />
+                <Typography>Date</Typography>
+                <TextField type="date" placeholder="Date" onChange={onDinnerChange} name="date" />
+                <Typography>Status</Typography>
+                <Select
+                  displayEmpty
+                  name="status"
+                  onChange={onDinnerChange}
+                  value={newDinner.status}
+                >
+                  <MenuItem key="status" value="" style={{ color: 'grey' }}>
+                    Select Status...
+                  </MenuItem>
+                  {statuslist.map((status) => (
+                    <MenuItem key={status} value={status}>
+                      {status}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </Stack>
+              <Stack spacing={3} style={{ flexBasis: '50%', padding: '10px', flexShrink: '0' }}>
+                <Typography>From Time</Typography>
+                <TextField
+                  type="time"
+                  placeholder="From Time"
+                  onChange={onDinnerChange}
+                  name="fromtime"
+                />
+                <Typography>To Time</Typography>
+                <TextField
+                  type="time"
+                  placeholder="To Time"
+                  onChange={onDinnerChange}
+                  name="totime"
                 />
               </Stack>
             </FormGroup>
             <Typography style={{ color: 'red', fontWeight: '700', padding: '10px' }}>
-              {addbulkmailerror}
+              {adddinnererror}
             </Typography>
           </Modal.Body>
           <Modal.Footer>
@@ -224,7 +319,26 @@ export default function Bulkmail() {
             filterName={filter}
             onFilterName={handleFilter}
           />
-
+          <div className="filter">
+            <Stack sx={{ flexBasis: '25%', padding: '0px 10px' }}>
+              <Select
+                displayEmpty
+                size="small"
+                onChange={handleFilterStatus}
+                value={filterStatus}
+                style={{ margin: '5px' }}
+              >
+                <MenuItem key="status" value="" style={{ color: 'grey' }}>
+                  All Status
+                </MenuItem>
+                {statuslist.map((status) => (
+                  <MenuItem key={status} value={status}>
+                    {status}
+                  </MenuItem>
+                ))}
+              </Select>
+            </Stack>
+          </div>
           <Scrollbar>
             <TableContainer sx={{ minWidth: 800 }}>
               <Table>
@@ -232,16 +346,17 @@ export default function Bulkmail() {
                   order={order}
                   orderBy={orderBy}
                   headLabel={TABLE_HEAD}
-                  rowCount={changeBulkmails.length}
+                  rowCount={changeDinners.length}
                   numSelected={selected.length}
                   onRequestSort={handleRequestSort}
                   onSelectAllClick={handleSelectAllClick}
                 />
                 <TableBody>
-                  {filteredBulkmails
+                  {filteredDinners
                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                     .map((row) => {
-                      const { id, name, email } = row;
+                      const { id, title, description, location, date, fromtime, totime, status } =
+                        row;
                       const isItemSelected = selected.indexOf(id) !== -1;
 
                       return (
@@ -260,14 +375,26 @@ export default function Bulkmail() {
                             />
                           </TableCell>
                           <TableCell align="left">{id}</TableCell>
-                          <TableCell align="left">{name}</TableCell>
-                          <TableCell align="left">{email}</TableCell>
+                          <TableCell align="left">{title}</TableCell>
+                          <TableCell align="left">{location}</TableCell>
+                          <TableCell align="left">{description}</TableCell>
+                          <TableCell align="left">{date}</TableCell>
+                          <TableCell align="left">{fromtime}</TableCell>
+                          <TableCell align="left">{totime}</TableCell>
+                          <TableCell align="left">
+                            <Label
+                              variant="ghost"
+                              color={status === 'Inactive' ? 'error' : 'success'}
+                            >
+                              {sentenceCase(status)}
+                            </Label>
+                          </TableCell>
 
                           <TableCell align="right">
                             <UserMoreMenu
                               id={id}
-                              setChangeData={setChangeBulkmails}
-                              changeData={changeBulkmails}
+                              setChangeData={setChangeDinners}
+                              changeData={changeDinners}
                             />
                           </TableCell>
                         </TableRow>
@@ -279,7 +406,7 @@ export default function Bulkmail() {
                     </TableRow>
                   )}
                 </TableBody>
-                {isBulkmailNotFound && (
+                {isDinnerNotFound && (
                   <TableBody>
                     <TableRow>
                       <TableCell align="center" colSpan={6} sx={{ py: 3 }}>
@@ -295,7 +422,7 @@ export default function Bulkmail() {
           <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
             component="div"
-            count={filteredBulkmails.length}
+            count={filteredDinners.length}
             rowsPerPage={rowsPerPage}
             page={page}
             onPageChange={handleChangePage}
