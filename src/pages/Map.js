@@ -4,6 +4,7 @@ import { sentenceCase } from 'change-case';
 import { useState } from 'react';
 import plusFill from '@iconify/icons-eva/plus-fill';
 import { Modal } from 'react-bootstrap';
+import closeFill from '@iconify/icons-eva/close-fill';
 // material
 import {
   Card,
@@ -73,7 +74,10 @@ function applySortFilter(array, comparator, query, status) {
     return filter(
       array,
       (maps) =>
-        maps.title.toLowerCase().indexOf(query.toLowerCase()) !== -1 &&
+        (maps.location.toLowerCase().indexOf(query.toLowerCase()) !== -1 ||
+          maps.link.toLowerCase().indexOf(query.toLowerCase()) !== -1 ||
+          maps.title.toLowerCase().indexOf(query.toLowerCase()) !== -1 ||
+          maps.id.toString().indexOf(query.toLowerCase()) !== -1) &&
         maps.status.indexOf(status) !== -1
     );
   }
@@ -113,7 +117,6 @@ export default function Maps() {
       [name]: value,
       id: idPlus
     }));
-    console.log(newMap);
   };
   const handleSubmit = () => {
     if (
@@ -195,6 +198,17 @@ export default function Maps() {
 
   const isMapNotFound = filteredMaps.length === 0;
 
+  const toggleStatus = (e) => {
+    const objIndex = changeMaps.findIndex((x) => x.id === parseInt(e.target.id, 10));
+    const newArr = [...changeMaps];
+    if (changeMaps[objIndex].status === 'Active') {
+      newArr[objIndex].status = 'Inactive';
+    } else {
+      newArr[objIndex].status = 'Active';
+    }
+    setChangeMaps(newArr);
+  };
+
   return (
     <Page title="Map">
       <Container>
@@ -207,8 +221,11 @@ export default function Maps() {
           </Button>
         </Stack>
         <Modal show={show} onHide={handleClose} size="lg">
-          <Modal.Header closeButton>
+          <Modal.Header>
             <Modal.Title>NEW MAP</Modal.Title>
+            <Button style={{ fontSize: '32px' }} onClick={handleClose}>
+              <Icon icon={closeFill} />
+            </Button>
           </Modal.Header>
           <Modal.Body>
             <FormGroup style={{ display: 'flex', width: '100%' }}>
@@ -268,6 +285,9 @@ export default function Maps() {
             numSelected={selected.length}
             filterName={filter}
             onFilterName={handleFilter}
+            selectedItems={selected}
+            setChangeData={setChangeMaps}
+            changeData={changeMaps}
           />
           <div className="filter">
             <Stack sx={{ flexBasis: '25%', padding: '0px 10px' }}>
@@ -328,6 +348,8 @@ export default function Maps() {
                           <TableCell align="left">{link}</TableCell>
                           <TableCell align="left">
                             <Label
+                              id={id}
+                              onClick={toggleStatus}
                               variant="ghost"
                               color={status === 'Inactive' ? 'error' : 'success'}
                             >

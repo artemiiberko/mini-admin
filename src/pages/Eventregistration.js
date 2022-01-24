@@ -4,6 +4,7 @@ import { sentenceCase } from 'change-case';
 import { useState } from 'react';
 import plusFill from '@iconify/icons-eva/plus-fill';
 import { Modal } from 'react-bootstrap';
+import closeFill from '@iconify/icons-eva/close-fill';
 // material
 import {
   Card,
@@ -76,7 +77,10 @@ function applySortFilter(array, comparator, query, status) {
     return filter(
       array,
       (eventregistrations) =>
-        eventregistrations.title.toLowerCase().indexOf(query.toLowerCase()) !== -1 &&
+        (eventregistrations.location.toLowerCase().indexOf(query.toLowerCase()) !== -1 ||
+          eventregistrations.description.toLowerCase().indexOf(query.toLowerCase()) !== -1 ||
+          eventregistrations.title.toLowerCase().indexOf(query.toLowerCase()) !== -1 ||
+          eventregistrations.id.toString().indexOf(query.toLowerCase()) !== -1) &&
         eventregistrations.status.indexOf(status) !== -1
     );
   }
@@ -134,7 +138,6 @@ export default function Eventregistration() {
       fromtime: fromtimestring,
       totime: totimestring
     }));
-    console.log(newEventregistration);
   };
   const handleSubmit = () => {
     if (
@@ -223,6 +226,17 @@ export default function Eventregistration() {
 
   const isEventregistrationNotFound = filteredEventregistrations.length === 0;
 
+  const toggleStatus = (e) => {
+    const objIndex = changeEventregistrations.findIndex((x) => x.id === parseInt(e.target.id, 10));
+    const newArr = [...changeEventregistrations];
+    if (changeEventregistrations[objIndex].status === 'Active') {
+      newArr[objIndex].status = 'Inactive';
+    } else {
+      newArr[objIndex].status = 'Active';
+    }
+    setChangeEventregistrations(newArr);
+  };
+
   return (
     <Page title="Event Registration">
       <Container>
@@ -235,8 +249,11 @@ export default function Eventregistration() {
           </Button>
         </Stack>
         <Modal show={show} onHide={handleClose} size="lg">
-          <Modal.Header closeButton>
+          <Modal.Header>
             <Modal.Title>NEW EVENT</Modal.Title>
+            <Button style={{ fontSize: '32px' }} onClick={handleClose}>
+              <Icon icon={closeFill} />
+            </Button>
           </Modal.Header>
           <Modal.Body>
             <FormGroup style={{ display: 'flex', width: '100%' }}>
@@ -324,6 +341,9 @@ export default function Eventregistration() {
             numSelected={selected.length}
             filterName={filter}
             onFilterName={handleFilter}
+            selectedItems={selected}
+            setChangeData={setChangeEventregistrations}
+            changeData={changeEventregistrations}
           />
           <div className="filter">
             <Stack sx={{ flexBasis: '25%', padding: '0px 10px' }}>
@@ -389,6 +409,8 @@ export default function Eventregistration() {
                           <TableCell align="left">{totime}</TableCell>
                           <TableCell align="left">
                             <Label
+                              id={id}
+                              onClick={toggleStatus}
                               variant="ghost"
                               color={status === 'Inactive' ? 'error' : 'success'}
                             >

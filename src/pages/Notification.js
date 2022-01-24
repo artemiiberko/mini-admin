@@ -4,6 +4,7 @@ import { sentenceCase } from 'change-case';
 import { useState } from 'react';
 import plusFill from '@iconify/icons-eva/plus-fill';
 import { Modal } from 'react-bootstrap';
+import closeFill from '@iconify/icons-eva/close-fill';
 // material
 import {
   Card,
@@ -72,7 +73,9 @@ function applySortFilter(array, comparator, query, status) {
     return filter(
       array,
       (notifications) =>
-        notifications.title.toLowerCase().indexOf(query.toLowerCase()) !== -1 &&
+        (notifications.title.toLowerCase().indexOf(query.toLowerCase()) !== -1 ||
+          notifications.description.toLowerCase().indexOf(query.toLowerCase()) !== -1 ||
+          notifications.id.toString().indexOf(query.toLowerCase()) !== -1) &&
         notifications.status.indexOf(status) !== -1
     );
   }
@@ -201,6 +204,17 @@ export default function Notifications() {
 
   const isNotificationNotFound = filteredNotifications.length === 0;
 
+  const toggleStatus = (e) => {
+    const objIndex = changeNotifications.findIndex((x) => x.id === parseInt(e.target.id, 10));
+    const newArr = [...changeNotifications];
+    if (changeNotifications[objIndex].status === 'Active') {
+      newArr[objIndex].status = 'Inactive';
+    } else {
+      newArr[objIndex].status = 'Active';
+    }
+    setChangeNotifications(newArr);
+  };
+
   return (
     <Page title="Notifications">
       <Container>
@@ -213,8 +227,11 @@ export default function Notifications() {
           </Button>
         </Stack>
         <Modal show={show} onHide={handleClose} size="lg">
-          <Modal.Header closeButton>
+          <Modal.Header>
             <Modal.Title>NEW NOTIFICATION</Modal.Title>
+            <Button style={{ fontSize: '32px' }} onClick={handleClose}>
+              <Icon icon={closeFill} />
+            </Button>
           </Modal.Header>
           <Modal.Body>
             <FormGroup style={{ display: 'flex', width: '100%' }}>
@@ -284,6 +301,9 @@ export default function Notifications() {
             numSelected={selected.length}
             filterName={filter}
             onFilterName={handleFilter}
+            selectedItems={selected}
+            setChangeData={setChangeNotifications}
+            changeData={changeNotifications}
           />
           <div className="filter">
             <Stack sx={{ flexBasis: '25%', padding: '0px 10px' }}>
@@ -345,6 +365,8 @@ export default function Notifications() {
                           <TableCell align="left">{date}</TableCell>
                           <TableCell align="left">
                             <Label
+                              id={id}
+                              onClick={toggleStatus}
                               variant="ghost"
                               color={status === 'Inactive' ? 'error' : 'success'}
                             >

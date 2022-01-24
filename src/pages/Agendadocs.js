@@ -3,6 +3,7 @@ import { Icon } from '@iconify/react';
 import { useState } from 'react';
 import plusFill from '@iconify/icons-eva/plus-fill';
 import { Modal } from 'react-bootstrap';
+import closeFill from '@iconify/icons-eva/close-fill';
 // material
 import {
   Card,
@@ -65,7 +66,9 @@ function applySortFilter(array, comparator, query) {
   if (query) {
     return filter(
       array,
-      (agendadocs) => agendadocs.title.toLowerCase().indexOf(query.toLowerCase()) !== -1
+      (agendadocs) =>
+        agendadocs.title.toLowerCase().indexOf(query.toLowerCase()) !== -1 ||
+        agendadocs.id.toString().indexOf(query.toLowerCase()) !== -1
     );
   }
   return stabilizedThis.map((el) => el[0]);
@@ -190,8 +193,11 @@ export default function Agendadocs() {
           </Button>
         </Stack>
         <Modal show={show} onHide={handleClose} size="lg">
-          <Modal.Header closeButton>
+          <Modal.Header>
             <Modal.Title>NEW AGENDA DOC</Modal.Title>
+            <Button style={{ fontSize: '32px' }} onClick={handleClose}>
+              <Icon icon={closeFill} />
+            </Button>
           </Modal.Header>
           <Modal.Body>
             <FormGroup style={{ display: 'flex', width: '100%' }}>
@@ -240,6 +246,9 @@ export default function Agendadocs() {
             numSelected={selected.length}
             filterName={filter}
             onFilterName={handleFilter}
+            selectedItems={selected}
+            setChangeData={setChangeAgendadocs}
+            changeData={changeAgendadocs}
           />
           <Scrollbar>
             <TableContainer sx={{ minWidth: 800 }}>
@@ -276,9 +285,10 @@ export default function Agendadocs() {
                             />
                           </TableCell>
                           <TableCell align="left">{id}</TableCell>
-                          <TableCell align="left">{title}</TableCell>
+
                           <TableCell align="left">{detailfile}</TableCell>
                           <TableCell align="left">{speechfile}</TableCell>
+                          <TableCell align="left">{title}</TableCell>
                           <TableCell align="right">
                             <UserMoreMenu
                               id={id}

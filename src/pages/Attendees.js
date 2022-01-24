@@ -23,6 +23,7 @@ import {
   TextField,
   FormGroup
 } from '@mui/material';
+import closeFill from '@iconify/icons-eva/close-fill';
 // components
 import Page from '../components/Page';
 import Label from '../components/Label';
@@ -100,7 +101,11 @@ function applySortFilter(array, comparator, query, status, appstatus) {
     return filter(
       array,
       (_user) =>
-        _user.lname.toLowerCase().indexOf(query.toLowerCase()) !== -1 &&
+        (_user.lname.toLowerCase().indexOf(query.toLowerCase()) !== -1 ||
+          _user.name.toLowerCase().indexOf(query.toLowerCase()) !== -1 ||
+          _user.title.toLowerCase().indexOf(query.toLowerCase()) !== -1 ||
+          _user.id.toString().indexOf(query.toLowerCase()) !== -1 ||
+          _user.email.toLowerCase().indexOf(query.toLowerCase()) !== -1) &&
         _user.status.indexOf(status) !== -1 &&
         _user.appstatus.indexOf(appstatus) !== -1
     );
@@ -279,6 +284,17 @@ export default function Attendees() {
 
   const isUserNotFound = filteredUsers.length === 0;
 
+  const toggleStatus = (e) => {
+    const objIndex = changeAttendees.findIndex((x) => x.id === parseInt(e.target.id, 10));
+    const newArr = [...changeAttendees];
+    if (changeAttendees[objIndex].status === 'Active') {
+      newArr[objIndex].status = 'Inactive';
+    } else {
+      newArr[objIndex].status = 'Active';
+    }
+    setChangeAttendees(newArr);
+  };
+
   return (
     <Page title="Attendees">
       <Container>
@@ -291,8 +307,11 @@ export default function Attendees() {
           </Button>
         </Stack>
         <Modal show={show} onHide={handleClose} size="lg">
-          <Modal.Header closeButton>
+          <Modal.Header>
             <Modal.Title>NEW ATTENDEE</Modal.Title>
+            <Button style={{ fontSize: '32px' }} onClick={handleClose}>
+              <Icon icon={closeFill} />
+            </Button>
           </Modal.Header>
           <Modal.Body>
             <FormGroup style={{ display: 'flex', width: '100%' }}>
@@ -393,6 +412,9 @@ export default function Attendees() {
             onFilterName={handleFilter}
             filterStatus={filterStatus}
             onfilterStatus={handleFilterStatus}
+            selectedItems={selected}
+            setChangeData={setChangeAttendees}
+            changeData={changeAttendees}
           />
           <div className="filter">
             <Stack sx={{ flexBasis: '25%', padding: '0px 10px' }}>
@@ -559,6 +581,8 @@ export default function Attendees() {
                           <TableCell align="left">{subdate}</TableCell>
                           <TableCell align="left">
                             <Label
+                              id={id}
+                              onClick={toggleStatus}
                               variant="ghost"
                               color={status === 'Inactive' ? 'error' : 'success'}
                             >

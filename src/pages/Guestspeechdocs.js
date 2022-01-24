@@ -3,6 +3,7 @@ import { Icon } from '@iconify/react';
 import { useState } from 'react';
 import plusFill from '@iconify/icons-eva/plus-fill';
 import { Modal } from 'react-bootstrap';
+import closeFill from '@iconify/icons-eva/close-fill';
 // material
 import {
   Card,
@@ -62,8 +63,7 @@ function applySortFilter(array, comparator, query) {
   if (query) {
     return filter(
       array,
-      (guestspeechdocs) =>
-        guestspeechdocs.speechfile.toLowerCase().indexOf(query.toLowerCase()) !== -1
+      (guestspeechdocs) => guestspeechdocs.id.toString().indexOf(query.toLowerCase()) !== -1
     );
   }
   return stabilizedThis.map((el) => el[0]);
@@ -98,7 +98,6 @@ export default function Guestspeechdocs() {
       [name]: value,
       id: idPlus
     }));
-    console.log(newGuestspeechdoc);
   };
   const handleSubmit = () => {
     if (newGuestspeechdoc.speechfile !== '') {
@@ -181,8 +180,11 @@ export default function Guestspeechdocs() {
           </Button>
         </Stack>
         <Modal show={show} onHide={handleClose} size="lg">
-          <Modal.Header closeButton>
+          <Modal.Header>
             <Modal.Title>NEW DOC</Modal.Title>
+            <Button style={{ fontSize: '32px' }} onClick={handleClose}>
+              <Icon icon={closeFill} />
+            </Button>
           </Modal.Header>
           <Modal.Body>
             <FormGroup style={{ display: 'flex', width: '100%' }}>
@@ -215,6 +217,9 @@ export default function Guestspeechdocs() {
             numSelected={selected.length}
             filterName={filter}
             onFilterName={handleFilter}
+            selectedItems={selected}
+            setChangeData={setChangeGuestspeechdocs}
+            changeData={changeGuestspeechdocs}
           />
           <Scrollbar>
             <TableContainer sx={{ minWidth: 800 }}>

@@ -27,6 +27,8 @@ import Mic from './pages/Mic';
 import Socialmedia from './pages/Socialmedia';
 import Code from './pages/Code';
 import Appversion from './pages/Appversion';
+import Myprofile from './pages/Myprofile';
+import Changepassword from './pages/Changepassword';
 
 // ----------------------------------------------------------------------
 
@@ -75,6 +77,14 @@ export default function Router() {
         { path: 'agendadocs', element: <Agendadocs /> },
         { path: 'mediapartners', element: <Mediapartners /> },
         { path: 'guestspeechdocs', element: <Guestspeechdocs /> }
+      ]
+    },
+    {
+      path: '/',
+      element: <DashboardLayout />,
+      children: [
+        { path: 'myprofile', element: <Myprofile /> },
+        { path: 'changepassword', element: <Changepassword /> }
       ]
     },
     {

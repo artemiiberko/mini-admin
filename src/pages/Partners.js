@@ -4,6 +4,7 @@ import { sentenceCase } from 'change-case';
 import { useState } from 'react';
 import plusFill from '@iconify/icons-eva/plus-fill';
 import { Modal } from 'react-bootstrap';
+import closeFill from '@iconify/icons-eva/close-fill';
 // material
 import {
   Card,
@@ -73,7 +74,9 @@ function applySortFilter(array, comparator, query, status) {
     return filter(
       array,
       (partners) =>
-        partners.title.toLowerCase().indexOf(query.toLowerCase()) !== -1 &&
+        (partners.title.toLowerCase().indexOf(query.toLowerCase()) !== -1 ||
+          partners.link.toLowerCase().indexOf(query.toLowerCase()) !== -1 ||
+          partners.id.toString().indexOf(query.toLowerCase()) !== -1) &&
         partners.status.indexOf(status) !== -1
     );
   }
@@ -113,7 +116,6 @@ export default function Partners() {
       [name]: value,
       id: idPlus
     }));
-    console.log(newPartner);
   };
   const handleSubmit = () => {
     if (
@@ -195,6 +197,17 @@ export default function Partners() {
 
   const isPartnerNotFound = filteredPartners.length === 0;
 
+  const toggleStatus = (e) => {
+    const objIndex = changePartners.findIndex((x) => x.id === parseInt(e.target.id, 10));
+    const newArr = [...changePartners];
+    if (changePartners[objIndex].status === 'Active') {
+      newArr[objIndex].status = 'Inactive';
+    } else {
+      newArr[objIndex].status = 'Active';
+    }
+    setChangePartners(newArr);
+  };
+
   return (
     <Page title="Partner">
       <Container>
@@ -207,8 +220,11 @@ export default function Partners() {
           </Button>
         </Stack>
         <Modal show={show} onHide={handleClose} size="lg">
-          <Modal.Header closeButton>
+          <Modal.Header>
             <Modal.Title>NEW PARTNER</Modal.Title>
+            <Button style={{ fontSize: '32px' }} onClick={handleClose}>
+              <Icon icon={closeFill} />
+            </Button>
           </Modal.Header>
           <Modal.Body>
             <FormGroup style={{ display: 'flex', width: '100%' }}>
@@ -273,6 +289,9 @@ export default function Partners() {
             numSelected={selected.length}
             filterName={filter}
             onFilterName={handleFilter}
+            selectedItems={selected}
+            setChangeData={setChangePartners}
+            changeData={changePartners}
           />
           <div className="filter">
             <Stack sx={{ flexBasis: '25%', padding: '0px 10px' }}>
@@ -310,7 +329,7 @@ export default function Partners() {
                   {filteredPartners
                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                     .map((row) => {
-                      const { id, title, link, status } = row;
+                      const { id, title, link, status, logo } = row;
                       const isItemSelected = selected.indexOf(id) !== -1;
 
                       return (
@@ -330,9 +349,12 @@ export default function Partners() {
                           </TableCell>
                           <TableCell align="left">{id}</TableCell>
                           <TableCell align="left">{title}</TableCell>
+                          <TableCell align="left">{logo}</TableCell>
                           <TableCell align="left">{link}</TableCell>
                           <TableCell align="left">
                             <Label
+                              id={id}
+                              onClick={toggleStatus}
                               variant="ghost"
                               color={status === 'Inactive' ? 'error' : 'success'}
                             >

@@ -4,6 +4,7 @@ import { sentenceCase } from 'change-case';
 import { useState } from 'react';
 import plusFill from '@iconify/icons-eva/plus-fill';
 import { Modal } from 'react-bootstrap';
+import closeFill from '@iconify/icons-eva/close-fill';
 // material
 import {
   Card,
@@ -37,8 +38,8 @@ import WIFIS from '../_mocks_/wifi';
 const TABLE_HEAD = [
   { id: 'id', label: 'ID', alignRight: false },
   { id: 'wifiname', label: 'WiFi Name', alignRight: false },
-  { id: 'password', label: 'Location', alignRight: false },
-  { id: 'description', label: 'Link', alignRight: false },
+  { id: 'password', label: 'Password', alignRight: false },
+  { id: 'description', label: 'Description', alignRight: false },
   { id: 'status', label: 'Status', alignRight: false },
   { id: '' }
 ];
@@ -73,7 +74,9 @@ function applySortFilter(array, comparator, query, status) {
     return filter(
       array,
       (wifis) =>
-        wifis.wifiname.toLowerCase().indexOf(query.toLowerCase()) !== -1 &&
+        (wifis.wifiname.toLowerCase().indexOf(query.toLowerCase()) !== -1 ||
+          wifis.description.toLowerCase().indexOf(query.toLowerCase()) !== -1 ||
+          wifis.id.toString().indexOf(query.toLowerCase()) !== -1) &&
         wifis.status.indexOf(status) !== -1
     );
   }
@@ -113,7 +116,6 @@ export default function Wifis() {
       [name]: value,
       id: idPlus
     }));
-    console.log(newWifi);
   };
   const handleSubmit = () => {
     if (
@@ -195,6 +197,17 @@ export default function Wifis() {
 
   const isWifiNotFound = filteredWifis.length === 0;
 
+  const toggleStatus = (e) => {
+    const objIndex = changeWifis.findIndex((x) => x.id === parseInt(e.target.id, 10));
+    const newArr = [...changeWifis];
+    if (changeWifis[objIndex].status === 'Active') {
+      newArr[objIndex].status = 'Inactive';
+    } else {
+      newArr[objIndex].status = 'Active';
+    }
+    setChangeWifis(newArr);
+  };
+
   return (
     <Page wifiname="Wifi">
       <Container>
@@ -207,8 +220,11 @@ export default function Wifis() {
           </Button>
         </Stack>
         <Modal show={show} onHide={handleClose} size="lg">
-          <Modal.Header closeButton>
+          <Modal.Header>
             <Modal.Title>NEW WIFI</Modal.Title>
+            <Button style={{ fontSize: '32px' }} onClick={handleClose}>
+              <Icon icon={closeFill} />
+            </Button>
           </Modal.Header>
           <Modal.Body>
             <FormGroup style={{ display: 'flex', width: '100%' }}>
@@ -268,6 +284,9 @@ export default function Wifis() {
             numSelected={selected.length}
             filterName={filter}
             onFilterName={handleFilter}
+            selectedItems={selected}
+            setChangeData={setChangeWifis}
+            changeData={changeWifis}
           />
           <div className="filter">
             <Stack sx={{ flexBasis: '25%', padding: '0px 10px' }}>
@@ -305,7 +324,7 @@ export default function Wifis() {
                   {filteredWifis
                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                     .map((row) => {
-                      const { id, wifiname, description, status } = row;
+                      const { id, wifiname, description, status, password } = row;
                       const isItemSelected = selected.indexOf(id) !== -1;
 
                       return (
@@ -325,9 +344,12 @@ export default function Wifis() {
                           </TableCell>
                           <TableCell align="left">{id}</TableCell>
                           <TableCell align="left">{wifiname}</TableCell>
+                          <TableCell align="left">{password}</TableCell>
                           <TableCell align="left">{description}</TableCell>
                           <TableCell align="left">
                             <Label
+                              id={id}
+                              onClick={toggleStatus}
                               variant="ghost"
                               color={status === 'Inactive' ? 'error' : 'success'}
                             >

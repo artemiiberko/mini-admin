@@ -1,8 +1,7 @@
 import { Icon } from '@iconify/react';
 import { useRef, useState } from 'react';
-import homeFill from '@iconify/icons-eva/home-fill';
 import personFill from '@iconify/icons-eva/person-fill';
-import settings2Fill from '@iconify/icons-eva/settings-2-fill';
+import lockOutline from '@iconify/icons-eva/lock-outline';
 import { Link as RouterLink } from 'react-router-dom';
 // material
 import { alpha } from '@mui/material/styles';
@@ -16,19 +15,14 @@ import account from '../../_mocks_/account';
 
 const MENU_OPTIONS = [
   {
-    label: 'Home',
-    icon: homeFill,
-    linkTo: '/'
-  },
-  {
-    label: 'Profile',
+    label: 'My Profile',
     icon: personFill,
-    linkTo: '#'
+    linkTo: 'myprofile'
   },
   {
-    label: 'Settings',
-    icon: settings2Fill,
-    linkTo: '#'
+    label: 'Change Password',
+    icon: lockOutline,
+    linkTo: 'changepassword'
   }
 ];
 

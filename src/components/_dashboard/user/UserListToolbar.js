@@ -41,10 +41,26 @@ const SearchStyle = styled(OutlinedInput)(({ theme }) => ({
 UserListToolbar.propTypes = {
   numSelected: PropTypes.number,
   filterName: PropTypes.string,
-  onFilterName: PropTypes.func
+  onFilterName: PropTypes.func,
+  selectedItems: PropTypes.array,
+  setChangeData: PropTypes.func,
+  changeData: PropTypes.array
 };
 
-export default function UserListToolbar({ numSelected, filterName, onFilterName }) {
+export default function UserListToolbar({
+  numSelected,
+  filterName,
+  onFilterName,
+  selectedItems,
+  changeData,
+  setChangeData
+}) {
+  const deleteSelected = () => {
+    setChangeData(
+      changeData.filter((data) => selectedItems.filter((item) => item === data.id).length === 0)
+    );
+  };
+
   return (
     <RootStyle
       sx={{
@@ -72,7 +88,7 @@ export default function UserListToolbar({ numSelected, filterName, onFilterName 
       )}
 
       {numSelected > 0 ? (
-        <Tooltip title="Delete">
+        <Tooltip onClick={deleteSelected} title="Delete">
           <IconButton>
             <Icon icon={trash2Fill} />
           </IconButton>

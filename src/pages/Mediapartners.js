@@ -4,6 +4,7 @@ import { sentenceCase } from 'change-case';
 import { useState } from 'react';
 import plusFill from '@iconify/icons-eva/plus-fill';
 import { Modal } from 'react-bootstrap';
+import closeFill from '@iconify/icons-eva/close-fill';
 // material
 import {
   Card,
@@ -72,7 +73,9 @@ function applySortFilter(array, comparator, query, status) {
     return filter(
       array,
       (mediapartners) =>
-        mediapartners.title.toLowerCase().indexOf(query.toLowerCase()) !== -1 &&
+        (mediapartners.link.toLowerCase().indexOf(query.toLowerCase()) !== -1 ||
+          mediapartners.title.toLowerCase().indexOf(query.toLowerCase()) !== -1 ||
+          mediapartners.id.toString().indexOf(query.toLowerCase()) !== -1) &&
         mediapartners.status.indexOf(status) !== -1
     );
   }
@@ -194,20 +197,34 @@ export default function Mediapartners() {
 
   const isMediapartnerNotFound = filteredMediapartners.length === 0;
 
+  const toggleStatus = (e) => {
+    const objIndex = changeMediapartners.findIndex((x) => x.id === parseInt(e.target.id, 10));
+    const newArr = [...changeMediapartners];
+    if (changeMediapartners[objIndex].status === 'Active') {
+      newArr[objIndex].status = 'Inactive';
+    } else {
+      newArr[objIndex].status = 'Active';
+    }
+    setChangeMediapartners(newArr);
+  };
+
   return (
     <Page title="Mediapartners">
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4" gutterBottom>
-            Mediapartners
+            Media Partners
           </Typography>
           <Button variant="contained" startIcon={<Icon icon={plusFill} />} onClick={handleShow}>
-            New Mediapartner
+            New Media Partner
           </Button>
         </Stack>
         <Modal show={show} onHide={handleClose} size="lg">
-          <Modal.Header closeButton>
-            <Modal.Title>NEW MEDIAPARTNER</Modal.Title>
+          <Modal.Header>
+            <Modal.Title>NEW MEDIA PARTNER</Modal.Title>
+            <Button style={{ fontSize: '32px' }} onClick={handleClose}>
+              <Icon icon={closeFill} />
+            </Button>
           </Modal.Header>
           <Modal.Body>
             <FormGroup style={{ display: 'flex', width: '100%' }}>
@@ -275,6 +292,9 @@ export default function Mediapartners() {
             numSelected={selected.length}
             filterName={filter}
             onFilterName={handleFilter}
+            selectedItems={selected}
+            setChangeData={setChangeMediapartners}
+            changeData={changeMediapartners}
           />
           <div className="filter">
             <Stack sx={{ flexBasis: '25%', padding: '0px 10px' }}>
@@ -336,6 +356,8 @@ export default function Mediapartners() {
                           <TableCell align="left">{link}</TableCell>
                           <TableCell align="left">
                             <Label
+                              id={id}
+                              onClick={toggleStatus}
                               variant="ghost"
                               color={status === 'Inactive' ? 'error' : 'success'}
                             >

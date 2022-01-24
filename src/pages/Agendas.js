@@ -4,6 +4,7 @@ import { sentenceCase } from 'change-case';
 import { useState } from 'react';
 import plusFill from '@iconify/icons-eva/plus-fill';
 import { Modal } from 'react-bootstrap';
+import closeFill from '@iconify/icons-eva/close-fill';
 // material
 import {
   Card,
@@ -73,7 +74,9 @@ function applySortFilter(array, comparator, query, status) {
     return filter(
       array,
       (agenda) =>
-        agenda.title.toLowerCase().indexOf(query.toLowerCase()) !== -1 &&
+        (agenda.title.toLowerCase().indexOf(query.toLowerCase()) !== -1 ||
+          agenda.id.toString().indexOf(query.toLowerCase()) !== -1 ||
+          agenda.description.toLowerCase().indexOf(query.toLowerCase()) !== -1) &&
         agenda.status.indexOf(status) !== -1
     );
   }
@@ -200,6 +203,17 @@ export default function Agendas() {
 
   const isAgendaNotFound = filteredAgendas.length === 0;
 
+  const toggleStatus = (e) => {
+    const objIndex = changeAgendas.findIndex((x) => x.id === parseInt(e.target.id, 10));
+    const newArr = [...changeAgendas];
+    if (changeAgendas[objIndex].status === 'Active') {
+      newArr[objIndex].status = 'Inactive';
+    } else {
+      newArr[objIndex].status = 'Active';
+    }
+    setChangeAgendas(newArr);
+  };
+
   return (
     <Page title="Agendas">
       <Container>
@@ -212,8 +226,11 @@ export default function Agendas() {
           </Button>
         </Stack>
         <Modal show={show} onHide={handleClose} size="lg">
-          <Modal.Header closeButton>
+          <Modal.Header>
             <Modal.Title>NEW AGENDA</Modal.Title>
+            <Button style={{ fontSize: '32px' }} onClick={handleClose}>
+              <Icon icon={closeFill} />
+            </Button>
           </Modal.Header>
           <Modal.Body>
             <FormGroup style={{ display: 'flex', width: '100%' }}>
@@ -291,6 +308,9 @@ export default function Agendas() {
             numSelected={selected.length}
             filterName={filter}
             onFilterName={handleFilter}
+            selectedItems={selected}
+            setChangeData={setChangeAgendas}
+            changeData={changeAgendas}
           />
           <div className="filter">
             <Stack sx={{ flexBasis: '25%', padding: '0px 10px' }}>
@@ -353,8 +373,10 @@ export default function Agendas() {
                           <TableCell align="left">{rating}</TableCell>
                           <TableCell align="left">
                             <Label
+                              id={id}
                               variant="ghost"
                               color={status === 'Inactive' ? 'error' : 'success'}
+                              onClick={toggleStatus}
                             >
                               {sentenceCase(status)}
                             </Label>

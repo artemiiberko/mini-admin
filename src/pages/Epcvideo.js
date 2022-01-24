@@ -4,6 +4,7 @@ import { sentenceCase } from 'change-case';
 import { useState } from 'react';
 import plusFill from '@iconify/icons-eva/plus-fill';
 import { Modal } from 'react-bootstrap';
+import closeFill from '@iconify/icons-eva/close-fill';
 // material
 import {
   Card,
@@ -73,7 +74,9 @@ function applySortFilter(array, comparator, query, status, videotype) {
     return filter(
       array,
       (videos) =>
-        videos.title.toLowerCase().indexOf(query.toLowerCase()) !== -1 &&
+        (videos.videourl.toLowerCase().indexOf(query.toLowerCase()) !== -1 ||
+          videos.title.toLowerCase().indexOf(query.toLowerCase()) !== -1 ||
+          videos.id.toString().indexOf(query.toLowerCase()) !== -1) &&
         videos.status.indexOf(status) !== -1 &&
         videos.videotype.indexOf(videotype) !== -1
     );
@@ -115,7 +118,6 @@ export default function Videos() {
       [name]: value,
       id: idPlus
     }));
-    console.log(newVideo);
   };
   const handleSubmit = () => {
     if (
@@ -202,6 +204,17 @@ export default function Videos() {
 
   const isVideoNotFound = filteredVideos.length === 0;
 
+  const toggleStatus = (e) => {
+    const objIndex = changeVideos.findIndex((x) => x.id === parseInt(e.target.id, 10));
+    const newArr = [...changeVideos];
+    if (changeVideos[objIndex].status === 'Active') {
+      newArr[objIndex].status = 'Inactive';
+    } else {
+      newArr[objIndex].status = 'Active';
+    }
+    setChangeVideos(newArr);
+  };
+
   return (
     <Page title="Videos">
       <Container>
@@ -214,8 +227,11 @@ export default function Videos() {
           </Button>
         </Stack>
         <Modal show={show} onHide={handleClose} size="lg">
-          <Modal.Header closeButton>
+          <Modal.Header>
             <Modal.Title>NEW VIDEO</Modal.Title>
+            <Button style={{ fontSize: '32px' }} onClick={handleClose}>
+              <Icon icon={closeFill} />
+            </Button>
           </Modal.Header>
           <Modal.Body>
             <FormGroup style={{ display: 'flex', width: '100%' }}>
@@ -286,6 +302,9 @@ export default function Videos() {
             numSelected={selected.length}
             filterName={filter}
             onFilterName={handleFilter}
+            selectedItems={selected}
+            setChangeData={setChangeVideos}
+            changeData={changeVideos}
           />
           <div className="filter">
             <Stack sx={{ flexBasis: '25%', padding: '0px 10px' }}>
@@ -365,6 +384,8 @@ export default function Videos() {
                           <TableCell align="left">{videotype}</TableCell>
                           <TableCell align="left">
                             <Label
+                              id={id}
+                              onClick={toggleStatus}
                               variant="ghost"
                               color={status === 'Inactive' ? 'error' : 'success'}
                             >

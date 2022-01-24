@@ -4,6 +4,7 @@ import { sentenceCase } from 'change-case';
 import { useState } from 'react';
 import plusFill from '@iconify/icons-eva/plus-fill';
 import { Modal } from 'react-bootstrap';
+
 // material
 import {
   Card,
@@ -23,6 +24,7 @@ import {
   TextField,
   FormGroup
 } from '@mui/material';
+import closeFill from '@iconify/icons-eva/close-fill';
 // components
 import Page from '../components/Page';
 import Label from '../components/Label';
@@ -80,7 +82,13 @@ function applySortFilter(array, comparator, query, status, polltype) {
     return filter(
       array,
       (polls) =>
-        polls.title.toLowerCase().indexOf(query.toLowerCase()) !== -1 &&
+        (polls.title.toLowerCase().indexOf(query.toLowerCase()) !== -1 ||
+          polls.question.toLowerCase().indexOf(query.toLowerCase()) !== -1 ||
+          polls.optiona.toLowerCase().indexOf(query.toLowerCase()) !== -1 ||
+          polls.optionc.toLowerCase().indexOf(query.toLowerCase()) !== -1 ||
+          polls.optiond.toLowerCase().indexOf(query.toLowerCase()) !== -1 ||
+          polls.id.toString().indexOf(query.toLowerCase()) !== -1 ||
+          polls.optionb.toLowerCase().indexOf(query.toLowerCase()) !== -1) &&
         polls.status.indexOf(status) !== -1 &&
         polls.polltype.indexOf(polltype) !== -1
     );
@@ -139,7 +147,6 @@ export default function Polls() {
       starttime: starttimestring,
       endtime: endtimestring
     }));
-    console.log(newPoll);
   };
   const handleSubmit = () => {
     if (
@@ -241,6 +248,17 @@ export default function Polls() {
 
   const isPollNotFound = filteredPolls.length === 0;
 
+  const toggleStatus = (e) => {
+    const objIndex = changePolls.findIndex((x) => x.id === parseInt(e.target.id, 10));
+    const newArr = [...changePolls];
+    if (changePolls[objIndex].status === 'Active') {
+      newArr[objIndex].status = 'Inactive';
+    } else {
+      newArr[objIndex].status = 'Active';
+    }
+    setChangePolls(newArr);
+  };
+
   return (
     <Page title="Polls">
       <Container>
@@ -253,8 +271,11 @@ export default function Polls() {
           </Button>
         </Stack>
         <Modal show={show} onHide={handleClose} size="lg">
-          <Modal.Header closeButton>
+          <Modal.Header>
             <Modal.Title>NEW POLL</Modal.Title>
+            <Button style={{ fontSize: '32px' }} onClick={handleClose}>
+              <Icon icon={closeFill} />
+            </Button>
           </Modal.Header>
           <Modal.Body>
             <FormGroup style={{ display: 'flex', width: '100%' }}>
@@ -283,6 +304,14 @@ export default function Polls() {
                   value={newPoll.optiona}
                   name="optiona"
                 />
+                <Typography>Option B</Typography>
+                <TextField
+                  type="text"
+                  placeholder="Option B"
+                  onChange={onPollChange}
+                  value={newPoll.optionb}
+                  name="optionb"
+                />
                 <Typography>Option C</Typography>
                 <TextField
                   type="text"
@@ -291,6 +320,15 @@ export default function Polls() {
                   value={newPoll.optionc}
                   name="optionc"
                 />
+                <Typography>Option D</Typography>
+                <TextField
+                  type="text"
+                  placeholder="Option D"
+                  onChange={onPollChange}
+                  value={newPoll.optiond}
+                  name="optiond"
+                />
+
                 <Typography>Poll Type</Typography>
                 <Select
                   displayEmpty
@@ -334,23 +372,6 @@ export default function Polls() {
                   onChange={onPollChange}
                   name="endtime"
                 />
-
-                <Typography>Option B</Typography>
-                <TextField
-                  type="text"
-                  placeholder="Option B"
-                  onChange={onPollChange}
-                  value={newPoll.optionb}
-                  name="optionb"
-                />
-                <Typography>Option D</Typography>
-                <TextField
-                  type="text"
-                  placeholder="Option D"
-                  onChange={onPollChange}
-                  value={newPoll.optiond}
-                  name="optiond"
-                />
                 <Typography>Result</Typography>
                 <TextField
                   type="number"
@@ -379,6 +400,9 @@ export default function Polls() {
             numSelected={selected.length}
             filterName={filter}
             onFilterName={handleFilter}
+            selectedItems={selected}
+            setChangeData={setChangePolls}
+            changeData={changePolls}
           />
           <div className="filter">
             <Stack sx={{ flexBasis: '25%', padding: '0px 10px' }}>
@@ -478,6 +502,8 @@ export default function Polls() {
                           <TableCell align="left">{result}</TableCell>
                           <TableCell align="left">
                             <Label
+                              id={id}
+                              onClick={toggleStatus}
                               variant="ghost"
                               color={status === 'Inactive' ? 'error' : 'success'}
                             >
