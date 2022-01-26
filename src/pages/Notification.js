@@ -38,11 +38,22 @@ const TABLE_HEAD = [
   { id: 'id', label: 'ID', alignRight: false },
   { id: 'title', label: 'Title', alignRight: false },
   { id: 'description', label: 'Description', alignRight: false },
-  { id: 'date', label: 'Date', alignRight: false },
+  { id: 'datefull', label: 'Date', alignRight: false },
   { id: 'status', label: 'status', alignRight: false },
   { id: '' }
 ];
 const statuslist = ['Active', 'Inactive'];
+const editlist = {
+  text: [
+    { name: 'Title', id: 'title' },
+    { name: 'Description', id: 'description' }
+  ],
+  select: [{ name: 'Status', id: 'status' }],
+  file: [],
+  date: [],
+  time: [],
+  datetime: [{ name: 'Date', id: 'datefull' }]
+};
 
 // ----------------------------------------------------------------------
 
@@ -100,7 +111,7 @@ export default function Notifications() {
     id: 0,
     title: '',
     description: '',
-    date: '',
+    datefull: '',
     status: ''
   });
   const addNotification = (notification) => {
@@ -109,8 +120,8 @@ export default function Notifications() {
   const onNotificationChange = (e) => {
     let idPlus = Math.max(...changeNotifications.map((e) => e.id));
     idPlus += 1;
-    let datestring = newNotification.date;
-    if (e.target.name === 'date') {
+    let datestring = newNotification.datefull;
+    if (e.target.name === 'datefull') {
       datestring = `${e.target.value.slice(0, 10)} ${e.target.value.slice(11, 16)} UTC`;
     }
 
@@ -119,14 +130,14 @@ export default function Notifications() {
       ...prevState,
       [name]: value,
       id: idPlus,
-      date: datestring
+      datefull: datestring
     }));
   };
   const handleSubmit = () => {
     if (
       newNotification.title !== '' &&
       newNotification.description !== '' &&
-      newNotification.date !== '' &&
+      newNotification.datefull !== '' &&
       newNotification.status !== ''
     ) {
       setAddnotificationerror('');
@@ -135,7 +146,7 @@ export default function Notifications() {
         id: 0,
         title: '',
         description: '',
-        date: '',
+        datefull: '',
         status: ''
       });
       setShow(false);
@@ -152,7 +163,7 @@ export default function Notifications() {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = changeNotifications.map((n) => n.id);
+      const newSelecteds = filteredNotifications.map((n) => n.id);
       setSelected(newSelecteds);
       return;
     }
@@ -250,7 +261,7 @@ export default function Notifications() {
                   type="datetime-local"
                   placeholder="Date"
                   onChange={onNotificationChange}
-                  name="date"
+                  name="datefull"
                 />
                 <Typography>Status</Typography>
                 <Select
@@ -302,6 +313,7 @@ export default function Notifications() {
             filterName={filter}
             onFilterName={handleFilter}
             selectedItems={selected}
+            setSelectedItems={setSelected}
             setChangeData={setChangeNotifications}
             changeData={changeNotifications}
           />
@@ -341,7 +353,7 @@ export default function Notifications() {
                   {filteredNotifications
                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                     .map((row) => {
-                      const { id, title, description, date, status } = row;
+                      const { id, title, description, datefull, status } = row;
                       const isItemSelected = selected.indexOf(id) !== -1;
 
                       return (
@@ -362,7 +374,7 @@ export default function Notifications() {
                           <TableCell align="left">{id}</TableCell>
                           <TableCell align="left">{title}</TableCell>
                           <TableCell align="left">{description}</TableCell>
-                          <TableCell align="left">{date}</TableCell>
+                          <TableCell align="left">{datefull}</TableCell>
                           <TableCell align="left">
                             <Label
                               id={id}
@@ -379,6 +391,7 @@ export default function Notifications() {
                               id={id}
                               setChangeData={setChangeNotifications}
                               changeData={changeNotifications}
+                              editlist={editlist}
                             />
                           </TableCell>
                         </TableRow>

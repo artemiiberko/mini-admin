@@ -52,6 +52,28 @@ const TABLE_HEAD = [
 ];
 const statuslist = ['Active', 'Inactive'];
 const polltypelist = ['Optional', 'Subjective'];
+const editlist = {
+  text: [
+    { name: 'Title', id: 'title' },
+    { name: 'Question', id: 'question' },
+    { name: 'Option A', id: 'optiona' },
+    { name: 'Option B', id: 'optionb' },
+    { name: 'Option C', id: 'optionc' },
+    { name: 'Option D', id: 'optiond' },
+    { name: 'Result', id: 'result' }
+  ],
+  select: [
+    { name: 'Status', id: 'status' },
+    { name: 'Poll Type', id: 'polltype' }
+  ],
+  file: [],
+  date: [],
+  time: [],
+  datetime: [
+    { name: 'End Time', id: 'endtime' },
+    { name: 'Start Time', id: 'starttime' }
+  ]
+};
 
 // ----------------------------------------------------------------------
 
@@ -192,7 +214,7 @@ export default function Polls() {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = changePolls.map((n) => n.id);
+      const newSelecteds = filteredPolls.map((n) => n.id);
       setSelected(newSelecteds);
       return;
     }
@@ -401,6 +423,7 @@ export default function Polls() {
             filterName={filter}
             onFilterName={handleFilter}
             selectedItems={selected}
+            setSelectedItems={setSelected}
             setChangeData={setChangePolls}
             changeData={changePolls}
           />
@@ -516,6 +539,7 @@ export default function Polls() {
                               id={id}
                               setChangeData={setChangePolls}
                               changeData={changePolls}
+                              editlist={editlist}
                             />
                           </TableCell>
                         </TableRow>

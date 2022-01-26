@@ -44,7 +44,18 @@ const TABLE_HEAD = [
   { id: '' }
 ];
 const statuslist = ['Active', 'Inactive'];
-
+const editlist = {
+  text: [
+    { name: 'Title', id: 'title' },
+    { name: 'Location', id: 'location' },
+    { name: 'Link', id: 'link' }
+  ],
+  select: [{ name: 'Status', id: 'status' }],
+  file: [],
+  date: [],
+  time: [],
+  datetime: []
+};
 // ----------------------------------------------------------------------
 
 function descendingComparator(a, b, orderBy) {
@@ -147,7 +158,7 @@ export default function Maps() {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = changeMaps.map((n) => n.id);
+      const newSelecteds = filteredMaps.map((n) => n.id);
       setSelected(newSelecteds);
       return;
     }
@@ -286,6 +297,7 @@ export default function Maps() {
             filterName={filter}
             onFilterName={handleFilter}
             selectedItems={selected}
+            setSelectedItems={setSelected}
             setChangeData={setChangeMaps}
             changeData={changeMaps}
           />
@@ -325,7 +337,7 @@ export default function Maps() {
                   {filteredMaps
                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                     .map((row) => {
-                      const { id, title, link, status } = row;
+                      const { id, title, link, status, location } = row;
                       const isItemSelected = selected.indexOf(id) !== -1;
 
                       return (
@@ -345,6 +357,7 @@ export default function Maps() {
                           </TableCell>
                           <TableCell align="left">{id}</TableCell>
                           <TableCell align="left">{title}</TableCell>
+                          <TableCell align="left">{location}</TableCell>
                           <TableCell align="left">{link}</TableCell>
                           <TableCell align="left">
                             <Label
@@ -362,6 +375,7 @@ export default function Maps() {
                               id={id}
                               setChangeData={setChangeMaps}
                               changeData={changeMaps}
+                              editlist={editlist}
                             />
                           </TableCell>
                         </TableRow>

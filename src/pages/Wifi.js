@@ -44,6 +44,18 @@ const TABLE_HEAD = [
   { id: '' }
 ];
 const statuslist = ['Active', 'Inactive'];
+const editlist = {
+  text: [
+    { name: 'WiFi Name', id: 'wifiname' },
+    { name: 'Password', id: 'password' },
+    { name: 'Description', id: 'description' }
+  ],
+  select: [{ name: 'Status', id: 'status' }],
+  file: [],
+  date: [],
+  time: [],
+  datetime: []
+};
 
 // ----------------------------------------------------------------------
 
@@ -146,7 +158,7 @@ export default function Wifis() {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = changeWifis.map((n) => n.id);
+      const newSelecteds = filteredWifis.map((n) => n.id);
       setSelected(newSelecteds);
       return;
     }
@@ -237,18 +249,18 @@ export default function Wifis() {
                   value={newWifi.wifiname}
                   name="wifiname"
                 />
-                <Typography>Location</Typography>
+                <Typography>Password</Typography>
                 <TextField
                   type="text"
-                  placeholder="Location"
+                  placeholder="Password"
                   onChange={onWifiChange}
                   value={newWifi.password}
                   name="password"
                 />
-                <Typography>Link</Typography>
+                <Typography>Description</Typography>
                 <TextField
                   type="text"
-                  placeholder="Link"
+                  placeholder="Description"
                   onChange={onWifiChange}
                   value={newWifi.description}
                   name="description"
@@ -285,6 +297,7 @@ export default function Wifis() {
             filterName={filter}
             onFilterName={handleFilter}
             selectedItems={selected}
+            setSelectedItems={setSelected}
             setChangeData={setChangeWifis}
             changeData={changeWifis}
           />
@@ -362,6 +375,7 @@ export default function Wifis() {
                               id={id}
                               setChangeData={setChangeWifis}
                               changeData={changeWifis}
+                              editlist={editlist}
                             />
                           </TableCell>
                         </TableRow>

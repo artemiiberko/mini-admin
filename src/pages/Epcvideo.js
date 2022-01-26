@@ -44,6 +44,20 @@ const TABLE_HEAD = [
 ];
 const statuslist = ['Active', 'Inactive'];
 const videotypelist = ['EPC Video', 'Live Video Webcost'];
+const editlist = {
+  text: [
+    { name: 'Title', id: 'title' },
+    { name: 'Video URL', id: 'videourl' }
+  ],
+  select: [
+    { name: 'Status', id: 'status' },
+    { name: 'Video Type', id: 'videotype' }
+  ],
+  file: [],
+  date: [],
+  time: [],
+  datetime: []
+};
 
 // ----------------------------------------------------------------------
 
@@ -148,7 +162,7 @@ export default function Videos() {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = changeVideos.map((n) => n.id);
+      const newSelecteds = filteredVideos.map((n) => n.id);
       setSelected(newSelecteds);
       return;
     }
@@ -303,6 +317,7 @@ export default function Videos() {
             filterName={filter}
             onFilterName={handleFilter}
             selectedItems={selected}
+            setSelectedItems={setSelected}
             setChangeData={setChangeVideos}
             changeData={changeVideos}
           />
@@ -398,6 +413,7 @@ export default function Videos() {
                               id={id}
                               setChangeData={setChangeVideos}
                               changeData={changeVideos}
+                              editlist={editlist}
                             />
                           </TableCell>
                         </TableRow>

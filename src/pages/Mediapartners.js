@@ -43,6 +43,17 @@ const TABLE_HEAD = [
   { id: '' }
 ];
 const statuslist = ['Active', 'Inactive'];
+const editlist = {
+  text: [
+    { name: 'Title', id: 'title' },
+    { name: 'Link', id: 'link' }
+  ],
+  select: [{ name: 'Status', id: 'status' }],
+  file: [{ name: 'Logo', id: 'logo' }],
+  date: [],
+  time: [],
+  datetime: []
+};
 
 // ----------------------------------------------------------------------
 
@@ -145,7 +156,7 @@ export default function Mediapartners() {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = changeMediapartners.map((n) => n.id);
+      const newSelecteds = filteredMediapartners.map((n) => n.id);
       setSelected(newSelecteds);
       return;
     }
@@ -239,7 +250,7 @@ export default function Mediapartners() {
                 />
                 <Typography>Logo</Typography>
                 <TextField
-                  type="text"
+                  type="file"
                   placeholder="Logo"
                   onChange={onMediapartnerChange}
                   value={newMediapartner.logo}
@@ -293,6 +304,7 @@ export default function Mediapartners() {
             filterName={filter}
             onFilterName={handleFilter}
             selectedItems={selected}
+            setSelectedItems={setSelected}
             setChangeData={setChangeMediapartners}
             changeData={changeMediapartners}
           />
@@ -370,6 +382,7 @@ export default function Mediapartners() {
                               id={id}
                               setChangeData={setChangeMediapartners}
                               changeData={changeMediapartners}
+                              editlist={editlist}
                             />
                           </TableCell>
                         </TableRow>

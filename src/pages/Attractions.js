@@ -43,6 +43,17 @@ const TABLE_HEAD = [
   { id: '' }
 ];
 const statuslist = ['Active', 'Inactive'];
+const editlist = {
+  text: [
+    { name: 'Title', id: 'title' },
+    { name: 'Location', id: 'location' }
+  ],
+  select: [{ name: 'Status', id: 'status' }],
+  file: [],
+  date: [],
+  time: [],
+  datetime: []
+};
 
 // ----------------------------------------------------------------------
 
@@ -142,7 +153,7 @@ export default function Attractions() {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = changeAttractions.map((n) => n.id);
+      const newSelecteds = filteredAttractions.map((n) => n.id);
       setSelected(newSelecteds);
       return;
     }
@@ -278,6 +289,7 @@ export default function Attractions() {
             filterName={filter}
             onFilterName={handleFilter}
             selectedItems={selected}
+            setSelectedItems={setSelected}
             setChangeData={setChangeAttractions}
             changeData={changeAttractions}
           />
@@ -354,6 +366,7 @@ export default function Attractions() {
                               id={id}
                               setChangeData={setChangeAttractions}
                               changeData={changeAttractions}
+                              editlist={editlist}
                             />
                           </TableCell>
                         </TableRow>

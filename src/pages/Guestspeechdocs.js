@@ -35,6 +35,14 @@ const TABLE_HEAD = [
   { id: 'speechfile', label: 'Guest Speach File', alignRight: false },
   { id: '' }
 ];
+const editlist = {
+  text: [],
+  select: [],
+  file: [{ name: 'Guest Speach File', id: 'speechfile' }],
+  date: [],
+  time: [],
+  datetime: []
+};
 // ----------------------------------------------------------------------
 
 function descendingComparator(a, b, orderBy) {
@@ -120,7 +128,7 @@ export default function Guestspeechdocs() {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = changeGuestspeechdocs.map((n) => n.id);
+      const newSelecteds = filteredGuestspeechdocs.map((n) => n.id);
       setSelected(newSelecteds);
       return;
     }
@@ -191,7 +199,7 @@ export default function Guestspeechdocs() {
               <Stack spacing={3} style={{ flexBasis: '50%', padding: '10px', flexShrink: '0' }}>
                 <Typography>Guest Speech File</Typography>
                 <TextField
-                  type="text"
+                  type="file"
                   placeholder="Guest Speech File"
                   onChange={onGuestspeechdocChange}
                   value={newGuestspeechdoc.speechfile}
@@ -218,6 +226,7 @@ export default function Guestspeechdocs() {
             filterName={filter}
             onFilterName={handleFilter}
             selectedItems={selected}
+            setSelectedItems={setSelected}
             setChangeData={setChangeGuestspeechdocs}
             changeData={changeGuestspeechdocs}
           />
@@ -262,6 +271,7 @@ export default function Guestspeechdocs() {
                               id={id}
                               setChangeData={setChangeGuestspeechdocs}
                               changeData={changeGuestspeechdocs}
+                              editlist={editlist}
                             />
                           </TableCell>
                         </TableRow>

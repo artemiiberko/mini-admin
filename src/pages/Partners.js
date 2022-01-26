@@ -44,6 +44,17 @@ const TABLE_HEAD = [
   { id: '' }
 ];
 const statuslist = ['Active', 'Inactive'];
+const editlist = {
+  text: [
+    { name: 'Title', id: 'title' },
+    { name: 'Link', id: 'link' }
+  ],
+  select: [{ name: 'Status', id: 'status' }],
+  file: [{ name: 'Logo', id: 'logo' }],
+  date: [],
+  time: [],
+  datetime: []
+};
 
 // ----------------------------------------------------------------------
 
@@ -146,7 +157,7 @@ export default function Partners() {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = changePartners.map((n) => n.id);
+      const newSelecteds = filteredPartners.map((n) => n.id);
       setSelected(newSelecteds);
       return;
     }
@@ -239,7 +250,7 @@ export default function Partners() {
                 />
                 <Typography>Logo</Typography>
                 <TextField
-                  type="text"
+                  type="file"
                   placeholder="Logo"
                   onChange={onPartnerChange}
                   value={newPartner.logo}
@@ -290,6 +301,7 @@ export default function Partners() {
             filterName={filter}
             onFilterName={handleFilter}
             selectedItems={selected}
+            setSelectedItems={setSelected}
             setChangeData={setChangePartners}
             changeData={changePartners}
           />
@@ -367,6 +379,7 @@ export default function Partners() {
                               id={id}
                               setChangeData={setChangePartners}
                               changeData={changePartners}
+                              editlist={editlist}
                             />
                           </TableCell>
                         </TableRow>

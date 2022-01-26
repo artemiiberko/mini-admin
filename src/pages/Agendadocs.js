@@ -37,6 +37,17 @@ const TABLE_HEAD = [
   { id: 'title', label: 'Agenda Title', alignRight: false },
   { id: '' }
 ];
+const editlist = {
+  text: [{ name: 'Agenda Title', id: 'title' }],
+  select: [],
+  file: [
+    { name: 'Agenda Detail File', id: 'detailfile' },
+    { name: 'Agenda Speech File', id: 'speechfile' }
+  ],
+  date: [],
+  time: [],
+  datetime: []
+};
 
 // ----------------------------------------------------------------------
 
@@ -133,7 +144,7 @@ export default function Agendadocs() {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = changeAgendadocs.map((n) => n.id);
+      const newSelecteds = filteredAgendadocs.map((n) => n.id);
       setSelected(newSelecteds);
       return;
     }
@@ -212,7 +223,7 @@ export default function Agendadocs() {
                 />
                 <Typography>Agenda Detail File</Typography>
                 <TextField
-                  type="text"
+                  type="file"
                   placeholder="Agenda Detail File"
                   onChange={onAgendadocChange}
                   value={newAgendadoc.detailfile}
@@ -220,7 +231,7 @@ export default function Agendadocs() {
                 />
                 <Typography>Agenda Speech File</Typography>
                 <TextField
-                  type="text"
+                  type="file"
                   placeholder="Agenda Speech File"
                   onChange={onAgendadocChange}
                   value={newAgendadoc.speechfile}
@@ -247,6 +258,7 @@ export default function Agendadocs() {
             filterName={filter}
             onFilterName={handleFilter}
             selectedItems={selected}
+            setSelectedItems={setSelected}
             setChangeData={setChangeAgendadocs}
             changeData={changeAgendadocs}
           />
@@ -294,6 +306,7 @@ export default function Agendadocs() {
                               id={id}
                               setChangeData={setChangeAgendadocs}
                               changeData={changeAgendadocs}
+                              editlist={editlist}
                             />
                           </TableCell>
                         </TableRow>

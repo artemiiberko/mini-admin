@@ -44,6 +44,19 @@ const TABLE_HEAD = [
   { id: '' }
 ];
 const statuslist = ['Active', 'Inactive'];
+const editlist = {
+  text: [
+    { name: 'Title', id: 'title' },
+    { name: 'Description', id: 'description' },
+    { name: 'Speakers', id: 'speakers' },
+    { name: 'Rating', id: 'rating' }
+  ],
+  select: [{ name: 'Status', id: 'status' }],
+  file: [],
+  date: [],
+  time: [],
+  datetime: []
+};
 
 // ----------------------------------------------------------------------
 
@@ -151,7 +164,7 @@ export default function Agendas() {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = changeAgendas.map((n) => n.id);
+      const newSelecteds = filteredAgendas.map((n) => n.id);
       setSelected(newSelecteds);
       return;
     }
@@ -309,6 +322,7 @@ export default function Agendas() {
             filterName={filter}
             onFilterName={handleFilter}
             selectedItems={selected}
+            setSelectedItems={setSelected}
             setChangeData={setChangeAgendas}
             changeData={changeAgendas}
           />
@@ -387,6 +401,7 @@ export default function Agendas() {
                               id={id}
                               setChangeData={setChangeAgendas}
                               changeData={changeAgendas}
+                              editlist={editlist}
                             />
                           </TableCell>
                         </TableRow>

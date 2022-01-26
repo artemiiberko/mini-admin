@@ -44,6 +44,7 @@ UserListToolbar.propTypes = {
   onFilterName: PropTypes.func,
   selectedItems: PropTypes.array,
   setChangeData: PropTypes.func,
+  setSelectedItems: PropTypes.func,
   changeData: PropTypes.array
 };
 
@@ -53,12 +54,14 @@ export default function UserListToolbar({
   onFilterName,
   selectedItems,
   changeData,
-  setChangeData
+  setChangeData,
+  setSelectedItems
 }) {
   const deleteSelected = () => {
     setChangeData(
       changeData.filter((data) => selectedItems.filter((item) => item === data.id).length === 0)
     );
+    setSelectedItems([]);
   };
 
   return (

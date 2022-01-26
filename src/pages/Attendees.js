@@ -72,6 +72,23 @@ const rolelist = [
   'Administration'
 ];
 const rsvplist = ['Open', 'Attended', 'Not Attended', 'Remind'];
+const editlist = {
+  text: [
+    { name: 'First Name', id: 'name' },
+    { name: 'Last Name', id: 'lname' },
+    { name: 'Email', id: 'email' }
+  ],
+  select: [
+    { name: 'Title', id: 'title' },
+    { name: 'Status', id: 'status' },
+    { name: 'Application Status', id: 'appstatus' }
+  ],
+  file: [],
+  date: [],
+  time: [],
+  datetime: []
+};
+
 // ----------------------------------------------------------------------
 
 function descendingComparator(a, b, orderBy) {
@@ -213,7 +230,7 @@ export default function Attendees() {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = USERLIST.map((n) => n.id);
+      const newSelecteds = filteredUsers.map((n) => n.id);
       setSelected(newSelecteds);
       return;
     }
@@ -413,6 +430,7 @@ export default function Attendees() {
             filterStatus={filterStatus}
             onfilterStatus={handleFilterStatus}
             selectedItems={selected}
+            setSelectedItems={setSelected}
             setChangeData={setChangeAttendees}
             changeData={changeAttendees}
           />
@@ -595,6 +613,7 @@ export default function Attendees() {
                               id={id}
                               setChangeData={setChangeAttendees}
                               changeData={changeAttendees}
+                              editlist={editlist}
                             />
                           </TableCell>
                         </TableRow>

@@ -43,6 +43,17 @@ const TABLE_HEAD = [
   { id: '' }
 ];
 const statuslist = ['Active', 'Inactive'];
+const editlist = {
+  text: [
+    { name: 'Title', id: 'title' },
+    { name: 'Description', id: 'description' }
+  ],
+  select: [{ name: 'Status', id: 'status' }],
+  file: [],
+  date: [],
+  time: [],
+  datetime: []
+};
 
 // ----------------------------------------------------------------------
 
@@ -138,7 +149,7 @@ export default function Helpdesks() {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = changeHelpdesks.map((n) => n.id);
+      const newSelecteds = filteredHelpdesks.map((n) => n.id);
       setSelected(newSelecteds);
       return;
     }
@@ -274,6 +285,7 @@ export default function Helpdesks() {
             filterName={filter}
             onFilterName={handleFilter}
             selectedItems={selected}
+            setSelectedItems={setSelected}
             setChangeData={setChangeHelpdesks}
             changeData={changeHelpdesks}
           />
@@ -350,6 +362,7 @@ export default function Helpdesks() {
                               id={id}
                               setChangeData={setChangeHelpdesks}
                               changeData={changeHelpdesks}
+                              editlist={editlist}
                             />
                           </TableCell>
                         </TableRow>

@@ -47,6 +47,21 @@ const TABLE_HEAD = [
   { id: '' }
 ];
 const statuslist = ['Active', 'Inactive'];
+const editlist = {
+  text: [
+    { name: 'Title', id: 'title' },
+    { name: 'Location', id: 'location' },
+    { name: 'Description', id: 'description' }
+  ],
+  select: [{ name: 'Status', id: 'status' }],
+  file: [],
+  date: [{ name: 'Date', id: 'date' }],
+  time: [
+    { name: 'From Time', id: 'fromtime' },
+    { name: 'To Time', id: 'totime' }
+  ],
+  datetime: []
+};
 
 // ----------------------------------------------------------------------
 
@@ -174,7 +189,7 @@ export default function Dinner() {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = changeDinners.map((n) => n.id);
+      const newSelecteds = filteredDinners.map((n) => n.id);
       setSelected(newSelecteds);
       return;
     }
@@ -336,6 +351,7 @@ export default function Dinner() {
             filterName={filter}
             onFilterName={handleFilter}
             selectedItems={selected}
+            setSelectedItems={setSelected}
             setChangeData={setChangeDinners}
             changeData={changeDinners}
           />
@@ -417,6 +433,7 @@ export default function Dinner() {
                               id={id}
                               setChangeData={setChangeDinners}
                               changeData={changeDinners}
+                              editlist={editlist}
                             />
                           </TableCell>
                         </TableRow>

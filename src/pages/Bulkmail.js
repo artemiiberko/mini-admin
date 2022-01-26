@@ -36,6 +36,17 @@ const TABLE_HEAD = [
   { id: 'email', label: 'Email', alignRight: false },
   { id: '' }
 ];
+const editlist = {
+  text: [
+    { name: 'Name', id: 'name' },
+    { name: 'Email', id: 'email' }
+  ],
+  select: [],
+  file: [],
+  date: [],
+  time: [],
+  datetime: []
+};
 
 // ----------------------------------------------------------------------
 
@@ -128,7 +139,7 @@ export default function Bulkmail() {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = changeBulkmails.map((n) => n.id);
+      const newSelecteds = filteredBulkmails.map((n) => n.id);
       setSelected(newSelecteds);
       return;
     }
@@ -231,6 +242,7 @@ export default function Bulkmail() {
             filterName={filter}
             onFilterName={handleFilter}
             selectedItems={selected}
+            setSelectedItems={setSelected}
             setChangeData={setChangeBulkmails}
             changeData={changeBulkmails}
           />
@@ -278,6 +290,7 @@ export default function Bulkmail() {
                               id={id}
                               setChangeData={setChangeBulkmails}
                               changeData={changeBulkmails}
+                              editlist={editlist}
                             />
                           </TableCell>
                         </TableRow>
