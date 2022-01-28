@@ -29,6 +29,9 @@ import Code from './pages/Code';
 import Appversion from './pages/Appversion';
 import Myprofile from './pages/Myprofile';
 import Changepassword from './pages/Changepassword';
+import LogoOnlyLayout from './layouts/LogoOnlyLayout';
+import Login from './pages/Login';
+import Register from './pages/Register';
 
 // ----------------------------------------------------------------------
 
@@ -38,7 +41,7 @@ export default function Router() {
       path: '/',
       element: <DashboardLayout />,
       children: [
-        { path: '/', element: <Navigate to="/dashboard" /> },
+        { path: '/', element: <Navigate to="/login" /> },
         { path: 'dashboard', element: <DashboardApp /> },
         { path: 'attendees', element: <Attendees /> },
         { path: 'agendas', element: <Agendas /> },
@@ -88,19 +91,15 @@ export default function Router() {
       ]
     },
     {
-      path: '*',
-      element: <DashboardLayout />
+      path: '/',
+      element: <LogoOnlyLayout />,
+      children: [
+        { path: 'login', element: <Login /> },
+        { path: 'register', element: <Register /> },
+        { path: '404', element: <NotFound /> },
+        { path: '/', element: <Navigate to="/login" /> },
+        { path: '*', element: <Navigate to="/404" /> }
+      ]
     }
-    // {
-    //   path: '/',
-    //   element: <LogoOnlyLayout />,
-    //   children: [
-    //     { path: 'login', element: <Login /> },
-    //     { path: 'register', element: <Register /> },
-    //     { path: '404', element: <NotFound /> },
-    //     { path: '/', element: <Navigate to="/dashboard" /> },
-    //     { path: '*', element: <Navigate to="/404" /> }
-    //   ]
-    // },
   ]);
 }

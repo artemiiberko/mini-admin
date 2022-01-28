@@ -36,12 +36,18 @@ const TABLE_HEAD = [
   { id: '' }
 ];
 const editlist = {
-  text: [],
+  text: [{ name: 'Title', id: 'title' }],
   select: [],
   file: [{ name: 'Guest Speach File', id: 'speechfile' }],
   date: [],
   time: [],
-  datetime: []
+  datetime: [],
+  textmb: [],
+  selectmb: [],
+  filemb: [],
+  datemb: [],
+  timemb: [],
+  datetimemb: []
 };
 // ----------------------------------------------------------------------
 
@@ -92,6 +98,7 @@ export default function Guestspeechdocs() {
 
   const [newGuestspeechdoc, setNewGuestspeechdoc] = useState({
     id: 0,
+    title: '',
     speechfile: ''
   });
   const addGuestspeechdoc = (guestspeechdoc) => {
@@ -108,11 +115,12 @@ export default function Guestspeechdocs() {
     }));
   };
   const handleSubmit = () => {
-    if (newGuestspeechdoc.speechfile !== '') {
+    if (newGuestspeechdoc.speechfile !== '' && newGuestspeechdoc.title !== '') {
       setAddguestspeechdocerror('');
       addGuestspeechdoc(newGuestspeechdoc);
       setNewGuestspeechdoc({
         id: 0,
+        title: '',
         speechfile: ''
       });
       setShow(false);
@@ -197,6 +205,14 @@ export default function Guestspeechdocs() {
           <Modal.Body>
             <FormGroup style={{ display: 'flex', width: '100%' }}>
               <Stack spacing={3} style={{ flexBasis: '50%', padding: '10px', flexShrink: '0' }}>
+                <Typography>Title</Typography>
+                <TextField
+                  type="text"
+                  placeholder="Title"
+                  onChange={onGuestspeechdocChange}
+                  value={newGuestspeechdoc.title}
+                  name="title"
+                />
                 <Typography>Guest Speech File</Typography>
                 <TextField
                   type="file"

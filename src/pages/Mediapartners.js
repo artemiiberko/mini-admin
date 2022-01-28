@@ -49,10 +49,16 @@ const editlist = {
     { name: 'Link', id: 'link' }
   ],
   select: [{ name: 'Status', id: 'status' }],
-  file: [{ name: 'Logo', id: 'logo' }],
+  file: [],
   date: [],
   time: [],
-  datetime: []
+  datetime: [],
+  textmb: [],
+  selectmb: [],
+  filemb: [{ name: 'Logo', id: 'logo' }],
+  datemb: [],
+  timemb: [],
+  datetimemb: []
 };
 
 // ----------------------------------------------------------------------
@@ -130,7 +136,6 @@ export default function Mediapartners() {
   const handleSubmit = () => {
     if (
       newMediapartner.title !== '' &&
-      newMediapartner.logo !== '' &&
       newMediapartner.link !== '' &&
       newMediapartner.status !== ''
     ) {

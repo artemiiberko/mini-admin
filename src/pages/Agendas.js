@@ -44,18 +44,33 @@ const TABLE_HEAD = [
   { id: '' }
 ];
 const statuslist = ['Active', 'Inactive'];
+const speakerslist = ['speaker1', 'speaker2', 'speaker3'];
 const editlist = {
   text: [
     { name: 'Title', id: 'title' },
     { name: 'Description', id: 'description' },
-    { name: 'Speakers', id: 'speakers' },
     { name: 'Rating', id: 'rating' }
   ],
-  select: [{ name: 'Status', id: 'status' }],
+  select: [
+    { name: 'Status', id: 'status' },
+    { name: 'Speakers', id: 'speakers' }
+  ],
   file: [],
   date: [],
   time: [],
-  datetime: []
+  datetime: [],
+  textmb: [],
+  selectmb: [],
+  filemb: [
+    { name: 'Upload Agenda Details', id: 'agendadetailsfile' },
+    { name: 'Upload Agenda Speech', id: 'agendaspeechfile' }
+  ],
+  datemb: [],
+  timemb: [],
+  datetimemb: [
+    { name: 'Session Start', id: 'sessionstart' },
+    { name: 'Session End', id: 'sessionend' }
+  ]
 };
 
 // ----------------------------------------------------------------------
@@ -270,13 +285,21 @@ export default function Agendas() {
               </Stack>
               <Stack spacing={3} style={{ flexBasis: '50%', padding: '10px', flexShrink: '0' }}>
                 <Typography>Speakers</Typography>
-                <TextField
-                  type="number"
-                  placeholder="Speakers"
+                <Select
+                  displayEmpty
+                  name="speakers"
                   onChange={onAgendaChange}
                   value={newAgenda.speakers}
-                  name="speakers"
-                />
+                >
+                  <MenuItem key="speakers" value="" style={{ color: 'grey' }}>
+                    Select Speaker...
+                  </MenuItem>
+                  {speakerslist.map((speaker) => (
+                    <MenuItem key={speaker} value={speaker}>
+                      {speaker}
+                    </MenuItem>
+                  ))}
+                </Select>
                 <Typography>Rating</Typography>
                 <TextField
                   type="number"

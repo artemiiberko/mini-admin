@@ -52,7 +52,13 @@ const editlist = {
   file: [],
   date: [],
   time: [],
-  datetime: []
+  datetime: [],
+  textmb: [],
+  selectmb: [],
+  filemb: [],
+  datemb: [],
+  timemb: [],
+  datetimemb: []
 };
 
 // ----------------------------------------------------------------------

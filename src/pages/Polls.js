@@ -70,9 +70,15 @@ const editlist = {
   date: [],
   time: [],
   datetime: [
-    { name: 'End Time', id: 'endtime' },
-    { name: 'Start Time', id: 'starttime' }
-  ]
+    { name: 'Survey Start Time', id: 'starttime' },
+    { name: 'Survey End Time', id: 'endtime' }
+  ],
+  textmb: [],
+  selectmb: [],
+  filemb: [],
+  datemb: [],
+  timemb: [],
+  datetimemb: []
 };
 
 // ----------------------------------------------------------------------

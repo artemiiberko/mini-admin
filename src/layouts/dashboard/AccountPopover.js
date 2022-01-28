@@ -2,7 +2,7 @@ import { Icon } from '@iconify/react';
 import { useRef, useState } from 'react';
 import personFill from '@iconify/icons-eva/person-fill';
 import lockOutline from '@iconify/icons-eva/lock-outline';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link, Link as RouterLink } from 'react-router-dom';
 // material
 import { alpha } from '@mui/material/styles';
 import { Button, Box, Divider, MenuItem, Typography, Avatar, IconButton } from '@mui/material';
@@ -104,9 +104,11 @@ export default function AccountPopover() {
         ))}
 
         <Box sx={{ p: 2, pt: 1.5 }}>
-          <Button fullWidth color="inherit" variant="outlined">
-            Logout
-          </Button>
+          <Link to="/login" style={{ textDecoration: 'none', color: 'red' }}>
+            <Button fullWidth color="inherit" variant="outlined">
+              Logout
+            </Button>
+          </Link>
         </Box>
       </MenuPopover>
     </>

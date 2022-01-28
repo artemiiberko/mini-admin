@@ -76,17 +76,65 @@ const editlist = {
   text: [
     { name: 'First Name', id: 'name' },
     { name: 'Last Name', id: 'lname' },
+    { name: 'Password', id: 'password' },
     { name: 'Email', id: 'email' }
   ],
   select: [
     { name: 'Title', id: 'title' },
     { name: 'Status', id: 'status' },
-    { name: 'Application Status', id: 'appstatus' }
+    { name: 'Application Status', id: 'appstatus' },
+    { name: 'Attendee Type', id: 'attendeetype' }
   ],
   file: [],
-  date: [],
+  date: [{ name: 'Submitted Date', id: 'subdate' }],
   time: [],
-  datetime: []
+  datetime: [],
+  textmb: [
+    { name: 'First Name (Arabic)', id: 'namearabic' },
+    { name: 'Last Name (Arabic)', id: 'lnamearabic' },
+    { name: 'Organization Name', id: 'organizationname' },
+    { name: 'Job Title', id: 'jobtitle' },
+    { name: 'Country Code', id: 'countrycode' },
+    { name: 'Contact Number', id: 'contactnumber' },
+    { name: 'Full Name', id: 'fullname' },
+    { name: 'Bio', id: 'bio' },
+    { name: 'Airport Of Departure', id: 'airportofdeparture' },
+    { name: 'Preference', id: 'preference' },
+    { name: 'Twitter', id: 'twitter' },
+    { name: 'RSVP Comments', id: 'rsvpcomments' },
+    { name: 'Status Remark', id: 'statusremark' },
+    { name: 'Transport Comments', id: 'transportcomments' },
+    { name: 'Airline Name', id: 'airlinename' },
+    { name: 'Airline BK Number', id: 'airlinebknumber' },
+    { name: 'Hotel BK Number', id: 'hotelbknumber' },
+    { name: 'Country Of Departure', id: 'countryofdeparture' },
+    { name: 'Passport Number', id: 'passportnumber' }
+  ],
+  selectmb: [
+    { name: 'Visa', id: 'visa' },
+    { name: 'Nationality', id: 'nationality' },
+    { name: 'Resident Country', id: 'country' },
+    { name: 'Resident City', id: 'city' },
+    { name: 'Role', id: 'role' },
+    { name: 'RSVP', id: 'rsvp' },
+    { name: 'Invitation Type', id: 'invitationtype' },
+    { name: 'Registration Type', id: 'registrationtype' },
+    { name: 'Link Expire', id: 'linkexpire' },
+    { name: 'Transportation', id: 'transportation' },
+    { name: 'Smoking Required', id: 'smokingrequired' }
+  ],
+  filemb: [
+    { name: 'Passport Doc', id: 'passportdoc' },
+    { name: 'Passport Photo', id: 'passportphoto' }
+  ],
+  datemb: [
+    { name: 'Date Of Issue', id: 'dateofissue' },
+    { name: 'Date Of Expire', id: 'dateofexpire' },
+    { name: 'Checkin', id: 'checkin' },
+    { name: 'Checkout', id: 'checkout' }
+  ],
+  timemb: [],
+  datetimemb: []
 };
 
 // ----------------------------------------------------------------------
@@ -107,14 +155,25 @@ function getComparator(order, orderBy) {
     : (a, b) => -descendingComparator(a, b, orderBy);
 }
 
-function applySortFilter(array, comparator, query, status, appstatus) {
+function applySortFilter(
+  array,
+  comparator,
+  query,
+  status,
+  appstatus,
+  attendeetype,
+  city,
+  country,
+  role,
+  rsvp
+) {
   const stabilizedThis = array.map((el, index) => [el, index]);
   stabilizedThis.sort((a, b) => {
     const order = comparator(a[0], b[0]);
     if (order !== 0) return order;
     return a[1] - b[1];
   });
-  if (query || status || appstatus) {
+  if (query || status || appstatus || attendeetype || country || city || rsvp || role) {
     return filter(
       array,
       (_user) =>
@@ -124,6 +183,11 @@ function applySortFilter(array, comparator, query, status, appstatus) {
           _user.id.toString().indexOf(query.toLowerCase()) !== -1 ||
           _user.email.toLowerCase().indexOf(query.toLowerCase()) !== -1) &&
         _user.status.indexOf(status) !== -1 &&
+        _user.attendeetype.indexOf(attendeetype) !== -1 &&
+        _user.role.indexOf(role) !== -1 &&
+        _user.rsvp.indexOf(rsvp) !== -1 &&
+        _user.city.indexOf(city) !== -1 &&
+        _user.country.indexOf(country) !== -1 &&
         _user.appstatus.indexOf(appstatus) !== -1
     );
   }
@@ -145,8 +209,15 @@ export default function Attendees() {
   const [filterStatus, setFilterStatus] = useState('');
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [show, setShow] = useState(false);
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
+  const [modaldn, setModaldn] = useState('none');
+  const handleClose = () => {
+    setShow(false);
+    setModaldn('none');
+  };
+  const handleShow = () => {
+    setShow(true);
+    setModaldn('block');
+  };
   const [changeAttendees, setChangeAttendees] = useState(USERLIST);
   const [addattendeeerror, setAddattendeeerror] = useState('');
 
@@ -158,10 +229,47 @@ export default function Attendees() {
     title: '',
     name: '',
     lname: '',
+    attendeetype: '',
     email: '',
-    appstatus: '',
     subdate: '',
-    status: ''
+    status: '',
+    appstatus: '',
+    namearabic: '',
+    lnamearabic: '',
+    organizationname: '',
+    jobtitle: '',
+    countrycode: '',
+    contactnumber: '',
+    fullname: '',
+    bio: '',
+    nationality: '',
+    passportnumber: '',
+    dateofissue: '',
+    dateofexpire: '',
+    passportdoc: '',
+    passportphoto: '',
+    airportofdeparture: '',
+    countryofdeparture: '',
+    preference: '',
+    visa: '',
+    smokingrequired: '',
+    twitter: '',
+    country: '',
+    city: '',
+    role: '',
+    rsvp: '',
+    rsvpcomments: '',
+    statusremark: '',
+    invitationtype: '',
+    registrationtype: '',
+    transportation: '',
+    transportcomments: '',
+    airlinename: '',
+    airlinebknumber: '',
+    hotelbknumber: '',
+    chekin: '',
+    checkout: '',
+    linkexpire: ''
   });
   const addAttendee = (attendee) => {
     setChangeAttendees((prevState) => [...prevState, attendee]);
@@ -182,7 +290,7 @@ export default function Attendees() {
     }-${nowdateday > 9 ? nowdateday.toString() : `0${nowdateday.toString()}`} ${
       nowdatehours > 9 ? nowdatehours.toString() : `0${nowdatehours.toString()}`
     }:${nowdateminutes > 9 ? nowdateminutes.toString() : `0${nowdateminutes.toString()}`}
-    } UTC`;
+     UTC`;
     const { name, value } = e.target;
     setNewAttendee((prevState) => ({
       ...prevState,
@@ -196,6 +304,7 @@ export default function Attendees() {
       newAttendee.name !== '' &&
       newAttendee.lname !== '' &&
       newAttendee.email !== '' &&
+      newAttendee.attendeetype !== '' &&
       newAttendee.title !== '' &&
       newAttendee.status !== '' &&
       newAttendee.appstatus !== ''
@@ -210,10 +319,47 @@ export default function Attendees() {
           title: '',
           name: '',
           lname: '',
+          attendeetype: '',
           email: '',
-          appstatus: '',
           subdate: '',
-          status: ''
+          status: '',
+          appstatus: '',
+          namearabic: '',
+          lnamearabic: '',
+          organizationname: '',
+          jobtitle: '',
+          countrycode: '',
+          contactnumber: '',
+          fullname: '',
+          bio: '',
+          nationality: '',
+          passportnumber: '',
+          dateofissue: '',
+          dateofexpire: '',
+          passportdoc: '',
+          passportphoto: '',
+          airportofdeparture: '',
+          countryofdeparture: '',
+          preference: '',
+          visa: '',
+          smokingrequired: '',
+          twitter: '',
+          country: '',
+          city: '',
+          role: '',
+          rsvp: '',
+          rsvpcomments: '',
+          statusremark: '',
+          invitationtype: '',
+          registrationtype: '',
+          transportation: '',
+          transportcomments: '',
+          airlinename: '',
+          airlinebknumber: '',
+          hotelbknumber: '',
+          chekin: '',
+          checkout: '',
+          linkexpire: ''
         });
         setShow(false);
       }
@@ -296,7 +442,12 @@ export default function Attendees() {
     getComparator(order, orderBy),
     filter,
     filterStatus,
-    filterAppStatus
+    filterAppStatus,
+    filterAttendeeType,
+    filterCity,
+    filterCountry,
+    filterRole,
+    filterRsvp
   );
 
   const isUserNotFound = filteredUsers.length === 0;
@@ -323,7 +474,7 @@ export default function Attendees() {
             New Attendee
           </Button>
         </Stack>
-        <Modal show={show} onHide={handleClose} size="lg">
+        <Modal show={show} onHide={handleClose} size="lg" style={{ display: modaldn }}>
           <Modal.Header>
             <Modal.Title>NEW ATTENDEE</Modal.Title>
             <Button style={{ fontSize: '32px' }} onClick={handleClose}>
@@ -375,6 +526,22 @@ export default function Attendees() {
                   value={newAttendee.email}
                   name="email"
                 />
+                <Typography>Attendee Type</Typography>
+                <Select
+                  displayEmpty
+                  name="attendeetype"
+                  onChange={onAttendeeChange}
+                  value={newAttendee.attendeetype}
+                >
+                  <MenuItem key="attendeetype" value="" style={{ color: 'grey' }}>
+                    Select Attendee Type...
+                  </MenuItem>
+                  {attendeetypelist.map((attendeetype) => (
+                    <MenuItem key={attendeetype} value={attendeetype}>
+                      {attendeetype}
+                    </MenuItem>
+                  ))}
+                </Select>
                 <Typography>Application Status</Typography>
                 <Select
                   displayEmpty
@@ -414,10 +581,10 @@ export default function Attendees() {
             </Typography>
           </Modal.Body>
           <Modal.Footer>
-            <Button variant="secondary" onClick={handleClose}>
+            <Button variant="outlined" color="error" onClick={handleClose}>
               Close
             </Button>
-            <Button variant="primary" onClick={handleSubmit}>
+            <Button variant="contained" onClick={handleSubmit}>
               Add
             </Button>
           </Modal.Footer>

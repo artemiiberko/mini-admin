@@ -27,7 +27,15 @@ const lists = {
   ],
   rsvp: ['Open', 'Attended', 'Not Attended', 'Remind'],
   polltype: ['Optional', 'Subjective'],
-  videotype: ['EPC Video', 'Live Video Webcost']
+  videotype: ['EPC Video', 'Live Video Webcost'],
+  visa: ['Yes', 'No'],
+  smokingrequired: ['Yes', 'No'],
+  invitationtype: ['Email', 'By Hand'],
+  registrationtype: ['Pre Registered', 'On Site'],
+  transportation: ['Yes', 'No'],
+  linkexpire: ['Yes', 'No'],
+  nationality: ['Africa', 'Germany', 'Ireland', 'USA', 'Poland', 'Russia'],
+  speakers: ['speaker1', 'speaker2', 'speaker3']
 };
 
 export default lists;

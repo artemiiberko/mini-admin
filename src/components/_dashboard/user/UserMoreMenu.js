@@ -31,10 +31,18 @@ UserMoreMenu.propTypes = {
 };
 export default function UserMoreMenu({ id, changeData, setChangeData, editlist }) {
   const [show, setShow] = useState(false);
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
+  const [modaldn, setModaldn] = useState('none');
+  const handleClose = () => {
+    setShow(false);
+    setModaldn('none');
+  };
+  const handleShow = () => {
+    setShow(true);
+    setModaldn('block');
+  };
   const [isOpen, setIsOpen] = useState(false);
   const [editRecord, setEditRecord] = useState({});
+  const [editerror, setEditerror] = useState('');
   const ref = useRef(null);
   const handleDeleteItem = () => {
     setChangeData(changeData.filter((el) => el.id !== id));
@@ -89,8 +97,26 @@ export default function UserMoreMenu({ id, changeData, setChangeData, editlist }
     setChangeData(newArr);
   };
   const handleSubmit = () => {
-    addEdit(editRecord);
-    setShow(false);
+    const asArray = Object.entries(editRecord);
+    const asArrayFiltered = asArray.filter(
+      ([key, value]) =>
+        value === '' &&
+        (editlist.text.some((e) => e.id === key) ||
+          editlist.select.some((e) => e.id === key) ||
+          editlist.time.some((e) => e.id === key) ||
+          editlist.datetime.some((e) => e.id === key) ||
+          editlist.date.some((e) => e.id === key))
+    );
+    const emptyFields = Object.fromEntries(asArrayFiltered);
+    console.log(emptyFields);
+
+    if (Object.keys(emptyFields).length) {
+      setEditerror('Please fill all required fields');
+    } else {
+      setEditerror('');
+      addEdit(editRecord);
+      setShow(false);
+    }
   };
   return (
     <>
@@ -128,7 +154,7 @@ export default function UserMoreMenu({ id, changeData, setChangeData, editlist }
         </MenuItem>
       </Menu>
 
-      <Modal show={show} onHide={handleClose} size="lg">
+      <Modal show={show} onHide={handleClose} size="lg" style={{ display: modaldn }}>
         <Modal.Header>
           <Modal.Title>EDIT</Modal.Title>
           <Button style={{ fontSize: '32px' }} onClick={handleClose}>
@@ -140,7 +166,7 @@ export default function UserMoreMenu({ id, changeData, setChangeData, editlist }
             <Stack spacing={3} style={{ flexBasis: '100%', padding: '10px', flexShrink: '0' }}>
               {editlist.text.map((edititem) => (
                 <>
-                  <Typography>{edititem.name}</Typography>
+                  <Typography>{`${edititem.name}*`}</Typography>
                   <TextField
                     type="text"
                     placeholder={edititem.name}
@@ -152,7 +178,7 @@ export default function UserMoreMenu({ id, changeData, setChangeData, editlist }
               ))}
               {editlist.select.map((edititem) => (
                 <>
-                  <Typography>{edititem.name}</Typography>
+                  <Typography>{`${edititem.name}*`}</Typography>
                   <Select
                     displayEmpty
                     onChange={onEditChange}
@@ -172,7 +198,7 @@ export default function UserMoreMenu({ id, changeData, setChangeData, editlist }
               ))}
               {editlist.datetime.map((edititem) => (
                 <>
-                  <Typography>{edititem.name}</Typography>
+                  <Typography>{`${edititem.name}*`}</Typography>
                   <TextField
                     type="datetime-local"
                     placeholder={edititem.name}
@@ -183,7 +209,7 @@ export default function UserMoreMenu({ id, changeData, setChangeData, editlist }
               ))}
               {editlist.date.map((edititem) => (
                 <>
-                  <Typography>{edititem.name}</Typography>
+                  <Typography>{`${edititem.name}*`}</Typography>
                   <TextField
                     type="date"
                     placeholder={edititem.name}
@@ -194,7 +220,7 @@ export default function UserMoreMenu({ id, changeData, setChangeData, editlist }
               ))}
               {editlist.time.map((edititem) => (
                 <>
-                  <Typography>{edititem.name}</Typography>
+                  <Typography>{`${edititem.name}*`}</Typography>
                   <TextField
                     type="time"
                     placeholder={edititem.name}
@@ -204,6 +230,84 @@ export default function UserMoreMenu({ id, changeData, setChangeData, editlist }
                 </>
               ))}
               {editlist.file.map((edititem) => (
+                <>
+                  <Typography>{`${edititem.name}*`}</Typography>
+                  <TextField
+                    type="file"
+                    placeholder={edititem.name}
+                    onChange={onEditChange}
+                    name={edititem.id}
+                  />
+                </>
+              ))}
+            </Stack>
+            <Stack spacing={3} style={{ flexBasis: '100%', padding: '10px', flexShrink: '0' }}>
+              {editlist.selectmb.map((edititem) => (
+                <>
+                  <Typography>{edititem.name}</Typography>
+                  <Select
+                    displayEmpty
+                    onChange={onEditChange}
+                    value={editRecord[edititem.id]}
+                    name={edititem.id}
+                  >
+                    <MenuItem key={edititem.id} value="" style={{ color: 'grey' }}>
+                      Select...
+                    </MenuItem>
+                    {lists[edititem.id].map((listitem) => (
+                      <MenuItem key={listitem} value={listitem}>
+                        {listitem}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </>
+              ))}
+              {editlist.textmb.map((edititem) => (
+                <>
+                  <Typography>{edititem.name}</Typography>
+                  <TextField
+                    type="text"
+                    placeholder={edititem.name}
+                    onChange={onEditChange}
+                    value={editRecord[edititem.id]}
+                    name={edititem.id}
+                  />
+                </>
+              ))}
+              {editlist.datetimemb.map((edititem) => (
+                <>
+                  <Typography>{edititem.name}</Typography>
+                  <TextField
+                    type="datetime-local"
+                    placeholder={edititem.name}
+                    onChange={onEditChange}
+                    name={edititem.id}
+                  />
+                </>
+              ))}
+              {editlist.datemb.map((edititem) => (
+                <>
+                  <Typography>{edititem.name}</Typography>
+                  <TextField
+                    type="date"
+                    placeholder={edititem.name}
+                    onChange={onEditChange}
+                    name={edititem.id}
+                  />
+                </>
+              ))}
+              {editlist.timemb.map((edititem) => (
+                <>
+                  <Typography>{edititem.name}</Typography>
+                  <TextField
+                    type="time"
+                    placeholder={edititem.name}
+                    onChange={onEditChange}
+                    name={edititem.id}
+                  />
+                </>
+              ))}
+              {editlist.filemb.map((edititem) => (
                 <>
                   <Typography>{edititem.name}</Typography>
                   <TextField
@@ -215,13 +319,16 @@ export default function UserMoreMenu({ id, changeData, setChangeData, editlist }
                 </>
               ))}
             </Stack>
+            <Typography style={{ color: 'red', fontWeight: '700', padding: '10px' }}>
+              {editerror}
+            </Typography>
           </FormGroup>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
+          <Button variant="outlined" color="error" onClick={handleClose}>
             Close
           </Button>
-          <Button variant="primary" onClick={handleSubmit}>
+          <Button variant="contained" onClick={handleSubmit}>
             Submit
           </Button>
         </Modal.Footer>

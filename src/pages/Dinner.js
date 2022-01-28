@@ -60,7 +60,13 @@ const editlist = {
     { name: 'From Time', id: 'fromtime' },
     { name: 'To Time', id: 'totime' }
   ],
-  datetime: []
+  datetime: [],
+  textmb: [],
+  selectmb: [],
+  filemb: [],
+  datemb: [],
+  timemb: [],
+  datetimemb: []
 };
 
 // ----------------------------------------------------------------------
