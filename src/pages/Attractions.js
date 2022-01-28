@@ -146,7 +146,7 @@ export default function Attractions() {
         location: '',
         status: ''
       });
-      setShow(false);
+      handleClose();
     } else {
       setAddattractionerror('Please fill all fields');
     }
@@ -281,10 +281,10 @@ export default function Attractions() {
             </Typography>
           </Modal.Body>
           <Modal.Footer>
-            <Button variant="secondary" onClick={handleClose}>
+            <Button variant="outlined" color="error" onClick={handleClose}>
               Close
             </Button>
-            <Button variant="primary" onClick={handleSubmit}>
+            <Button variant="contained" onClick={handleSubmit}>
               Add
             </Button>
           </Modal.Footer>

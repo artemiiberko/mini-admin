@@ -132,7 +132,7 @@ export default function Bulkmail() {
         name: '',
         email: ''
       });
-      setShow(false);
+      handleClose();
     } else {
       setAddbulkmailerror('Please fill all fields');
     }
@@ -234,10 +234,10 @@ export default function Bulkmail() {
             </Typography>
           </Modal.Body>
           <Modal.Footer>
-            <Button variant="secondary" onClick={handleClose}>
+            <Button variant="outlined" color="error" onClick={handleClose}>
               Close
             </Button>
-            <Button variant="primary" onClick={handleSubmit}>
+            <Button variant="contained" onClick={handleSubmit}>
               Add
             </Button>
           </Modal.Footer>

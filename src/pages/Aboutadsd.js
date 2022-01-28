@@ -136,11 +136,11 @@ export default function Aboutadsd() {
             </Typography>
           </Modal.Body>
           <Modal.Footer>
-            <Button variant="secondary" onClick={handleClose}>
+            <Button variant="outlined" color="error" onClick={handleClose}>
               Close
             </Button>
-            <Button variant="primary" onClick={handleSubmit}>
-              Save
+            <Button variant="contained" onClick={handleSubmit}>
+              Add
             </Button>
           </Modal.Footer>
         </Modal>

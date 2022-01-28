@@ -86,9 +86,9 @@ const editlist = {
     { name: 'Attendee Type', id: 'attendeetype' }
   ],
   file: [],
-  date: [{ name: 'Submitted Date', id: 'subdate' }],
+  date: [],
   time: [],
-  datetime: [],
+  datetime: [{ name: 'Submitted Date', id: 'subdate' }],
   textmb: [
     { name: 'First Name (Arabic)', id: 'namearabic' },
     { name: 'Last Name (Arabic)', id: 'lnamearabic' },
@@ -209,14 +209,11 @@ export default function Attendees() {
   const [filterStatus, setFilterStatus] = useState('');
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [show, setShow] = useState(false);
-  const [modaldn, setModaldn] = useState('none');
   const handleClose = () => {
     setShow(false);
-    setModaldn('none');
   };
   const handleShow = () => {
     setShow(true);
-    setModaldn('block');
   };
   const [changeAttendees, setChangeAttendees] = useState(USERLIST);
   const [addattendeeerror, setAddattendeeerror] = useState('');
@@ -361,7 +358,7 @@ export default function Attendees() {
           checkout: '',
           linkexpire: ''
         });
-        setShow(false);
+        handleClose();
       }
     } else {
       setAddattendeeerror('Please fill all fields');
@@ -474,7 +471,7 @@ export default function Attendees() {
             New Attendee
           </Button>
         </Stack>
-        <Modal show={show} onHide={handleClose} size="lg" style={{ display: modaldn }}>
+        <Modal show={show} onHide={handleClose} size="lg">
           <Modal.Header>
             <Modal.Title>NEW ATTENDEE</Modal.Title>
             <Button style={{ fontSize: '32px' }} onClick={handleClose}>

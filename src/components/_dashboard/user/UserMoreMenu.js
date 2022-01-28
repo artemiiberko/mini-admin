@@ -6,6 +6,7 @@ import { Link as RouterLink } from 'react-router-dom';
 import trash2Outline from '@iconify/icons-eva/trash-2-outline';
 import moreVerticalFill from '@iconify/icons-eva/more-vertical-fill';
 import closeFill from '@iconify/icons-eva/close-fill';
+import eyeFill from '@iconify/icons-eva/eye-fill';
 import { Modal } from 'react-bootstrap';
 // material
 import {
@@ -31,17 +32,22 @@ UserMoreMenu.propTypes = {
 };
 export default function UserMoreMenu({ id, changeData, setChangeData, editlist }) {
   const [show, setShow] = useState(false);
-  const [modaldn, setModaldn] = useState('none');
+  const [viewShow, setViewShow] = useState(false);
   const handleClose = () => {
     setShow(false);
-    setModaldn('none');
+  };
+  const handleViewClose = () => {
+    setViewShow(false);
   };
   const handleShow = () => {
     setShow(true);
-    setModaldn('block');
+  };
+  const handleViewShow = () => {
+    setViewShow(true);
   };
   const [isOpen, setIsOpen] = useState(false);
   const [editRecord, setEditRecord] = useState({});
+  const [viewRecord, setViewRecord] = useState({});
   const [editerror, setEditerror] = useState('');
   const ref = useRef(null);
   const handleDeleteItem = () => {
@@ -51,6 +57,11 @@ export default function UserMoreMenu({ id, changeData, setChangeData, editlist }
   const handleEditItem = () => {
     handleShow();
     setEditRecord(changeData.find((x) => x.id === id));
+    setIsOpen(false);
+  };
+  const handleViewItem = () => {
+    handleViewShow();
+    setViewRecord(changeData.find((x) => x.id === id));
     setIsOpen(false);
   };
   const onEditChange = (e) => {
@@ -78,6 +89,18 @@ export default function UserMoreMenu({ id, changeData, setChangeData, editlist }
     if (e.target.name === 'totime') {
       totimestring = `${e.target.value} UTC`;
     }
+    let sessionstartstring = editRecord.sessionstart;
+    if (e.target.name === 'sessionstart') {
+      sessionstartstring = `${e.target.value.slice(0, 10)} ${e.target.value.slice(11, 16)} UTC`;
+    }
+    let sessionendstring = editRecord.sessionend;
+    if (e.target.name === 'sessionend') {
+      sessionendstring = `${e.target.value.slice(0, 10)} ${e.target.value.slice(11, 16)} UTC`;
+    }
+    let subdatestring = editRecord.subdate;
+    if (e.target.name === 'subdate') {
+      subdatestring = `${e.target.value.slice(0, 10)} ${e.target.value.slice(11, 16)} UTC`;
+    }
     const { name, value } = e.target;
     setEditRecord((prevState) => ({
       ...prevState,
@@ -87,7 +110,10 @@ export default function UserMoreMenu({ id, changeData, setChangeData, editlist }
       datefull: datefullstring,
       date: datestring,
       fromtime: fromtimestring,
-      totime: totimestring
+      totime: totimestring,
+      sessionstart: sessionstartstring,
+      sessionend: sessionendstring,
+      subdate: subdatestring
     }));
   };
   const addEdit = (record) => {
@@ -108,14 +134,13 @@ export default function UserMoreMenu({ id, changeData, setChangeData, editlist }
           editlist.date.some((e) => e.id === key))
     );
     const emptyFields = Object.fromEntries(asArrayFiltered);
-    console.log(emptyFields);
 
     if (Object.keys(emptyFields).length) {
       setEditerror('Please fill all required fields');
     } else {
       setEditerror('');
       addEdit(editRecord);
-      setShow(false);
+      handleClose();
     }
   };
   return (
@@ -152,9 +177,20 @@ export default function UserMoreMenu({ id, changeData, setChangeData, editlist }
           </ListItemIcon>
           <ListItemText primary="Edit" primaryTypographyProps={{ variant: 'body2' }} />
         </MenuItem>
+        <MenuItem
+          onClick={handleViewItem}
+          component={RouterLink}
+          to="#"
+          sx={{ color: 'text.secondary' }}
+        >
+          <ListItemIcon>
+            <Icon icon={eyeFill} width={24} height={24} />
+          </ListItemIcon>
+          <ListItemText primary="View" primaryTypographyProps={{ variant: 'body2' }} />
+        </MenuItem>
       </Menu>
 
-      <Modal show={show} onHide={handleClose} size="lg" style={{ display: modaldn }}>
+      <Modal show={show} onHide={handleClose} size="lg">
         <Modal.Header>
           <Modal.Title>EDIT</Modal.Title>
           <Button style={{ fontSize: '32px' }} onClick={handleClose}>
@@ -330,6 +366,160 @@ export default function UserMoreMenu({ id, changeData, setChangeData, editlist }
           </Button>
           <Button variant="contained" onClick={handleSubmit}>
             Submit
+          </Button>
+        </Modal.Footer>
+      </Modal>
+      <Modal show={viewShow} onHide={handleViewClose} size="lg">
+        <Modal.Header>
+          <Modal.Title>VIEW</Modal.Title>
+          <Button style={{ fontSize: '32px' }} onClick={handleViewClose}>
+            <Icon icon={closeFill} />
+          </Button>
+        </Modal.Header>
+        <Modal.Body>
+          <FormGroup style={{ display: 'flex', width: '100%' }}>
+            <Stack spacing={3} style={{ flexBasis: '100%', padding: '10px', flexShrink: '0' }}>
+              {editlist.text.map((edititem) => (
+                <Stack key={edititem.id} spacing={1}>
+                  <Typography variant="overline">{edititem.name}</Typography>
+                  <TextField
+                    multiline
+                    name={edititem.id}
+                    value={viewRecord[edititem.id]}
+                    maxRows={5}
+                  />
+                </Stack>
+              ))}
+              {editlist.select.map((edititem) => (
+                <Stack key={edititem.id} spacing={1}>
+                  <Typography variant="overline">{edititem.name}</Typography>
+                  <TextField
+                    multiline
+                    name={edititem.id}
+                    value={viewRecord[edititem.id]}
+                    maxRows={5}
+                  />
+                </Stack>
+              ))}
+              {editlist.file.map((edititem) => (
+                <Stack key={edititem.id} spacing={1}>
+                  <Typography variant="overline">{edititem.name}</Typography>
+                  <TextField
+                    multiline
+                    name={edititem.id}
+                    value={viewRecord[edititem.id]}
+                    maxRows={5}
+                  />
+                </Stack>
+              ))}
+              {editlist.date.map((edititem) => (
+                <Stack key={edititem.id} spacing={1}>
+                  <Typography variant="overline">{edititem.name}</Typography>
+                  <TextField
+                    multiline
+                    name={edititem.id}
+                    value={viewRecord[edititem.id]}
+                    maxRows={5}
+                  />
+                </Stack>
+              ))}
+              {editlist.time.map((edititem) => (
+                <Stack key={edititem.id} spacing={1}>
+                  <Typography variant="overline">{edititem.name}</Typography>
+                  <TextField
+                    multiline
+                    name={edititem.id}
+                    value={viewRecord[edititem.id]}
+                    maxRows={5}
+                  />
+                </Stack>
+              ))}
+              {editlist.datetime.map((edititem) => (
+                <Stack key={edititem.id} spacing={1}>
+                  <Typography variant="overline">{edititem.name}</Typography>
+                  <TextField
+                    multiline
+                    name={edititem.id}
+                    value={viewRecord[edititem.id]}
+                    maxRows={5}
+                  />
+                </Stack>
+              ))}
+              {editlist.textmb.map((edititem) => (
+                <Stack key={edititem.id} spacing={1}>
+                  <Typography variant="overline">{edititem.name}</Typography>
+                  <TextField
+                    multiline
+                    name={edititem.id}
+                    value={viewRecord[edititem.id]}
+                    maxRows={5}
+                  />
+                </Stack>
+              ))}
+              {editlist.selectmb.map((edititem) => (
+                <Stack key={edititem.id} spacing={1}>
+                  <Typography variant="overline">{edititem.name}</Typography>
+                  <TextField
+                    multiline
+                    name={edititem.id}
+                    value={viewRecord[edititem.id]}
+                    maxRows={5}
+                  />
+                </Stack>
+              ))}
+              {editlist.filemb.map((edititem) => (
+                <Stack key={edititem.id} spacing={1}>
+                  <Typography variant="overline">{edititem.name}</Typography>
+                  <TextField
+                    multiline
+                    name={edititem.id}
+                    value={viewRecord[edititem.id]}
+                    maxRows={5}
+                  />
+                </Stack>
+              ))}
+              {editlist.datemb.map((edititem) => (
+                <Stack key={edititem.id} spacing={1}>
+                  <Typography variant="overline">{edititem.name}</Typography>
+                  <TextField
+                    multiline
+                    name={edititem.id}
+                    value={viewRecord[edititem.id]}
+                    maxRows={5}
+                  />
+                </Stack>
+              ))}
+              {editlist.timemb.map((edititem) => (
+                <Stack key={edititem.id} spacing={1}>
+                  <Typography variant="overline">{edititem.name}</Typography>
+                  <TextField
+                    multiline
+                    name={edititem.id}
+                    value={viewRecord[edititem.id]}
+                    maxRows={5}
+                  />
+                </Stack>
+              ))}
+              {editlist.datetimemb.map((edititem) => (
+                <Stack key={edititem.id} spacing={1}>
+                  <Typography variant="overline">{edititem.name}</Typography>
+                  <TextField
+                    multiline
+                    name={edititem.id}
+                    value={viewRecord[edititem.id]}
+                    maxRows={5}
+                  />
+                </Stack>
+              ))}
+            </Stack>
+            <Typography style={{ color: 'red', fontWeight: '700', padding: '10px' }}>
+              {editerror}
+            </Typography>
+          </FormGroup>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="outlined" color="error" onClick={handleViewClose}>
+            Close
           </Button>
         </Modal.Footer>
       </Modal>

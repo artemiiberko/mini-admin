@@ -151,7 +151,7 @@ export default function Wifis() {
         description: '',
         status: ''
       });
-      setShow(false);
+      handleClose();
     } else {
       setAddwifierror('Please fill all fields');
     }
@@ -289,10 +289,10 @@ export default function Wifis() {
             </Typography>
           </Modal.Body>
           <Modal.Footer>
-            <Button variant="secondary" onClick={handleClose}>
+            <Button variant="outlined" color="error" onClick={handleClose}>
               Close
             </Button>
-            <Button variant="primary" onClick={handleSubmit}>
+            <Button variant="contained" onClick={handleSubmit}>
               Add
             </Button>
           </Modal.Footer>

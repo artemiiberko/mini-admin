@@ -155,7 +155,7 @@ export default function Notifications() {
         datefull: '',
         status: ''
       });
-      setShow(false);
+      handleClose();
     } else {
       setAddnotificationerror('Please fill all fields');
     }
@@ -305,10 +305,10 @@ export default function Notifications() {
             </Typography>
           </Modal.Body>
           <Modal.Footer>
-            <Button variant="secondary" onClick={handleClose}>
+            <Button variant="outlined" color="error" onClick={handleClose}>
               Close
             </Button>
-            <Button variant="primary" onClick={handleSubmit}>
+            <Button variant="contained" onClick={handleSubmit}>
               Add
             </Button>
           </Modal.Footer>

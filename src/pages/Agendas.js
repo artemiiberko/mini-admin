@@ -165,7 +165,7 @@ export default function Agendas() {
         rating: '',
         status: ''
       });
-      setShow(false);
+      handleClose();
     } else {
       setAddagendaerror('Please fill all fields');
     }
@@ -331,10 +331,10 @@ export default function Agendas() {
             </Typography>
           </Modal.Body>
           <Modal.Footer>
-            <Button variant="secondary" onClick={handleClose}>
+            <Button variant="outlined" color="error" onClick={handleClose}>
               Close
             </Button>
-            <Button variant="primary" onClick={handleSubmit}>
+            <Button variant="contained" onClick={handleSubmit}>
               Add
             </Button>
           </Modal.Footer>
