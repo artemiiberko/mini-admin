@@ -1,6 +1,10 @@
-.filter{
+.filter {
     display: flex;
     padding: 0px 20px;
+}
+
+a {
+  text-decoration: none;
 }
 
 .modal {

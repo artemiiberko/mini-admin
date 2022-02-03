@@ -1,10 +1,9 @@
+import { Link, Route, Routes } from 'react-router-dom';
 import { filter } from 'lodash';
 import { Icon } from '@iconify/react';
 import { sentenceCase } from 'change-case';
 import { useState } from 'react';
 import plusFill from '@iconify/icons-eva/plus-fill';
-import { Modal } from 'react-bootstrap';
-import closeFill from '@iconify/icons-eva/close-fill';
 // material
 import {
   Card,
@@ -20,9 +19,7 @@ import {
   TableContainer,
   TablePagination,
   Select,
-  MenuItem,
-  TextField,
-  FormGroup
+  MenuItem
 } from '@mui/material';
 // components
 import Page from '../components/Page';
@@ -32,6 +29,10 @@ import SearchNotFound from '../components/SearchNotFound';
 import { UserListHead, UserListToolbar, UserMoreMenu } from '../components/_dashboard/user';
 //
 import NOTIFICATIONS from '../_mocks_/notifications';
+import AddNotification from './add/AddNotification';
+import ViewPage from './ViewPage';
+import EditPage from './EditPage';
+
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
@@ -107,58 +108,13 @@ export default function Notifications() {
   const [filter, setFilter] = useState('');
   const [filterStatus, setFilterStatus] = useState('');
   const [rowsPerPage, setRowsPerPage] = useState(5);
-  const [show, setShow] = useState(false);
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
   const [changeNotifications, setChangeNotifications] = useState(NOTIFICATIONS);
-  const [addnotificationerror, setAddnotificationerror] = useState('');
+  const [itemId, setItemId] = useState(0);
+  const [editviewRecord, setEditviewRecord] = useState({});
 
-  const [newNotification, setNewNotification] = useState({
-    id: 0,
-    title: '',
-    description: '',
-    datefull: '',
-    status: ''
-  });
-  const addNotification = (notification) => {
-    setChangeNotifications((prevState) => [...prevState, notification]);
-  };
-  const onNotificationChange = (e) => {
-    let idPlus = Math.max(...changeNotifications.map((e) => e.id));
-    idPlus += 1;
-    let datestring = newNotification.datefull;
-    if (e.target.name === 'datefull') {
-      datestring = `${e.target.value.slice(0, 10)} ${e.target.value.slice(11, 16)} UTC`;
-    }
-
-    const { name, value } = e.target;
-    setNewNotification((prevState) => ({
-      ...prevState,
-      [name]: value,
-      id: idPlus,
-      datefull: datestring
-    }));
-  };
-  const handleSubmit = () => {
-    if (
-      newNotification.title !== '' &&
-      newNotification.description !== '' &&
-      newNotification.datefull !== '' &&
-      newNotification.status !== ''
-    ) {
-      setAddnotificationerror('');
-      addNotification(newNotification);
-      setNewNotification({
-        id: 0,
-        title: '',
-        description: '',
-        datefull: '',
-        status: ''
-      });
-      handleClose();
-    } else {
-      setAddnotificationerror('Please fill all fields');
-    }
+  const getItem = (id) => {
+    setItemId(id);
+    setEditviewRecord(changeNotifications.find((x) => x.id === id));
   };
 
   const handleRequestSort = (event, property) => {
@@ -233,206 +189,169 @@ export default function Notifications() {
   };
 
   return (
-    <Page title="Notifications">
-      <Container>
-        <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
-          <Typography variant="h4" gutterBottom>
-            Notifications
-          </Typography>
-          <Button variant="contained" startIcon={<Icon icon={plusFill} />} onClick={handleShow}>
-            New Notification
-          </Button>
-        </Stack>
-        <Modal show={show} onHide={handleClose} size="lg">
-          <Modal.Header>
-            <Modal.Title>NEW NOTIFICATION</Modal.Title>
-            <Button style={{ fontSize: '32px' }} onClick={handleClose}>
-              <Icon icon={closeFill} />
-            </Button>
-          </Modal.Header>
-          <Modal.Body>
-            <FormGroup style={{ display: 'flex', width: '100%' }}>
-              <Stack spacing={3} style={{ flexBasis: '50%', padding: '10px', flexShrink: '0' }}>
-                <Typography>Title</Typography>
-                <TextField
-                  type="text"
-                  placeholder="Title"
-                  onChange={onNotificationChange}
-                  value={newNotification.title}
-                  name="title"
+    <Routes>
+      <Route
+        path=""
+        element={
+          <Page title="Notifications">
+            <Container maxWidth="false">
+              <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
+                <Typography variant="h4" gutterBottom>
+                  Notifications
+                </Typography>
+                <Link to="./add">
+                  <Button variant="contained" startIcon={<Icon icon={plusFill} />}>
+                    New Notification
+                  </Button>
+                </Link>
+              </Stack>
+              <Card>
+                <UserListToolbar
+                  numSelected={selected.length}
+                  filterName={filter}
+                  onFilterName={handleFilter}
+                  selectedItems={selected}
+                  setSelectedItems={setSelected}
+                  setChangeData={setChangeNotifications}
+                  changeData={changeNotifications}
                 />
+                <div className="filter">
+                  <Stack sx={{ flexBasis: '25%', padding: '0px 10px' }}>
+                    <Select
+                      displayEmpty
+                      size="small"
+                      onChange={handleFilterStatus}
+                      value={filterStatus}
+                      style={{ margin: '5px' }}
+                    >
+                      <MenuItem key="status" value="" style={{ color: 'grey' }}>
+                        All Status
+                      </MenuItem>
+                      {statuslist.map((status) => (
+                        <MenuItem key={status} value={status}>
+                          {status}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </Stack>
+                </div>
+                <Scrollbar>
+                  <TableContainer sx={{ minWidth: 800 }}>
+                    <Table>
+                      <UserListHead
+                        order={order}
+                        orderBy={orderBy}
+                        headLabel={TABLE_HEAD}
+                        rowCount={changeNotifications.length}
+                        numSelected={selected.length}
+                        onRequestSort={handleRequestSort}
+                        onSelectAllClick={handleSelectAllClick}
+                      />
+                      <TableBody>
+                        {filteredNotifications
+                          .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                          .map((row) => {
+                            const { id, title, description, datefull, status } = row;
+                            const isItemSelected = selected.indexOf(id) !== -1;
 
-                <Typography>Date</Typography>
-                <TextField
-                  type="datetime-local"
-                  placeholder="Date"
-                  onChange={onNotificationChange}
-                  name="datefull"
+                            return (
+                              <TableRow
+                                hover
+                                key={id}
+                                tabIndex={-1}
+                                role="checkbox"
+                                selected={isItemSelected}
+                                aria-checked={isItemSelected}
+                              >
+                                <TableCell padding="checkbox">
+                                  <Checkbox
+                                    checked={isItemSelected}
+                                    onChange={(event) => handleClick(event, id)}
+                                  />
+                                </TableCell>
+                                <TableCell align="left">{id}</TableCell>
+                                <TableCell align="left">{title}</TableCell>
+                                <TableCell align="left">{description}</TableCell>
+                                <TableCell align="left">{datefull}</TableCell>
+                                <TableCell align="left">
+                                  <Label
+                                    id={id}
+                                    onClick={toggleStatus}
+                                    variant="ghost"
+                                    color={status === 'Inactive' ? 'error' : 'success'}
+                                  >
+                                    {sentenceCase(status)}
+                                  </Label>
+                                </TableCell>
+
+                                <TableCell onClick={() => getItem(id)} align="right">
+                                  <UserMoreMenu
+                                    id={id}
+                                    setChangeData={setChangeNotifications}
+                                    changeData={changeNotifications}
+                                  />
+                                </TableCell>
+                              </TableRow>
+                            );
+                          })}
+                        {emptyRows > 0 && (
+                          <TableRow style={{ height: 53 * emptyRows }}>
+                            <TableCell colSpan={6} />
+                          </TableRow>
+                        )}
+                      </TableBody>
+                      {isNotificationNotFound && (
+                        <TableBody>
+                          <TableRow>
+                            <TableCell align="center" colSpan={6} sx={{ py: 3 }}>
+                              <SearchNotFound searchQuery={filter} />
+                            </TableCell>
+                          </TableRow>
+                        </TableBody>
+                      )}
+                    </Table>
+                  </TableContainer>
+                </Scrollbar>
+
+                <TablePagination
+                  rowsPerPageOptions={[5, 10, 25]}
+                  component="div"
+                  count={filteredNotifications.length}
+                  rowsPerPage={rowsPerPage}
+                  page={page}
+                  onPageChange={handleChangePage}
+                  onRowsPerPageChange={handleChangeRowsPerPage}
                 />
-                <Typography>Status</Typography>
-                <Select
-                  displayEmpty
-                  name="status"
-                  onChange={onNotificationChange}
-                  value={newNotification.status}
-                >
-                  <MenuItem key="status" value="" style={{ color: 'grey' }}>
-                    Select Status...
-                  </MenuItem>
-                  {statuslist.map((status) => (
-                    <MenuItem key={status} value={status}>
-                      {status}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </Stack>
-              <Stack spacing={3} style={{ flexBasis: '50%', padding: '10px', flexShrink: '0' }}>
-                <Typography>Description</Typography>
-                <TextField
-                  multiline
-                  minRows={6}
-                  maxRows={6}
-                  type="text"
-                  placeholder="Description"
-                  onChange={onNotificationChange}
-                  value={newNotification.description}
-                  name="description"
-                />
-              </Stack>
-            </FormGroup>
-            <Typography style={{ color: 'red', fontWeight: '700', padding: '10px' }}>
-              {addnotificationerror}
-            </Typography>
-          </Modal.Body>
-          <Modal.Footer>
-            <Button variant="outlined" color="error" onClick={handleClose}>
-              Close
-            </Button>
-            <Button variant="contained" onClick={handleSubmit}>
-              Add
-            </Button>
-          </Modal.Footer>
-        </Modal>
-        <Card>
-          <UserListToolbar
-            numSelected={selected.length}
-            filterName={filter}
-            onFilterName={handleFilter}
-            selectedItems={selected}
-            setSelectedItems={setSelected}
+              </Card>
+            </Container>
+          </Page>
+        }
+      />
+      <Route
+        path="/add"
+        element={
+          <AddNotification
+            changeNotifications={changeNotifications}
+            setChangeNotifications={setChangeNotifications}
+          />
+        }
+      />
+      <Route
+        path="/edit"
+        element={
+          <EditPage
+            id={itemId}
+            editviewRecord={editviewRecord}
             setChangeData={setChangeNotifications}
             changeData={changeNotifications}
+            editlist={editlist}
           />
-          <div className="filter">
-            <Stack sx={{ flexBasis: '25%', padding: '0px 10px' }}>
-              <Select
-                displayEmpty
-                size="small"
-                onChange={handleFilterStatus}
-                value={filterStatus}
-                style={{ margin: '5px' }}
-              >
-                <MenuItem key="status" value="" style={{ color: 'grey' }}>
-                  All Status
-                </MenuItem>
-                {statuslist.map((status) => (
-                  <MenuItem key={status} value={status}>
-                    {status}
-                  </MenuItem>
-                ))}
-              </Select>
-            </Stack>
-          </div>
-          <Scrollbar>
-            <TableContainer sx={{ minWidth: 800 }}>
-              <Table>
-                <UserListHead
-                  order={order}
-                  orderBy={orderBy}
-                  headLabel={TABLE_HEAD}
-                  rowCount={changeNotifications.length}
-                  numSelected={selected.length}
-                  onRequestSort={handleRequestSort}
-                  onSelectAllClick={handleSelectAllClick}
-                />
-                <TableBody>
-                  {filteredNotifications
-                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                    .map((row) => {
-                      const { id, title, description, datefull, status } = row;
-                      const isItemSelected = selected.indexOf(id) !== -1;
-
-                      return (
-                        <TableRow
-                          hover
-                          key={id}
-                          tabIndex={-1}
-                          role="checkbox"
-                          selected={isItemSelected}
-                          aria-checked={isItemSelected}
-                        >
-                          <TableCell padding="checkbox">
-                            <Checkbox
-                              checked={isItemSelected}
-                              onChange={(event) => handleClick(event, id)}
-                            />
-                          </TableCell>
-                          <TableCell align="left">{id}</TableCell>
-                          <TableCell align="left">{title}</TableCell>
-                          <TableCell align="left">{description}</TableCell>
-                          <TableCell align="left">{datefull}</TableCell>
-                          <TableCell align="left">
-                            <Label
-                              id={id}
-                              onClick={toggleStatus}
-                              variant="ghost"
-                              color={status === 'Inactive' ? 'error' : 'success'}
-                            >
-                              {sentenceCase(status)}
-                            </Label>
-                          </TableCell>
-
-                          <TableCell align="right">
-                            <UserMoreMenu
-                              id={id}
-                              setChangeData={setChangeNotifications}
-                              changeData={changeNotifications}
-                              editlist={editlist}
-                            />
-                          </TableCell>
-                        </TableRow>
-                      );
-                    })}
-                  {emptyRows > 0 && (
-                    <TableRow style={{ height: 53 * emptyRows }}>
-                      <TableCell colSpan={6} />
-                    </TableRow>
-                  )}
-                </TableBody>
-                {isNotificationNotFound && (
-                  <TableBody>
-                    <TableRow>
-                      <TableCell align="center" colSpan={6} sx={{ py: 3 }}>
-                        <SearchNotFound searchQuery={filter} />
-                      </TableCell>
-                    </TableRow>
-                  </TableBody>
-                )}
-              </Table>
-            </TableContainer>
-          </Scrollbar>
-
-          <TablePagination
-            rowsPerPageOptions={[5, 10, 25]}
-            component="div"
-            count={filteredNotifications.length}
-            rowsPerPage={rowsPerPage}
-            page={page}
-            onPageChange={handleChangePage}
-            onRowsPerPageChange={handleChangeRowsPerPage}
-          />
-        </Card>
-      </Container>
-    </Page>
+        }
+      />
+      <Route
+        path="/view"
+        element={<ViewPage editviewRecord={editviewRecord} editlist={editlist} />}
+      />
+    </Routes>
   );
 }

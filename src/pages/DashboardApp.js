@@ -9,7 +9,7 @@ import { AppNewUsers } from '../components/_dashboard/app';
 export default function DashboardApp() {
   return (
     <Page title="Dashboard | Minimal-UI">
-      <Container maxWidth="xl">
+      <Container maxWidth="false">
         <Box sx={{ pb: 5 }}>
           <Typography variant="h4">Dashboard</Typography>
         </Box>

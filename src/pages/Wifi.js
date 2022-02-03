@@ -1,10 +1,9 @@
+import { Link, Route, Routes } from 'react-router-dom';
 import { filter } from 'lodash';
 import { Icon } from '@iconify/react';
 import { sentenceCase } from 'change-case';
 import { useState } from 'react';
 import plusFill from '@iconify/icons-eva/plus-fill';
-import { Modal } from 'react-bootstrap';
-import closeFill from '@iconify/icons-eva/close-fill';
 // material
 import {
   Card,
@@ -20,9 +19,7 @@ import {
   TableContainer,
   TablePagination,
   Select,
-  MenuItem,
-  TextField,
-  FormGroup
+  MenuItem
 } from '@mui/material';
 
 // components
@@ -33,6 +30,9 @@ import SearchNotFound from '../components/SearchNotFound';
 import { UserListHead, UserListToolbar, UserMoreMenu } from '../components/_dashboard/user';
 //
 import WIFIS from '../_mocks_/wifi';
+import AddWifi from './add/AddWifi';
+import EditPage from './EditPage';
+import ViewPage from './ViewPage';
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
@@ -109,53 +109,15 @@ export default function Wifis() {
   const [filter, setFilter] = useState('');
   const [filterStatus, setFilterStatus] = useState('');
   const [rowsPerPage, setRowsPerPage] = useState(5);
-  const [show, setShow] = useState(false);
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
   const [changeWifis, setChangeWifis] = useState(WIFIS);
-  const [addwifierror, setAddwifierror] = useState('');
+  const [itemId, setItemId] = useState(0);
+  const [editviewRecord, setEditviewRecord] = useState({});
 
-  const [newWifi, setNewWifi] = useState({
-    id: 0,
-    wifiname: '',
-    password: '',
-    description: '',
-    status: ''
-  });
-  const addWifi = (wifi) => {
-    setChangeWifis((prevState) => [...prevState, wifi]);
+  const getItem = (id) => {
+    setItemId(id);
+    setEditviewRecord(changeWifis.find((x) => x.id === id));
   };
-  const onWifiChange = (e) => {
-    let idPlus = Math.max(...changeWifis.map((e) => e.id));
-    idPlus += 1;
-    const { name, value } = e.target;
-    setNewWifi((prevState) => ({
-      ...prevState,
-      [name]: value,
-      id: idPlus
-    }));
-  };
-  const handleSubmit = () => {
-    if (
-      newWifi.wifiname !== '' &&
-      newWifi.password !== '' &&
-      newWifi.description !== '' &&
-      newWifi.status !== ''
-    ) {
-      setAddwifierror('');
-      addWifi(newWifi);
-      setNewWifi({
-        id: 0,
-        wifiname: '',
-        password: '',
-        description: '',
-        status: ''
-      });
-      handleClose();
-    } else {
-      setAddwifierror('Please fill all fields');
-    }
-  };
+
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
@@ -227,196 +189,164 @@ export default function Wifis() {
   };
 
   return (
-    <Page wifiname="Wifi">
-      <Container>
-        <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
-          <Typography variant="h4" gutterBottom>
-            Wifi
-          </Typography>
-          <Button variant="contained" startIcon={<Icon icon={plusFill} />} onClick={handleShow}>
-            New Wifi
-          </Button>
-        </Stack>
-        <Modal show={show} onHide={handleClose} size="lg">
-          <Modal.Header>
-            <Modal.Title>NEW WIFI</Modal.Title>
-            <Button style={{ fontSize: '32px' }} onClick={handleClose}>
-              <Icon icon={closeFill} />
-            </Button>
-          </Modal.Header>
-          <Modal.Body>
-            <FormGroup style={{ display: 'flex', width: '100%' }}>
-              <Stack spacing={3} style={{ flexBasis: '50%', padding: '10px', flexShrink: '0' }}>
-                <Typography>WiFi Name</Typography>
-                <TextField
-                  type="text"
-                  placeholder="WiFi Name"
-                  onChange={onWifiChange}
-                  value={newWifi.wifiname}
-                  name="wifiname"
-                />
-                <Typography>Password</Typography>
-                <TextField
-                  type="text"
-                  placeholder="Password"
-                  onChange={onWifiChange}
-                  value={newWifi.password}
-                  name="password"
-                />
-                <Typography>Description</Typography>
-                <TextField
-                  type="text"
-                  placeholder="Description"
-                  onChange={onWifiChange}
-                  value={newWifi.description}
-                  name="description"
-                />
-                <Typography>Status</Typography>
-                <Select displayEmpty name="status" onChange={onWifiChange} value={newWifi.status}>
-                  <MenuItem key="status" value="" style={{ color: 'grey' }}>
-                    Select Status...
-                  </MenuItem>
-                  {statuslist.map((status) => (
-                    <MenuItem key={status} value={status}>
-                      {status}
-                    </MenuItem>
-                  ))}
-                </Select>
+    <Routes>
+      <Route
+        path=""
+        element={
+          <Page title="WiFi">
+            <Container maxWidth="false">
+              <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
+                <Typography variant="h4" gutterBottom>
+                  WiFi
+                </Typography>
+                <Link to="./add">
+                  <Button variant="contained" startIcon={<Icon icon={plusFill} />}>
+                    New WiFi
+                  </Button>
+                </Link>
               </Stack>
-            </FormGroup>
-            <Typography style={{ color: 'red', fontWeight: '700', padding: '10px' }}>
-              {addwifierror}
-            </Typography>
-          </Modal.Body>
-          <Modal.Footer>
-            <Button variant="outlined" color="error" onClick={handleClose}>
-              Close
-            </Button>
-            <Button variant="contained" onClick={handleSubmit}>
-              Add
-            </Button>
-          </Modal.Footer>
-        </Modal>
-        <Card>
-          <UserListToolbar
-            numSelected={selected.length}
-            filterName={filter}
-            onFilterName={handleFilter}
-            selectedItems={selected}
-            setSelectedItems={setSelected}
+              <Card>
+                <UserListToolbar
+                  numSelected={selected.length}
+                  filterName={filter}
+                  onFilterName={handleFilter}
+                  selectedItems={selected}
+                  setSelectedItems={setSelected}
+                  setChangeData={setChangeWifis}
+                  changeData={changeWifis}
+                />
+                <div className="filter">
+                  <Stack sx={{ flexBasis: '25%', padding: '0px 10px' }}>
+                    <Select
+                      displayEmpty
+                      size="small"
+                      onChange={handleFilterStatus}
+                      value={filterStatus}
+                      style={{ margin: '5px' }}
+                    >
+                      <MenuItem key="status" value="" style={{ color: 'grey' }}>
+                        All Status
+                      </MenuItem>
+                      {statuslist.map((status) => (
+                        <MenuItem key={status} value={status}>
+                          {status}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </Stack>
+                </div>
+                <Scrollbar>
+                  <TableContainer sx={{ minWidth: 800 }}>
+                    <Table>
+                      <UserListHead
+                        order={order}
+                        orderBy={orderBy}
+                        headLabel={TABLE_HEAD}
+                        rowCount={changeWifis.length}
+                        numSelected={selected.length}
+                        onRequestSort={handleRequestSort}
+                        onSelectAllClick={handleSelectAllClick}
+                      />
+                      <TableBody>
+                        {filteredWifis
+                          .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                          .map((row) => {
+                            const { id, wifiname, description, status, password } = row;
+                            const isItemSelected = selected.indexOf(id) !== -1;
+
+                            return (
+                              <TableRow
+                                hover
+                                key={id}
+                                tabIndex={-1}
+                                role="checkbox"
+                                selected={isItemSelected}
+                                aria-checked={isItemSelected}
+                              >
+                                <TableCell padding="checkbox">
+                                  <Checkbox
+                                    checked={isItemSelected}
+                                    onChange={(event) => handleClick(event, id)}
+                                  />
+                                </TableCell>
+                                <TableCell align="left">{id}</TableCell>
+                                <TableCell align="left">{wifiname}</TableCell>
+                                <TableCell align="left">{password}</TableCell>
+                                <TableCell align="left">{description}</TableCell>
+                                <TableCell align="left">
+                                  <Label
+                                    id={id}
+                                    onClick={toggleStatus}
+                                    variant="ghost"
+                                    color={status === 'Inactive' ? 'error' : 'success'}
+                                  >
+                                    {sentenceCase(status)}
+                                  </Label>
+                                </TableCell>
+
+                                <TableCell onClick={() => getItem(id)} align="right">
+                                  <UserMoreMenu
+                                    id={id}
+                                    setChangeData={setChangeWifis}
+                                    changeData={changeWifis}
+                                  />
+                                </TableCell>
+                              </TableRow>
+                            );
+                          })}
+                        {emptyRows > 0 && (
+                          <TableRow style={{ height: 53 * emptyRows }}>
+                            <TableCell colSpan={6} />
+                          </TableRow>
+                        )}
+                      </TableBody>
+                      {isWifiNotFound && (
+                        <TableBody>
+                          <TableRow>
+                            <TableCell align="center" colSpan={6} sx={{ py: 3 }}>
+                              <SearchNotFound searchQuery={filter} />
+                            </TableCell>
+                          </TableRow>
+                        </TableBody>
+                      )}
+                    </Table>
+                  </TableContainer>
+                </Scrollbar>
+
+                <TablePagination
+                  rowsPerPageOptions={[5, 10, 25]}
+                  component="div"
+                  count={filteredWifis.length}
+                  rowsPerPage={rowsPerPage}
+                  page={page}
+                  onPageChange={handleChangePage}
+                  onRowsPerPageChange={handleChangeRowsPerPage}
+                />
+              </Card>
+            </Container>
+          </Page>
+        }
+      />
+      <Route
+        path="/add"
+        element={<AddWifi changeWifis={changeWifis} setChangeWifis={setChangeWifis} />}
+      />
+      <Route
+        path="/edit"
+        element={
+          <EditPage
+            id={itemId}
+            editviewRecord={editviewRecord}
             setChangeData={setChangeWifis}
             changeData={changeWifis}
+            editlist={editlist}
           />
-          <div className="filter">
-            <Stack sx={{ flexBasis: '25%', padding: '0px 10px' }}>
-              <Select
-                displayEmpty
-                size="small"
-                onChange={handleFilterStatus}
-                value={filterStatus}
-                style={{ margin: '5px' }}
-              >
-                <MenuItem key="status" value="" style={{ color: 'grey' }}>
-                  All Status
-                </MenuItem>
-                {statuslist.map((status) => (
-                  <MenuItem key={status} value={status}>
-                    {status}
-                  </MenuItem>
-                ))}
-              </Select>
-            </Stack>
-          </div>
-          <Scrollbar>
-            <TableContainer sx={{ minWidth: 800 }}>
-              <Table>
-                <UserListHead
-                  order={order}
-                  orderBy={orderBy}
-                  headLabel={TABLE_HEAD}
-                  rowCount={changeWifis.length}
-                  numSelected={selected.length}
-                  onRequestSort={handleRequestSort}
-                  onSelectAllClick={handleSelectAllClick}
-                />
-                <TableBody>
-                  {filteredWifis
-                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                    .map((row) => {
-                      const { id, wifiname, description, status, password } = row;
-                      const isItemSelected = selected.indexOf(id) !== -1;
-
-                      return (
-                        <TableRow
-                          hover
-                          key={id}
-                          tabIndex={-1}
-                          role="checkbox"
-                          selected={isItemSelected}
-                          aria-checked={isItemSelected}
-                        >
-                          <TableCell padding="checkbox">
-                            <Checkbox
-                              checked={isItemSelected}
-                              onChange={(event) => handleClick(event, id)}
-                            />
-                          </TableCell>
-                          <TableCell align="left">{id}</TableCell>
-                          <TableCell align="left">{wifiname}</TableCell>
-                          <TableCell align="left">{password}</TableCell>
-                          <TableCell align="left">{description}</TableCell>
-                          <TableCell align="left">
-                            <Label
-                              id={id}
-                              onClick={toggleStatus}
-                              variant="ghost"
-                              color={status === 'Inactive' ? 'error' : 'success'}
-                            >
-                              {sentenceCase(status)}
-                            </Label>
-                          </TableCell>
-
-                          <TableCell align="right">
-                            <UserMoreMenu
-                              id={id}
-                              setChangeData={setChangeWifis}
-                              changeData={changeWifis}
-                              editlist={editlist}
-                            />
-                          </TableCell>
-                        </TableRow>
-                      );
-                    })}
-                  {emptyRows > 0 && (
-                    <TableRow style={{ height: 53 * emptyRows }}>
-                      <TableCell colSpan={6} />
-                    </TableRow>
-                  )}
-                </TableBody>
-                {isWifiNotFound && (
-                  <TableBody>
-                    <TableRow>
-                      <TableCell align="center" colSpan={6} sx={{ py: 3 }}>
-                        <SearchNotFound searchQuery={filter} />
-                      </TableCell>
-                    </TableRow>
-                  </TableBody>
-                )}
-              </Table>
-            </TableContainer>
-          </Scrollbar>
-
-          <TablePagination
-            rowsPerPageOptions={[5, 10, 25]}
-            component="div"
-            count={filteredWifis.length}
-            rowsPerPage={rowsPerPage}
-            page={page}
-            onPageChange={handleChangePage}
-            onRowsPerPageChange={handleChangeRowsPerPage}
-          />
-        </Card>
-      </Container>
-    </Page>
+        }
+      />
+      <Route
+        path="/view"
+        element={<ViewPage editviewRecord={editviewRecord} editlist={editlist} />}
+      />
+    </Routes>
   );
 }

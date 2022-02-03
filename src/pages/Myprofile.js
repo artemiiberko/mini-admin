@@ -8,7 +8,7 @@ import Page from '../components/Page';
 export default function Myprofile() {
   return (
     <Page title="App version">
-      <Container>
+      <Container maxWidth="false">
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4" gutterBottom>
             My Profile

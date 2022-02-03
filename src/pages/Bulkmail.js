@@ -1,9 +1,8 @@
+import { Routes, Route, Link } from 'react-router-dom';
 import { filter } from 'lodash';
 import { Icon } from '@iconify/react';
 import { useState } from 'react';
 import plusFill from '@iconify/icons-eva/plus-fill';
-import { Modal } from 'react-bootstrap';
-import closeFill from '@iconify/icons-eva/close-fill';
 // material
 import {
   Card,
@@ -17,9 +16,7 @@ import {
   Container,
   Typography,
   TableContainer,
-  TablePagination,
-  TextField,
-  FormGroup
+  TablePagination
 } from '@mui/material';
 // components
 import Page from '../components/Page';
@@ -28,6 +25,10 @@ import SearchNotFound from '../components/SearchNotFound';
 import { UserListHead, UserListToolbar, UserMoreMenu } from '../components/_dashboard/user';
 //
 import BULKMAILS from '../_mocks_/bulkmails';
+import AddBulkmail from './add/AddBulkmail';
+import EditPage from './EditPage';
+import ViewPage from './ViewPage';
+
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
@@ -98,45 +99,15 @@ export default function Bulkmail() {
   const [orderBy, setOrderBy] = useState('id');
   const [filter, setFilter] = useState('');
   const [rowsPerPage, setRowsPerPage] = useState(5);
-  const [show, setShow] = useState(false);
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
   const [changeBulkmails, setChangeBulkmails] = useState(BULKMAILS);
-  const [addbulkmailerror, setAddbulkmailerror] = useState('');
+  const [itemId, setItemId] = useState(0);
+  const [editviewRecord, setEditviewRecord] = useState({});
 
-  const [newBulkmail, setNewBulkmail] = useState({
-    id: 0,
-    name: '',
-    email: ''
-  });
-  const addBulkmail = (bulkmail) => {
-    setChangeBulkmails((prevState) => [...prevState, bulkmail]);
+  const getItem = (id) => {
+    setItemId(id);
+    setEditviewRecord(changeBulkmails.find((x) => x.id === id));
   };
-  const onBulkmailChange = (e) => {
-    let idPlus = Math.max(...changeBulkmails.map((e) => e.id));
-    idPlus += 1;
 
-    const { name, value } = e.target;
-    setNewBulkmail((prevState) => ({
-      ...prevState,
-      [name]: value,
-      id: idPlus
-    }));
-  };
-  const handleSubmit = () => {
-    if (newBulkmail.name !== '' && newBulkmail.email !== '') {
-      setAddbulkmailerror('');
-      addBulkmail(newBulkmail);
-      setNewBulkmail({
-        id: 0,
-        name: '',
-        email: ''
-      });
-      handleClose();
-    } else {
-      setAddbulkmailerror('Please fill all fields');
-    }
-  };
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
@@ -190,148 +161,136 @@ export default function Bulkmail() {
   const isBulkmailNotFound = filteredBulkmails.length === 0;
 
   return (
-    <Page title="Bulkmail">
-      <Container>
-        <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
-          <Typography variant="h4" gutterBottom>
-            Bulkmail
-          </Typography>
-          <Button variant="contained" startIcon={<Icon icon={plusFill} />} onClick={handleShow}>
-            Send Mail
-          </Button>
-        </Stack>
-        <Modal show={show} onHide={handleClose} size="lg">
-          <Modal.Header>
-            <Modal.Title>Bulk Mail Send</Modal.Title>
-            <Button style={{ fontSize: '32px' }} onClick={handleClose}>
-              <Icon icon={closeFill} />
-            </Button>
-          </Modal.Header>
-          <Modal.Body>
-            <FormGroup style={{ display: 'flex', width: '100%' }}>
-              <Stack spacing={3} style={{ flexBasis: '50%', padding: '10px', flexShrink: '0' }}>
-                <Typography>Name</Typography>
-                <TextField
-                  type="text"
-                  placeholder="Title"
-                  onChange={onBulkmailChange}
-                  value={newBulkmail.name}
-                  name="name"
+    <Routes>
+      <Route
+        path=""
+        element={
+          <Page title="Bulkmail">
+            <Container maxWidth="false">
+              <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
+                <Typography variant="h4" gutterBottom>
+                  Bulkmail
+                </Typography>
+                <Link to="./add">
+                  <Button variant="contained" startIcon={<Icon icon={plusFill} />}>
+                    Send Mail
+                  </Button>
+                </Link>
+              </Stack>
+              <Card>
+                <UserListToolbar
+                  numSelected={selected.length}
+                  filterName={filter}
+                  onFilterName={handleFilter}
+                  selectedItems={selected}
+                  setSelectedItems={setSelected}
+                  setChangeData={setChangeBulkmails}
+                  changeData={changeBulkmails}
                 />
 
-                <Typography>Email</Typography>
-                <TextField
-                  type="text"
-                  placeholder="Email"
-                  onChange={onBulkmailChange}
-                  value={newBulkmail.emal}
-                  name="email"
+                <Scrollbar>
+                  <TableContainer sx={{ minWidth: 800 }}>
+                    <Table>
+                      <UserListHead
+                        order={order}
+                        orderBy={orderBy}
+                        headLabel={TABLE_HEAD}
+                        rowCount={changeBulkmails.length}
+                        numSelected={selected.length}
+                        onRequestSort={handleRequestSort}
+                        onSelectAllClick={handleSelectAllClick}
+                      />
+                      <TableBody>
+                        {filteredBulkmails
+                          .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                          .map((row) => {
+                            const { id, name, email } = row;
+                            const isItemSelected = selected.indexOf(id) !== -1;
+
+                            return (
+                              <TableRow
+                                hover
+                                key={id}
+                                tabIndex={-1}
+                                role="checkbox"
+                                selected={isItemSelected}
+                                aria-checked={isItemSelected}
+                              >
+                                <TableCell padding="checkbox">
+                                  <Checkbox
+                                    checked={isItemSelected}
+                                    onChange={(event) => handleClick(event, id)}
+                                  />
+                                </TableCell>
+                                <TableCell align="left">{id}</TableCell>
+                                <TableCell align="left">{name}</TableCell>
+                                <TableCell align="left">{email}</TableCell>
+
+                                <TableCell onClick={() => getItem(id)} align="right">
+                                  <UserMoreMenu
+                                    id={id}
+                                    setChangeData={setChangeBulkmails}
+                                    changeData={changeBulkmails}
+                                  />
+                                </TableCell>
+                              </TableRow>
+                            );
+                          })}
+                        {emptyRows > 0 && (
+                          <TableRow style={{ height: 53 * emptyRows }}>
+                            <TableCell colSpan={6} />
+                          </TableRow>
+                        )}
+                      </TableBody>
+                      {isBulkmailNotFound && (
+                        <TableBody>
+                          <TableRow>
+                            <TableCell align="center" colSpan={6} sx={{ py: 3 }}>
+                              <SearchNotFound searchQuery={filter} />
+                            </TableCell>
+                          </TableRow>
+                        </TableBody>
+                      )}
+                    </Table>
+                  </TableContainer>
+                </Scrollbar>
+
+                <TablePagination
+                  rowsPerPageOptions={[5, 10, 25]}
+                  component="div"
+                  count={filteredBulkmails.length}
+                  rowsPerPage={rowsPerPage}
+                  page={page}
+                  onPageChange={handleChangePage}
+                  onRowsPerPageChange={handleChangeRowsPerPage}
                 />
-              </Stack>
-            </FormGroup>
-            <Typography style={{ color: 'red', fontWeight: '700', padding: '10px' }}>
-              {addbulkmailerror}
-            </Typography>
-          </Modal.Body>
-          <Modal.Footer>
-            <Button variant="outlined" color="error" onClick={handleClose}>
-              Close
-            </Button>
-            <Button variant="contained" onClick={handleSubmit}>
-              Add
-            </Button>
-          </Modal.Footer>
-        </Modal>
-        <Card>
-          <UserListToolbar
-            numSelected={selected.length}
-            filterName={filter}
-            onFilterName={handleFilter}
-            selectedItems={selected}
-            setSelectedItems={setSelected}
+              </Card>
+            </Container>
+          </Page>
+        }
+      />
+      <Route
+        path="/add"
+        element={
+          <AddBulkmail changeBulkmails={changeBulkmails} setChangeBulkmails={setChangeBulkmails} />
+        }
+      />
+      <Route
+        path="/edit"
+        element={
+          <EditPage
+            id={itemId}
+            editviewRecord={editviewRecord}
             setChangeData={setChangeBulkmails}
             changeData={changeBulkmails}
+            editlist={editlist}
           />
-
-          <Scrollbar>
-            <TableContainer sx={{ minWidth: 800 }}>
-              <Table>
-                <UserListHead
-                  order={order}
-                  orderBy={orderBy}
-                  headLabel={TABLE_HEAD}
-                  rowCount={changeBulkmails.length}
-                  numSelected={selected.length}
-                  onRequestSort={handleRequestSort}
-                  onSelectAllClick={handleSelectAllClick}
-                />
-                <TableBody>
-                  {filteredBulkmails
-                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                    .map((row) => {
-                      const { id, name, email } = row;
-                      const isItemSelected = selected.indexOf(id) !== -1;
-
-                      return (
-                        <TableRow
-                          hover
-                          key={id}
-                          tabIndex={-1}
-                          role="checkbox"
-                          selected={isItemSelected}
-                          aria-checked={isItemSelected}
-                        >
-                          <TableCell padding="checkbox">
-                            <Checkbox
-                              checked={isItemSelected}
-                              onChange={(event) => handleClick(event, id)}
-                            />
-                          </TableCell>
-                          <TableCell align="left">{id}</TableCell>
-                          <TableCell align="left">{name}</TableCell>
-                          <TableCell align="left">{email}</TableCell>
-
-                          <TableCell align="right">
-                            <UserMoreMenu
-                              id={id}
-                              setChangeData={setChangeBulkmails}
-                              changeData={changeBulkmails}
-                              editlist={editlist}
-                            />
-                          </TableCell>
-                        </TableRow>
-                      );
-                    })}
-                  {emptyRows > 0 && (
-                    <TableRow style={{ height: 53 * emptyRows }}>
-                      <TableCell colSpan={6} />
-                    </TableRow>
-                  )}
-                </TableBody>
-                {isBulkmailNotFound && (
-                  <TableBody>
-                    <TableRow>
-                      <TableCell align="center" colSpan={6} sx={{ py: 3 }}>
-                        <SearchNotFound searchQuery={filter} />
-                      </TableCell>
-                    </TableRow>
-                  </TableBody>
-                )}
-              </Table>
-            </TableContainer>
-          </Scrollbar>
-
-          <TablePagination
-            rowsPerPageOptions={[5, 10, 25]}
-            component="div"
-            count={filteredBulkmails.length}
-            rowsPerPage={rowsPerPage}
-            page={page}
-            onPageChange={handleChangePage}
-            onRowsPerPageChange={handleChangeRowsPerPage}
-          />
-        </Card>
-      </Container>
-    </Page>
+        }
+      />
+      <Route
+        path="/view"
+        element={<ViewPage editviewRecord={editviewRecord} editlist={editlist} />}
+      />
+    </Routes>
   );
 }

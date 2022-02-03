@@ -43,12 +43,12 @@ export default function Router() {
       children: [
         { path: '/', element: <Navigate to="/login" /> },
         { path: 'dashboard', element: <DashboardApp /> },
-        { path: 'attendees', element: <Attendees /> },
-        { path: 'agendas', element: <Agendas /> },
-        { path: 'polls', element: <Polls /> },
-        { path: 'notification', element: <Notification /> },
-        { path: 'bulkmail', element: <BulkMail /> },
-        { path: 'pressroom', element: <Pressroom /> },
+        { path: 'attendees/*', element: <Attendees /> },
+        { path: 'agendas/*', element: <Agendas /> },
+        { path: 'polls/*', element: <Polls /> },
+        { path: 'notification/*', element: <Notification /> },
+        { path: 'bulkmail/*', element: <BulkMail /> },
+        { path: 'pressroom/*', element: <Pressroom /> },
         { path: '404', element: <NotFound /> }
       ]
     },
@@ -59,16 +59,16 @@ export default function Router() {
         { path: 'aboutadsd', element: <Aboutadsd /> },
         { path: 'aboutus', element: <Aboutus /> },
         { path: 'epccontact', element: <Contacts /> },
-        { path: 'eventregistration', element: <Eventregistration /> },
-        { path: 'dinner', element: <Dinner /> },
-        { path: 'map', element: <Maps /> },
-        { path: 'abudhabiattractions', element: <Attractions /> },
-        { path: 'adsdheldesk', element: <Helpdesks /> },
-        { path: 'wificredentials', element: <Wifis /> },
+        { path: 'eventregistration/*', element: <Eventregistration /> },
+        { path: 'dinner/*', element: <Dinner /> },
+        { path: 'map/*', element: <Maps /> },
+        { path: 'abudhabiattractions/*', element: <Attractions /> },
+        { path: 'adsdheldesk/*', element: <Helpdesks /> },
+        { path: 'wificredentials/*', element: <Wifis /> },
         { path: 'howtousethemic', element: <Mic /> },
         { path: 'socialmedialinks', element: <Socialmedia /> },
         { path: 'codeofconduct', element: <Code /> },
-        { path: 'partners', element: <Partners /> },
+        { path: 'partners/*', element: <Partners /> },
         { path: 'appversion', element: <Appversion /> }
       ]
     },
@@ -76,10 +76,10 @@ export default function Router() {
       path: '/',
       element: <DashboardLayout />,
       children: [
-        { path: 'epcvideo', element: <Epcvideos /> },
-        { path: 'agendadocs', element: <Agendadocs /> },
-        { path: 'mediapartners', element: <Mediapartners /> },
-        { path: 'guestspeechdocs', element: <Guestspeechdocs /> }
+        { path: 'epcvideo/*', element: <Epcvideos /> },
+        { path: 'agendadocs/*', element: <Agendadocs /> },
+        { path: 'mediapartners/*', element: <Mediapartners /> },
+        { path: 'guestspeechdocs/*', element: <Guestspeechdocs /> }
       ]
     },
     {

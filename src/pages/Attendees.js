@@ -3,7 +3,8 @@ import { Icon } from '@iconify/react';
 import { sentenceCase } from 'change-case';
 import { useState } from 'react';
 import plusFill from '@iconify/icons-eva/plus-fill';
-import { Modal } from 'react-bootstrap';
+import { Link, Routes, Route } from 'react-router-dom';
+
 // material
 import {
   Card,
@@ -19,19 +20,20 @@ import {
   TableContainer,
   TablePagination,
   Select,
-  MenuItem,
-  TextField,
-  FormGroup
+  MenuItem
 } from '@mui/material';
-import closeFill from '@iconify/icons-eva/close-fill';
 // components
 import Page from '../components/Page';
 import Label from '../components/Label';
 import Scrollbar from '../components/Scrollbar';
 import SearchNotFound from '../components/SearchNotFound';
 import { UserListHead, UserListToolbar, UserMoreMenu } from '../components/_dashboard/user';
+import AddAttendee from './add/AddAttendee';
 //
 import USERLIST from '../_mocks_/user';
+import EditPage from './EditPage';
+import ViewPage from './ViewPage';
+
 // ----------------------------------------------------------------------
 
 const countrylist = ['Africa', 'Germany', 'Ireland', 'USA', 'Poland', 'Russia'];
@@ -48,7 +50,6 @@ const TABLE_HEAD = [
   { id: '' }
 ];
 const statuslist = ['Active', 'Inactive'];
-const titlelist = ['Mr.', 'Mrs.'];
 const appstatuslist = [
   'Entered',
   'Link Sent',
@@ -208,161 +209,13 @@ export default function Attendees() {
   const [filterRsvp, setFilterRsvp] = useState('');
   const [filterStatus, setFilterStatus] = useState('');
   const [rowsPerPage, setRowsPerPage] = useState(5);
-  const [show, setShow] = useState(false);
-  const handleClose = () => {
-    setShow(false);
-  };
-  const handleShow = () => {
-    setShow(true);
-  };
   const [changeAttendees, setChangeAttendees] = useState(USERLIST);
-  const [addattendeeerror, setAddattendeeerror] = useState('');
+  const [itemId, setItemId] = useState(0);
+  const [editviewRecord, setEditviewRecord] = useState({});
 
-  function emailExists(email) {
-    return changeAttendees.some((e) => e.email === email);
-  }
-  const [newAttendee, setNewAttendee] = useState({
-    id: 0,
-    title: '',
-    name: '',
-    lname: '',
-    attendeetype: '',
-    email: '',
-    subdate: '',
-    status: '',
-    appstatus: '',
-    namearabic: '',
-    lnamearabic: '',
-    organizationname: '',
-    jobtitle: '',
-    countrycode: '',
-    contactnumber: '',
-    fullname: '',
-    bio: '',
-    nationality: '',
-    passportnumber: '',
-    dateofissue: '',
-    dateofexpire: '',
-    passportdoc: '',
-    passportphoto: '',
-    airportofdeparture: '',
-    countryofdeparture: '',
-    preference: '',
-    visa: '',
-    smokingrequired: '',
-    twitter: '',
-    country: '',
-    city: '',
-    role: '',
-    rsvp: '',
-    rsvpcomments: '',
-    statusremark: '',
-    invitationtype: '',
-    registrationtype: '',
-    transportation: '',
-    transportcomments: '',
-    airlinename: '',
-    airlinebknumber: '',
-    hotelbknumber: '',
-    chekin: '',
-    checkout: '',
-    linkexpire: ''
-  });
-  const addAttendee = (attendee) => {
-    setChangeAttendees((prevState) => [...prevState, attendee]);
-  };
-
-  const onAttendeeChange = (e) => {
-    let idPlus = Math.max(...changeAttendees.map((e) => e.id));
-    idPlus += 1;
-    const nowdate = new Date(Date.now());
-    const nowdateyear = nowdate.getUTCFullYear();
-    const nowdatemonth = nowdate.getUTCMonth() + 1;
-    const nowdateday = nowdate.getUTCDate();
-    const nowdatehours = nowdate.getUTCHours() + 1;
-    const nowdateminutes = nowdate.getUTCMinutes() + 1;
-
-    const nowdatestring = `${nowdateyear.toString()}-${
-      nowdatemonth > 9 ? nowdatemonth.toString() : `0${nowdatemonth.toString()}`
-    }-${nowdateday > 9 ? nowdateday.toString() : `0${nowdateday.toString()}`} ${
-      nowdatehours > 9 ? nowdatehours.toString() : `0${nowdatehours.toString()}`
-    }:${nowdateminutes > 9 ? nowdateminutes.toString() : `0${nowdateminutes.toString()}`}
-     UTC`;
-    const { name, value } = e.target;
-    setNewAttendee((prevState) => ({
-      ...prevState,
-      [name]: value,
-      id: idPlus,
-      subdate: nowdatestring
-    }));
-  };
-  const handleSubmit = () => {
-    if (
-      newAttendee.name !== '' &&
-      newAttendee.lname !== '' &&
-      newAttendee.email !== '' &&
-      newAttendee.attendeetype !== '' &&
-      newAttendee.title !== '' &&
-      newAttendee.status !== '' &&
-      newAttendee.appstatus !== ''
-    ) {
-      if (emailExists(newAttendee.email)) {
-        setAddattendeeerror('Email is already exists');
-      } else {
-        setAddattendeeerror('');
-        addAttendee(newAttendee);
-        setNewAttendee({
-          id: 0,
-          title: '',
-          name: '',
-          lname: '',
-          attendeetype: '',
-          email: '',
-          subdate: '',
-          status: '',
-          appstatus: '',
-          namearabic: '',
-          lnamearabic: '',
-          organizationname: '',
-          jobtitle: '',
-          countrycode: '',
-          contactnumber: '',
-          fullname: '',
-          bio: '',
-          nationality: '',
-          passportnumber: '',
-          dateofissue: '',
-          dateofexpire: '',
-          passportdoc: '',
-          passportphoto: '',
-          airportofdeparture: '',
-          countryofdeparture: '',
-          preference: '',
-          visa: '',
-          smokingrequired: '',
-          twitter: '',
-          country: '',
-          city: '',
-          role: '',
-          rsvp: '',
-          rsvpcomments: '',
-          statusremark: '',
-          invitationtype: '',
-          registrationtype: '',
-          transportation: '',
-          transportcomments: '',
-          airlinename: '',
-          airlinebknumber: '',
-          hotelbknumber: '',
-          chekin: '',
-          checkout: '',
-          linkexpire: ''
-        });
-        handleClose();
-      }
-    } else {
-      setAddattendeeerror('Please fill all fields');
-    }
+  const getItem = (id) => {
+    setItemId(id);
+    setEditviewRecord(changeAttendees.find((x) => x.id === id));
   };
 
   const handleRequestSort = (event, property) => {
@@ -461,358 +314,274 @@ export default function Attendees() {
   };
 
   return (
-    <Page title="Attendees">
-      <Container>
-        <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
-          <Typography variant="h4" gutterBottom>
-            Attendees
-          </Typography>
-          <Button variant="contained" startIcon={<Icon icon={plusFill} />} onClick={handleShow}>
-            New Attendee
-          </Button>
-        </Stack>
-        <Modal show={show} onHide={handleClose} size="lg">
-          <Modal.Header>
-            <Modal.Title>NEW ATTENDEE</Modal.Title>
-            <Button style={{ fontSize: '32px' }} onClick={handleClose}>
-              <Icon icon={closeFill} />
-            </Button>
-          </Modal.Header>
-          <Modal.Body>
-            <FormGroup style={{ display: 'flex', width: '100%' }}>
-              <Stack spacing={3} style={{ flexBasis: '50%', padding: '10px', flexShrink: '0' }}>
-                <Typography>Title</Typography>
-                <Select
-                  displayEmpty
-                  onChange={onAttendeeChange}
-                  value={newAttendee.title}
-                  name="title"
-                >
-                  <MenuItem key="title" value="" style={{ color: 'grey' }}>
-                    Select title...
-                  </MenuItem>
-                  {titlelist.map((title) => (
-                    <MenuItem key={title} value={title}>
-                      {title}
-                    </MenuItem>
-                  ))}
-                </Select>
-                <Typography>First Name</Typography>
-                <TextField
-                  type="text"
-                  placeholder="First Name"
-                  onChange={onAttendeeChange}
-                  value={newAttendee.name}
-                  name="name"
-                />
-                <Typography>Last Name</Typography>
-                <TextField
-                  type="text"
-                  placeholder="Last Name"
-                  onChange={onAttendeeChange}
-                  value={newAttendee.lname}
-                  name="lname"
-                />
+    <Routes>
+      <Route
+        path=""
+        element={
+          <Page title="Attendees">
+            <Container maxWidth="false">
+              <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
+                <Typography variant="h4" gutterBottom>
+                  Attendees
+                </Typography>
+                <Link to="./add">
+                  <Button variant="contained" startIcon={<Icon icon={plusFill} />}>
+                    New Attendee
+                  </Button>
+                </Link>
               </Stack>
-              <Stack spacing={3} style={{ flexBasis: '50%', padding: '10px', flexShrink: '0' }}>
-                <Typography>Email Address</Typography>
-                <TextField
-                  type="text"
-                  placeholder="Email Address"
-                  onChange={onAttendeeChange}
-                  value={newAttendee.email}
-                  name="email"
+              <Card>
+                <UserListToolbar
+                  numSelected={selected.length}
+                  filterName={filter}
+                  onFilterName={handleFilter}
+                  filterStatus={filterStatus}
+                  onfilterStatus={handleFilterStatus}
+                  selectedItems={selected}
+                  setSelectedItems={setSelected}
+                  setChangeData={setChangeAttendees}
+                  changeData={changeAttendees}
                 />
-                <Typography>Attendee Type</Typography>
-                <Select
-                  displayEmpty
-                  name="attendeetype"
-                  onChange={onAttendeeChange}
-                  value={newAttendee.attendeetype}
-                >
-                  <MenuItem key="attendeetype" value="" style={{ color: 'grey' }}>
-                    Select Attendee Type...
-                  </MenuItem>
-                  {attendeetypelist.map((attendeetype) => (
-                    <MenuItem key={attendeetype} value={attendeetype}>
-                      {attendeetype}
-                    </MenuItem>
-                  ))}
-                </Select>
-                <Typography>Application Status</Typography>
-                <Select
-                  displayEmpty
-                  name="appstatus"
-                  onChange={onAttendeeChange}
-                  value={newAttendee.appstatus}
-                >
-                  <MenuItem key="appstatus" value="" style={{ color: 'grey' }}>
-                    Select Application Status...
-                  </MenuItem>
-                  {appstatuslist.map((appstatus) => (
-                    <MenuItem key={appstatus} value={appstatus}>
-                      {appstatus}
-                    </MenuItem>
-                  ))}
-                </Select>
-                <Typography>Status</Typography>
-                <Select
-                  displayEmpty
-                  name="status"
-                  onChange={onAttendeeChange}
-                  value={newAttendee.status}
-                >
-                  <MenuItem key="status" value="" style={{ color: 'grey' }}>
-                    Select Status...
-                  </MenuItem>
-                  {statuslist.map((status) => (
-                    <MenuItem key={status} value={status}>
-                      {status}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </Stack>
-            </FormGroup>
-            <Typography style={{ color: 'red', fontWeight: '700', padding: '10px' }}>
-              {addattendeeerror}
-            </Typography>
-          </Modal.Body>
-          <Modal.Footer>
-            <Button variant="outlined" color="error" onClick={handleClose}>
-              Close
-            </Button>
-            <Button variant="contained" onClick={handleSubmit}>
-              Add
-            </Button>
-          </Modal.Footer>
-        </Modal>
-        <Card>
-          <UserListToolbar
-            numSelected={selected.length}
-            filterName={filter}
-            onFilterName={handleFilter}
-            filterStatus={filterStatus}
-            onfilterStatus={handleFilterStatus}
-            selectedItems={selected}
-            setSelectedItems={setSelected}
+                <div className="filter">
+                  <Stack sx={{ flexBasis: '25%', padding: '0px 10px' }}>
+                    <Select
+                      displayEmpty
+                      size="small"
+                      onChange={handleFilterCountry}
+                      value={filterCountry}
+                      style={{ margin: '5px' }}
+                    >
+                      <MenuItem key="country" value="" style={{ color: 'grey' }}>
+                        All Countries
+                      </MenuItem>
+                      {countrylist.map((country) => (
+                        <MenuItem key={country} value={country}>
+                          {country}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                    <Select
+                      displayEmpty
+                      size="small"
+                      onChange={handleFilterAppStatus}
+                      value={filterAppStatus}
+                      style={{ margin: '5px' }}
+                    >
+                      <MenuItem key="appstatus" value="" style={{ color: 'grey' }}>
+                        All Application Status
+                      </MenuItem>
+                      {appstatuslist.map((appstatus) => (
+                        <MenuItem key={appstatus} value={appstatus}>
+                          {appstatus}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </Stack>
+                  <Stack sx={{ flexBasis: '25%', padding: '0px 10px' }}>
+                    <Select
+                      displayEmpty
+                      size="small"
+                      onChange={handleFilterCity}
+                      value={filterCity}
+                      style={{ margin: '5px' }}
+                    >
+                      <MenuItem key="city" value="" style={{ color: 'grey' }}>
+                        All Cities
+                      </MenuItem>
+                      {citylist.map((city) => (
+                        <MenuItem key={city} value={city}>
+                          {city}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                    <Select
+                      displayEmpty
+                      size="small"
+                      onChange={handleFilterAttendeeType}
+                      value={filterAttendeeType}
+                      style={{ margin: '5px' }}
+                    >
+                      <MenuItem key="attendeetype" value="" style={{ color: 'grey' }}>
+                        All Attendee Types
+                      </MenuItem>
+                      {attendeetypelist.map((attendeetype) => (
+                        <MenuItem key={attendeetype} value={attendeetype}>
+                          {attendeetype}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </Stack>
+                  <Stack sx={{ flexBasis: '25%', padding: '0px 10px' }}>
+                    <Select
+                      displayEmpty
+                      size="small"
+                      onChange={handleFilterRole}
+                      value={filterRole}
+                      style={{ margin: '5px' }}
+                    >
+                      <MenuItem key="role" value="" style={{ color: 'grey' }}>
+                        All Roles
+                      </MenuItem>
+                      {rolelist.map((role) => (
+                        <MenuItem key={role} value={role}>
+                          {role}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                    <Select
+                      displayEmpty
+                      size="small"
+                      onChange={handleFilterStatus}
+                      value={filterStatus}
+                      style={{ margin: '5px' }}
+                    >
+                      <MenuItem key="status" value="" style={{ color: 'grey' }}>
+                        All Status
+                      </MenuItem>
+                      {statuslist.map((status) => (
+                        <MenuItem key={status} value={status}>
+                          {status}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </Stack>
+                  <Stack sx={{ flexBasis: '25%', padding: '0px 10px' }}>
+                    <Select
+                      displayEmpty
+                      size="small"
+                      onChange={handleFilterRsvp}
+                      value={filterRsvp}
+                      style={{ margin: '5px' }}
+                    >
+                      <MenuItem key="rsvp" value="" style={{ color: 'grey' }}>
+                        All RSVP
+                      </MenuItem>
+                      {rsvplist.map((rsvp) => (
+                        <MenuItem key={rsvp} value={rsvp}>
+                          {rsvp}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </Stack>
+                </div>
+                <Scrollbar>
+                  <TableContainer sx={{ minWidth: 800 }}>
+                    <Table>
+                      <UserListHead
+                        order={order}
+                        orderBy={orderBy}
+                        headLabel={TABLE_HEAD}
+                        rowCount={USERLIST.length}
+                        numSelected={selected.length}
+                        onRequestSort={handleRequestSort}
+                        onSelectAllClick={handleSelectAllClick}
+                      />
+                      <TableBody>
+                        {filteredUsers
+                          .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                          .map((row) => {
+                            const { id, name, title, lname, status, subdate, appstatus, email } =
+                              row;
+                            const isItemSelected = selected.indexOf(id) !== -1;
+
+                            return (
+                              <TableRow
+                                hover
+                                key={id}
+                                tabIndex={-1}
+                                role="checkbox"
+                                selected={isItemSelected}
+                                aria-checked={isItemSelected}
+                              >
+                                <TableCell padding="checkbox">
+                                  <Checkbox
+                                    checked={isItemSelected}
+                                    onChange={(event) => handleClick(event, id)}
+                                  />
+                                </TableCell>
+                                <TableCell align="left">{id}</TableCell>
+                                <TableCell align="left">{title}</TableCell>
+                                <TableCell align="left">{name}</TableCell>
+                                <TableCell align="left">{lname}</TableCell>
+                                <TableCell align="left">{email}</TableCell>
+                                <TableCell align="left">{appstatus}</TableCell>
+                                <TableCell align="left">{subdate}</TableCell>
+                                <TableCell align="left">
+                                  <Label
+                                    id={id}
+                                    onClick={toggleStatus}
+                                    variant="ghost"
+                                    color={status === 'Inactive' ? 'error' : 'success'}
+                                  >
+                                    {sentenceCase(status)}
+                                  </Label>
+                                </TableCell>
+
+                                <TableCell onClick={() => getItem(id)} align="right">
+                                  <UserMoreMenu
+                                    id={id}
+                                    setChangeData={setChangeAttendees}
+                                    changeData={changeAttendees}
+                                  />
+                                </TableCell>
+                              </TableRow>
+                            );
+                          })}
+                        {emptyRows > 0 && (
+                          <TableRow style={{ height: 53 * emptyRows }}>
+                            <TableCell colSpan={6} />
+                          </TableRow>
+                        )}
+                      </TableBody>
+                      {isUserNotFound && (
+                        <TableBody>
+                          <TableRow>
+                            <TableCell align="center" colSpan={6} sx={{ py: 3 }}>
+                              <SearchNotFound searchQuery={filter} />
+                            </TableCell>
+                          </TableRow>
+                        </TableBody>
+                      )}
+                    </Table>
+                  </TableContainer>
+                </Scrollbar>
+
+                <TablePagination
+                  rowsPerPageOptions={[5, 10, 25]}
+                  component="div"
+                  count={filteredUsers.length}
+                  rowsPerPage={rowsPerPage}
+                  page={page}
+                  onPageChange={handleChangePage}
+                  onRowsPerPageChange={handleChangeRowsPerPage}
+                />
+              </Card>
+            </Container>
+          </Page>
+        }
+      />
+      <Route
+        path="/add"
+        element={
+          <AddAttendee changeAttendees={changeAttendees} setChangeAttendees={setChangeAttendees} />
+        }
+      />
+      <Route
+        path="/edit"
+        element={
+          <EditPage
+            id={itemId}
+            editviewRecord={editviewRecord}
             setChangeData={setChangeAttendees}
             changeData={changeAttendees}
+            editlist={editlist}
           />
-          <div className="filter">
-            <Stack sx={{ flexBasis: '25%', padding: '0px 10px' }}>
-              <Select
-                displayEmpty
-                size="small"
-                onChange={handleFilterCountry}
-                value={filterCountry}
-                style={{ margin: '5px' }}
-              >
-                <MenuItem key="country" value="" style={{ color: 'grey' }}>
-                  All Countries
-                </MenuItem>
-                {countrylist.map((country) => (
-                  <MenuItem key={country} value={country}>
-                    {country}
-                  </MenuItem>
-                ))}
-              </Select>
-              <Select
-                displayEmpty
-                size="small"
-                onChange={handleFilterAppStatus}
-                value={filterAppStatus}
-                style={{ margin: '5px' }}
-              >
-                <MenuItem key="appstatus" value="" style={{ color: 'grey' }}>
-                  All Application Status
-                </MenuItem>
-                {appstatuslist.map((appstatus) => (
-                  <MenuItem key={appstatus} value={appstatus}>
-                    {appstatus}
-                  </MenuItem>
-                ))}
-              </Select>
-            </Stack>
-            <Stack sx={{ flexBasis: '25%', padding: '0px 10px' }}>
-              <Select
-                displayEmpty
-                size="small"
-                onChange={handleFilterCity}
-                value={filterCity}
-                style={{ margin: '5px' }}
-              >
-                <MenuItem key="city" value="" style={{ color: 'grey' }}>
-                  All Cities
-                </MenuItem>
-                {citylist.map((city) => (
-                  <MenuItem key={city} value={city}>
-                    {city}
-                  </MenuItem>
-                ))}
-              </Select>
-              <Select
-                displayEmpty
-                size="small"
-                onChange={handleFilterAttendeeType}
-                value={filterAttendeeType}
-                style={{ margin: '5px' }}
-              >
-                <MenuItem key="attendeetype" value="" style={{ color: 'grey' }}>
-                  All Attendee Types
-                </MenuItem>
-                {attendeetypelist.map((attendeetype) => (
-                  <MenuItem key={attendeetype} value={attendeetype}>
-                    {attendeetype}
-                  </MenuItem>
-                ))}
-              </Select>
-            </Stack>
-            <Stack sx={{ flexBasis: '25%', padding: '0px 10px' }}>
-              <Select
-                displayEmpty
-                size="small"
-                onChange={handleFilterRole}
-                value={filterRole}
-                style={{ margin: '5px' }}
-              >
-                <MenuItem key="role" value="" style={{ color: 'grey' }}>
-                  All Roles
-                </MenuItem>
-                {rolelist.map((role) => (
-                  <MenuItem key={role} value={role}>
-                    {role}
-                  </MenuItem>
-                ))}
-              </Select>
-              <Select
-                displayEmpty
-                size="small"
-                onChange={handleFilterStatus}
-                value={filterStatus}
-                style={{ margin: '5px' }}
-              >
-                <MenuItem key="status" value="" style={{ color: 'grey' }}>
-                  All Status
-                </MenuItem>
-                {statuslist.map((status) => (
-                  <MenuItem key={status} value={status}>
-                    {status}
-                  </MenuItem>
-                ))}
-              </Select>
-            </Stack>
-            <Stack sx={{ flexBasis: '25%', padding: '0px 10px' }}>
-              <Select
-                displayEmpty
-                size="small"
-                onChange={handleFilterRsvp}
-                value={filterRsvp}
-                style={{ margin: '5px' }}
-              >
-                <MenuItem key="rsvp" value="" style={{ color: 'grey' }}>
-                  All RSVP
-                </MenuItem>
-                {rsvplist.map((rsvp) => (
-                  <MenuItem key={rsvp} value={rsvp}>
-                    {rsvp}
-                  </MenuItem>
-                ))}
-              </Select>
-            </Stack>
-          </div>
-          <Scrollbar>
-            <TableContainer sx={{ minWidth: 800 }}>
-              <Table>
-                <UserListHead
-                  order={order}
-                  orderBy={orderBy}
-                  headLabel={TABLE_HEAD}
-                  rowCount={USERLIST.length}
-                  numSelected={selected.length}
-                  onRequestSort={handleRequestSort}
-                  onSelectAllClick={handleSelectAllClick}
-                />
-                <TableBody>
-                  {filteredUsers
-                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                    .map((row) => {
-                      const { id, name, title, lname, status, subdate, appstatus, email } = row;
-                      const isItemSelected = selected.indexOf(id) !== -1;
-
-                      return (
-                        <TableRow
-                          hover
-                          key={id}
-                          tabIndex={-1}
-                          role="checkbox"
-                          selected={isItemSelected}
-                          aria-checked={isItemSelected}
-                        >
-                          <TableCell padding="checkbox">
-                            <Checkbox
-                              checked={isItemSelected}
-                              onChange={(event) => handleClick(event, id)}
-                            />
-                          </TableCell>
-                          <TableCell align="left">{id}</TableCell>
-                          <TableCell align="left">{title}</TableCell>
-                          <TableCell align="left">{name}</TableCell>
-                          <TableCell align="left">{lname}</TableCell>
-                          <TableCell align="left">{email}</TableCell>
-                          <TableCell align="left">{appstatus}</TableCell>
-                          <TableCell align="left">{subdate}</TableCell>
-                          <TableCell align="left">
-                            <Label
-                              id={id}
-                              onClick={toggleStatus}
-                              variant="ghost"
-                              color={status === 'Inactive' ? 'error' : 'success'}
-                            >
-                              {sentenceCase(status)}
-                            </Label>
-                          </TableCell>
-
-                          <TableCell align="right">
-                            <UserMoreMenu
-                              id={id}
-                              setChangeData={setChangeAttendees}
-                              changeData={changeAttendees}
-                              editlist={editlist}
-                            />
-                          </TableCell>
-                        </TableRow>
-                      );
-                    })}
-                  {emptyRows > 0 && (
-                    <TableRow style={{ height: 53 * emptyRows }}>
-                      <TableCell colSpan={6} />
-                    </TableRow>
-                  )}
-                </TableBody>
-                {isUserNotFound && (
-                  <TableBody>
-                    <TableRow>
-                      <TableCell align="center" colSpan={6} sx={{ py: 3 }}>
-                        <SearchNotFound searchQuery={filter} />
-                      </TableCell>
-                    </TableRow>
-                  </TableBody>
-                )}
-              </Table>
-            </TableContainer>
-          </Scrollbar>
-
-          <TablePagination
-            rowsPerPageOptions={[5, 10, 25]}
-            component="div"
-            count={filteredUsers.length}
-            rowsPerPage={rowsPerPage}
-            page={page}
-            onPageChange={handleChangePage}
-            onRowsPerPageChange={handleChangeRowsPerPage}
-          />
-        </Card>
-      </Container>
-    </Page>
+        }
+      />
+      <Route
+        path="/view"
+        element={<ViewPage editviewRecord={editviewRecord} editlist={editlist} />}
+      />
+    </Routes>
   );
 }

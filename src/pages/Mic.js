@@ -40,7 +40,7 @@ export default function Mic() {
 
   return (
     <Page title="How to use mic">
-      <Container>
+      <Container maxWidth="false">
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4" gutterBottom>
             How to use the mic

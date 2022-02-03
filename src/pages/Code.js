@@ -40,7 +40,7 @@ export default function Code() {
 
   return (
     <Page title="Code of Conduct">
-      <Container>
+      <Container maxWidth="false">
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4" gutterBottom>
             Code of Conduct

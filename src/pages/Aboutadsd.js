@@ -54,7 +54,7 @@ export default function Aboutadsd() {
 
   return (
     <Page title="About ADSD">
-      <Container>
+      <Container maxWidth="false">
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4" gutterBottom>
             About ADSD
@@ -122,13 +122,7 @@ export default function Aboutadsd() {
                   name="description"
                 />
                 <Typography>Logo</Typography>
-                <TextField
-                  type="text"
-                  placeholder="Logo"
-                  onChange={onEditChange}
-                  value={newEdit.logo}
-                  name="logo"
-                />
+                <TextField type="file" placeholder="Logo" onChange={onEditChange} name="logo" />
               </Stack>
             </FormGroup>
             <Typography style={{ color: 'red', fontWeight: '700', padding: '10px' }}>

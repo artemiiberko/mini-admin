@@ -1,10 +1,9 @@
+import { Link, Route, Routes } from 'react-router-dom';
 import { filter } from 'lodash';
 import { Icon } from '@iconify/react';
 import { sentenceCase } from 'change-case';
 import { useState } from 'react';
 import plusFill from '@iconify/icons-eva/plus-fill';
-import { Modal } from 'react-bootstrap';
-import closeFill from '@iconify/icons-eva/close-fill';
 // material
 import {
   Card,
@@ -20,9 +19,7 @@ import {
   TableContainer,
   TablePagination,
   Select,
-  MenuItem,
-  TextField,
-  FormGroup
+  MenuItem
 } from '@mui/material';
 
 // components
@@ -33,6 +30,10 @@ import SearchNotFound from '../components/SearchNotFound';
 import { UserListHead, UserListToolbar, UserMoreMenu } from '../components/_dashboard/user';
 //
 import EVENTREGISTRATIONS from '../_mocks_/eventregistration';
+import AddEventregistration from './add/AddEventregistration';
+import EditPage from './EditPage';
+import ViewPage from './ViewPage';
+
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
@@ -116,77 +117,15 @@ export default function Eventregistration() {
   const [filter, setFilter] = useState('');
   const [filterStatus, setFilterStatus] = useState('');
   const [rowsPerPage, setRowsPerPage] = useState(5);
-  const [show, setShow] = useState(false);
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
   const [changeEventregistrations, setChangeEventregistrations] = useState(EVENTREGISTRATIONS);
-  const [addeventregistrationerror, setAddeventregistrationerror] = useState('');
+  const [itemId, setItemId] = useState(0);
+  const [editviewRecord, setEditviewRecord] = useState({});
 
-  const [newEventregistration, setNewEventregistration] = useState({
-    id: 0,
-    title: '',
-    location: '',
-    description: '',
-    date: '',
-    fromtime: '',
-    totime: '',
-    status: ''
-  });
-  const addEventregistration = (eventregistration) => {
-    setChangeEventregistrations((prevState) => [...prevState, eventregistration]);
+  const getItem = (id) => {
+    setItemId(id);
+    setEditviewRecord(changeEventregistrations.find((x) => x.id === id));
   };
-  const onEventregistrationChange = (e) => {
-    let idPlus = Math.max(...changeEventregistrations.map((e) => e.id));
-    idPlus += 1;
-    let datestring = newEventregistration.date;
-    if (e.target.name === 'date') {
-      datestring = `${e.target.value} UTC`;
-    }
-    let fromtimestring = newEventregistration.fromtime;
-    if (e.target.name === 'fromtime') {
-      fromtimestring = `${e.target.value} UTC`;
-    }
-    let totimestring = newEventregistration.totime;
-    if (e.target.name === 'totime') {
-      totimestring = `${e.target.value} UTC`;
-    }
-    const { name, value } = e.target;
-    setNewEventregistration((prevState) => ({
-      ...prevState,
-      [name]: value,
-      id: idPlus,
-      date: datestring,
-      fromtime: fromtimestring,
-      totime: totimestring
-    }));
-  };
-  const handleSubmit = () => {
-    if (
-      newEventregistration.title !== '' &&
-      newEventregistration.location !== '' &&
-      newEventregistration.description !== '' &&
-      newEventregistration.date !== '' &&
-      newEventregistration.fromtime !== '' &&
-      newEventregistration.totime !== '' &&
-      newEventregistration.status !== ''
-    ) {
-      setAddeventregistrationerror('');
-      addEventregistration(newEventregistration);
-      setNewEventregistration({
-        id: 0,
-        title: '',
-        location: '',
-        description: '',
-        date: '',
-        fromtime: '',
-        totime: '',
-        status: ''
-      });
-      handleClose();
-    } else {
-      setAddeventregistrationerror('Please fill all fields');
-    }
-  };
+
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
@@ -259,228 +198,182 @@ export default function Eventregistration() {
   };
 
   return (
-    <Page title="Event Registration">
-      <Container>
-        <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
-          <Typography variant="h4" gutterBottom>
-            Event Registration
-          </Typography>
-          <Button variant="contained" startIcon={<Icon icon={plusFill} />} onClick={handleShow}>
-            New Event
-          </Button>
-        </Stack>
-        <Modal show={show} onHide={handleClose} size="lg">
-          <Modal.Header>
-            <Modal.Title>NEW EVENT</Modal.Title>
-            <Button style={{ fontSize: '32px' }} onClick={handleClose}>
-              <Icon icon={closeFill} />
-            </Button>
-          </Modal.Header>
-          <Modal.Body>
-            <FormGroup style={{ display: 'flex', width: '100%' }}>
-              <Stack spacing={3} style={{ flexBasis: '50%', padding: '10px', flexShrink: '0' }}>
-                <Typography>Title</Typography>
-                <TextField
-                  type="text"
-                  placeholder="Title"
-                  onChange={onEventregistrationChange}
-                  value={newEventregistration.title}
-                  name="title"
-                />
-                <Typography>Location</Typography>
-                <TextField
-                  type="text"
-                  placeholder="Location"
-                  onChange={onEventregistrationChange}
-                  value={newEventregistration.location}
-                  name="location"
-                />
-                <Typography>Description</Typography>
-                <TextField
-                  type="text"
-                  placeholder="Description"
-                  onChange={onEventregistrationChange}
-                  value={newEventregistration.description}
-                  name="description"
-                />
-                <Typography>Date</Typography>
-                <TextField
-                  type="date"
-                  placeholder="Date"
-                  onChange={onEventregistrationChange}
-                  name="date"
-                />
-                <Typography>Status</Typography>
-                <Select
-                  displayEmpty
-                  name="status"
-                  onChange={onEventregistrationChange}
-                  value={newEventregistration.status}
-                >
-                  <MenuItem key="status" value="" style={{ color: 'grey' }}>
-                    Select Status...
-                  </MenuItem>
-                  {statuslist.map((status) => (
-                    <MenuItem key={status} value={status}>
-                      {status}
-                    </MenuItem>
-                  ))}
-                </Select>
+    <Routes>
+      <Route
+        path=""
+        element={
+          <Page title="Event Registration">
+            <Container maxWidth="false">
+              <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
+                <Typography variant="h4" gutterBottom>
+                  Event Registration
+                </Typography>
+                <Link to="./add">
+                  <Button variant="contained" startIcon={<Icon icon={plusFill} />}>
+                    New Event
+                  </Button>
+                </Link>
               </Stack>
-              <Stack spacing={3} style={{ flexBasis: '50%', padding: '10px', flexShrink: '0' }}>
-                <Typography>From Time</Typography>
-                <TextField
-                  type="time"
-                  placeholder="From Time"
-                  onChange={onEventregistrationChange}
-                  name="fromtime"
+
+              <Card>
+                <UserListToolbar
+                  numSelected={selected.length}
+                  filterName={filter}
+                  onFilterName={handleFilter}
+                  selectedItems={selected}
+                  setSelectedItems={setSelected}
+                  setChangeData={setChangeEventregistrations}
+                  changeData={changeEventregistrations}
                 />
-                <Typography>To Time</Typography>
-                <TextField
-                  type="time"
-                  placeholder="To Time"
-                  onChange={onEventregistrationChange}
-                  name="totime"
+                <div className="filter">
+                  <Stack sx={{ flexBasis: '25%', padding: '0px 10px' }}>
+                    <Select
+                      displayEmpty
+                      size="small"
+                      onChange={handleFilterStatus}
+                      value={filterStatus}
+                      style={{ margin: '5px' }}
+                    >
+                      <MenuItem key="status" value="" style={{ color: 'grey' }}>
+                        All Status
+                      </MenuItem>
+                      {statuslist.map((status) => (
+                        <MenuItem key={status} value={status}>
+                          {status}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </Stack>
+                </div>
+                <Scrollbar>
+                  <TableContainer sx={{ minWidth: 800 }}>
+                    <Table>
+                      <UserListHead
+                        order={order}
+                        orderBy={orderBy}
+                        headLabel={TABLE_HEAD}
+                        rowCount={changeEventregistrations.length}
+                        numSelected={selected.length}
+                        onRequestSort={handleRequestSort}
+                        onSelectAllClick={handleSelectAllClick}
+                      />
+                      <TableBody>
+                        {filteredEventregistrations
+                          .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                          .map((row) => {
+                            const {
+                              id,
+                              title,
+                              description,
+                              location,
+                              date,
+                              fromtime,
+                              totime,
+                              status
+                            } = row;
+                            const isItemSelected = selected.indexOf(id) !== -1;
+
+                            return (
+                              <TableRow
+                                hover
+                                key={id}
+                                tabIndex={-1}
+                                role="checkbox"
+                                selected={isItemSelected}
+                                aria-checked={isItemSelected}
+                              >
+                                <TableCell padding="checkbox">
+                                  <Checkbox
+                                    checked={isItemSelected}
+                                    onChange={(event) => handleClick(event, id)}
+                                  />
+                                </TableCell>
+                                <TableCell align="left">{id}</TableCell>
+                                <TableCell align="left">{title}</TableCell>
+                                <TableCell align="left">{location}</TableCell>
+                                <TableCell align="left">{description}</TableCell>
+                                <TableCell align="left">{date}</TableCell>
+                                <TableCell align="left">{fromtime}</TableCell>
+                                <TableCell align="left">{totime}</TableCell>
+                                <TableCell align="left">
+                                  <Label
+                                    id={id}
+                                    onClick={toggleStatus}
+                                    variant="ghost"
+                                    color={status === 'Inactive' ? 'error' : 'success'}
+                                  >
+                                    {sentenceCase(status)}
+                                  </Label>
+                                </TableCell>
+
+                                <TableCell onClick={() => getItem(id)} align="right">
+                                  <UserMoreMenu
+                                    id={id}
+                                    setChangeData={setChangeEventregistrations}
+                                    changeData={changeEventregistrations}
+                                  />
+                                </TableCell>
+                              </TableRow>
+                            );
+                          })}
+                        {emptyRows > 0 && (
+                          <TableRow style={{ height: 53 * emptyRows }}>
+                            <TableCell colSpan={6} />
+                          </TableRow>
+                        )}
+                      </TableBody>
+                      {isEventregistrationNotFound && (
+                        <TableBody>
+                          <TableRow>
+                            <TableCell align="center" colSpan={6} sx={{ py: 3 }}>
+                              <SearchNotFound searchQuery={filter} />
+                            </TableCell>
+                          </TableRow>
+                        </TableBody>
+                      )}
+                    </Table>
+                  </TableContainer>
+                </Scrollbar>
+
+                <TablePagination
+                  rowsPerPageOptions={[5, 10, 25]}
+                  component="div"
+                  count={filteredEventregistrations.length}
+                  rowsPerPage={rowsPerPage}
+                  page={page}
+                  onPageChange={handleChangePage}
+                  onRowsPerPageChange={handleChangeRowsPerPage}
                 />
-              </Stack>
-            </FormGroup>
-            <Typography style={{ color: 'red', fontWeight: '700', padding: '10px' }}>
-              {addeventregistrationerror}
-            </Typography>
-          </Modal.Body>
-          <Modal.Footer>
-            <Button variant="outlined" color="error" onClick={handleClose}>
-              Close
-            </Button>
-            <Button variant="contained" onClick={handleSubmit}>
-              Add
-            </Button>
-          </Modal.Footer>
-        </Modal>
-        <Card>
-          <UserListToolbar
-            numSelected={selected.length}
-            filterName={filter}
-            onFilterName={handleFilter}
-            selectedItems={selected}
-            setSelectedItems={setSelected}
+              </Card>
+            </Container>
+          </Page>
+        }
+      />
+      <Route
+        path="/add"
+        element={
+          <AddEventregistration
+            changeEventregistrations={changeEventregistrations}
+            setChangeEventregistrations={setChangeEventregistrations}
+          />
+        }
+      />
+      <Route
+        path="/edit"
+        element={
+          <EditPage
+            id={itemId}
+            editviewRecord={editviewRecord}
             setChangeData={setChangeEventregistrations}
             changeData={changeEventregistrations}
+            editlist={editlist}
           />
-          <div className="filter">
-            <Stack sx={{ flexBasis: '25%', padding: '0px 10px' }}>
-              <Select
-                displayEmpty
-                size="small"
-                onChange={handleFilterStatus}
-                value={filterStatus}
-                style={{ margin: '5px' }}
-              >
-                <MenuItem key="status" value="" style={{ color: 'grey' }}>
-                  All Status
-                </MenuItem>
-                {statuslist.map((status) => (
-                  <MenuItem key={status} value={status}>
-                    {status}
-                  </MenuItem>
-                ))}
-              </Select>
-            </Stack>
-          </div>
-          <Scrollbar>
-            <TableContainer sx={{ minWidth: 800 }}>
-              <Table>
-                <UserListHead
-                  order={order}
-                  orderBy={orderBy}
-                  headLabel={TABLE_HEAD}
-                  rowCount={changeEventregistrations.length}
-                  numSelected={selected.length}
-                  onRequestSort={handleRequestSort}
-                  onSelectAllClick={handleSelectAllClick}
-                />
-                <TableBody>
-                  {filteredEventregistrations
-                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                    .map((row) => {
-                      const { id, title, description, location, date, fromtime, totime, status } =
-                        row;
-                      const isItemSelected = selected.indexOf(id) !== -1;
-
-                      return (
-                        <TableRow
-                          hover
-                          key={id}
-                          tabIndex={-1}
-                          role="checkbox"
-                          selected={isItemSelected}
-                          aria-checked={isItemSelected}
-                        >
-                          <TableCell padding="checkbox">
-                            <Checkbox
-                              checked={isItemSelected}
-                              onChange={(event) => handleClick(event, id)}
-                            />
-                          </TableCell>
-                          <TableCell align="left">{id}</TableCell>
-                          <TableCell align="left">{title}</TableCell>
-                          <TableCell align="left">{location}</TableCell>
-                          <TableCell align="left">{description}</TableCell>
-                          <TableCell align="left">{date}</TableCell>
-                          <TableCell align="left">{fromtime}</TableCell>
-                          <TableCell align="left">{totime}</TableCell>
-                          <TableCell align="left">
-                            <Label
-                              id={id}
-                              onClick={toggleStatus}
-                              variant="ghost"
-                              color={status === 'Inactive' ? 'error' : 'success'}
-                            >
-                              {sentenceCase(status)}
-                            </Label>
-                          </TableCell>
-
-                          <TableCell align="right">
-                            <UserMoreMenu
-                              id={id}
-                              setChangeData={setChangeEventregistrations}
-                              changeData={changeEventregistrations}
-                              editlist={editlist}
-                            />
-                          </TableCell>
-                        </TableRow>
-                      );
-                    })}
-                  {emptyRows > 0 && (
-                    <TableRow style={{ height: 53 * emptyRows }}>
-                      <TableCell colSpan={6} />
-                    </TableRow>
-                  )}
-                </TableBody>
-                {isEventregistrationNotFound && (
-                  <TableBody>
-                    <TableRow>
-                      <TableCell align="center" colSpan={6} sx={{ py: 3 }}>
-                        <SearchNotFound searchQuery={filter} />
-                      </TableCell>
-                    </TableRow>
-                  </TableBody>
-                )}
-              </Table>
-            </TableContainer>
-          </Scrollbar>
-
-          <TablePagination
-            rowsPerPageOptions={[5, 10, 25]}
-            component="div"
-            count={filteredEventregistrations.length}
-            rowsPerPage={rowsPerPage}
-            page={page}
-            onPageChange={handleChangePage}
-            onRowsPerPageChange={handleChangeRowsPerPage}
-          />
-        </Card>
-      </Container>
-    </Page>
+        }
+      />
+      <Route
+        path="/view"
+        element={<ViewPage editviewRecord={editviewRecord} editlist={editlist} />}
+      />
+    </Routes>
   );
 }

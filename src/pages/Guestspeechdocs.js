@@ -1,9 +1,8 @@
+import { Link, Route, Routes } from 'react-router-dom';
 import { filter } from 'lodash';
 import { Icon } from '@iconify/react';
 import { useState } from 'react';
 import plusFill from '@iconify/icons-eva/plus-fill';
-import { Modal } from 'react-bootstrap';
-import closeFill from '@iconify/icons-eva/close-fill';
 // material
 import {
   Card,
@@ -17,9 +16,7 @@ import {
   Container,
   Typography,
   TableContainer,
-  TablePagination,
-  TextField,
-  FormGroup
+  TablePagination
 } from '@mui/material';
 // components
 import Page from '../components/Page';
@@ -28,6 +25,10 @@ import SearchNotFound from '../components/SearchNotFound';
 import { UserListHead, UserListToolbar, UserMoreMenu } from '../components/_dashboard/user';
 //
 import GUESTSPEECHDOCS from '../_mocks_/guestspeechdocs';
+import AddGuestspeechdoc from './add/AddGuestspeechdocs';
+import EditPage from './EditPage';
+import ViewPage from './ViewPage';
+
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
@@ -90,44 +91,15 @@ export default function Guestspeechdocs() {
   const [orderBy, setOrderBy] = useState('id');
   const [filter, setFilter] = useState('');
   const [rowsPerPage, setRowsPerPage] = useState(5);
-  const [show, setShow] = useState(false);
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
   const [changeGuestspeechdocs, setChangeGuestspeechdocs] = useState(GUESTSPEECHDOCS);
-  const [addguestspeechdocerror, setAddguestspeechdocerror] = useState('');
+  const [itemId, setItemId] = useState(0);
+  const [editviewRecord, setEditviewRecord] = useState({});
 
-  const [newGuestspeechdoc, setNewGuestspeechdoc] = useState({
-    id: 0,
-    title: '',
-    speechfile: ''
-  });
-  const addGuestspeechdoc = (guestspeechdoc) => {
-    setChangeGuestspeechdocs((prevState) => [...prevState, guestspeechdoc]);
+  const getItem = (id) => {
+    setItemId(id);
+    setEditviewRecord(changeGuestspeechdocs.find((x) => x.id === id));
   };
-  const onGuestspeechdocChange = (e) => {
-    let idPlus = Math.max(...changeGuestspeechdocs.map((e) => e.id));
-    idPlus += 1;
-    const { name, value } = e.target;
-    setNewGuestspeechdoc((prevState) => ({
-      ...prevState,
-      [name]: value,
-      id: idPlus
-    }));
-  };
-  const handleSubmit = () => {
-    if (newGuestspeechdoc.speechfile !== '' && newGuestspeechdoc.title !== '') {
-      setAddguestspeechdocerror('');
-      addGuestspeechdoc(newGuestspeechdoc);
-      setNewGuestspeechdoc({
-        id: 0,
-        title: '',
-        speechfile: ''
-      });
-      handleClose();
-    } else {
-      setAddguestspeechdocerror('Please fill all fields');
-    }
-  };
+
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
@@ -185,144 +157,136 @@ export default function Guestspeechdocs() {
   const isGuestspeechdocNotFound = filteredGuestspeechdocs.length === 0;
 
   return (
-    <Page title="Guest Speech Docs">
-      <Container>
-        <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
-          <Typography variant="h4" gutterBottom>
-            Guest Speech Docs
-          </Typography>
-          <Button variant="contained" startIcon={<Icon icon={plusFill} />} onClick={handleShow}>
-            Add Doc
-          </Button>
-        </Stack>
-        <Modal show={show} onHide={handleClose} size="lg">
-          <Modal.Header>
-            <Modal.Title>NEW DOC</Modal.Title>
-            <Button style={{ fontSize: '32px' }} onClick={handleClose}>
-              <Icon icon={closeFill} />
-            </Button>
-          </Modal.Header>
-          <Modal.Body>
-            <FormGroup style={{ display: 'flex', width: '100%' }}>
-              <Stack spacing={3} style={{ flexBasis: '50%', padding: '10px', flexShrink: '0' }}>
-                <Typography>Title</Typography>
-                <TextField
-                  type="text"
-                  placeholder="Title"
-                  onChange={onGuestspeechdocChange}
-                  value={newGuestspeechdoc.title}
-                  name="title"
-                />
-                <Typography>Guest Speech File</Typography>
-                <TextField
-                  type="file"
-                  placeholder="Guest Speech File"
-                  onChange={onGuestspeechdocChange}
-                  value={newGuestspeechdoc.speechfile}
-                  name="speechfile"
-                />
+    <Routes>
+      <Route
+        path=""
+        element={
+          <Page title="Guest Speech Docs">
+            <Container maxWidth="false">
+              <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
+                <Typography variant="h4" gutterBottom>
+                  Guest Speech Docs
+                </Typography>
+                <Link to="./add">
+                  <Button variant="contained" startIcon={<Icon icon={plusFill} />}>
+                    Add Doc
+                  </Button>
+                </Link>
               </Stack>
-            </FormGroup>
-            <Typography style={{ color: 'red', fontWeight: '700', padding: '10px' }}>
-              {addguestspeechdocerror}
-            </Typography>
-          </Modal.Body>
-          <Modal.Footer>
-            <Button variant="outlined" color="error" onClick={handleClose}>
-              Close
-            </Button>
-            <Button variant="contained" onClick={handleSubmit}>
-              Add
-            </Button>
-          </Modal.Footer>
-        </Modal>
-        <Card>
-          <UserListToolbar
-            numSelected={selected.length}
-            filterName={filter}
-            onFilterName={handleFilter}
-            selectedItems={selected}
-            setSelectedItems={setSelected}
+              <Card>
+                <UserListToolbar
+                  numSelected={selected.length}
+                  filterName={filter}
+                  onFilterName={handleFilter}
+                  selectedItems={selected}
+                  setSelectedItems={setSelected}
+                  setChangeData={setChangeGuestspeechdocs}
+                  changeData={changeGuestspeechdocs}
+                />
+                <Scrollbar>
+                  <TableContainer sx={{ minWidth: 800 }}>
+                    <Table>
+                      <UserListHead
+                        order={order}
+                        orderBy={orderBy}
+                        headLabel={TABLE_HEAD}
+                        rowCount={changeGuestspeechdocs.length}
+                        numSelected={selected.length}
+                        onRequestSort={handleRequestSort}
+                        onSelectAllClick={handleSelectAllClick}
+                      />
+                      <TableBody>
+                        {filteredGuestspeechdocs
+                          .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                          .map((row) => {
+                            const { id, speechfile } = row;
+                            const isItemSelected = selected.indexOf(id) !== -1;
+
+                            return (
+                              <TableRow
+                                hover
+                                key={id}
+                                tabIndex={-1}
+                                role="checkbox"
+                                selected={isItemSelected}
+                                aria-checked={isItemSelected}
+                              >
+                                <TableCell padding="checkbox">
+                                  <Checkbox
+                                    checked={isItemSelected}
+                                    onChange={(event) => handleClick(event, id)}
+                                  />
+                                </TableCell>
+                                <TableCell align="left">{id}</TableCell>
+                                <TableCell align="left">{speechfile}</TableCell>
+                                <TableCell onClick={() => getItem(id)} align="right">
+                                  <UserMoreMenu
+                                    id={id}
+                                    setChangeData={setChangeGuestspeechdocs}
+                                    changeData={changeGuestspeechdocs}
+                                  />
+                                </TableCell>
+                              </TableRow>
+                            );
+                          })}
+                        {emptyRows > 0 && (
+                          <TableRow style={{ height: 53 * emptyRows }}>
+                            <TableCell colSpan={6} />
+                          </TableRow>
+                        )}
+                      </TableBody>
+                      {isGuestspeechdocNotFound && (
+                        <TableBody>
+                          <TableRow>
+                            <TableCell align="center" colSpan={6} sx={{ py: 3 }}>
+                              <SearchNotFound searchQuery={filter} />
+                            </TableCell>
+                          </TableRow>
+                        </TableBody>
+                      )}
+                    </Table>
+                  </TableContainer>
+                </Scrollbar>
+
+                <TablePagination
+                  rowsPerPageOptions={[5, 10, 25]}
+                  component="div"
+                  count={filteredGuestspeechdocs.length}
+                  rowsPerPage={rowsPerPage}
+                  page={page}
+                  onPageChange={handleChangePage}
+                  onRowsPerPageChange={handleChangeRowsPerPage}
+                />
+              </Card>
+            </Container>
+          </Page>
+        }
+      />
+      <Route
+        path="/add"
+        element={
+          <AddGuestspeechdoc
+            changeGuestspeechdocs={changeGuestspeechdocs}
+            setChangeGuestspeechdocs={setChangeGuestspeechdocs}
+          />
+        }
+      />
+      <Route
+        path="/edit"
+        element={
+          <EditPage
+            id={itemId}
+            editviewRecord={editviewRecord}
             setChangeData={setChangeGuestspeechdocs}
             changeData={changeGuestspeechdocs}
+            editlist={editlist}
           />
-          <Scrollbar>
-            <TableContainer sx={{ minWidth: 800 }}>
-              <Table>
-                <UserListHead
-                  order={order}
-                  orderBy={orderBy}
-                  headLabel={TABLE_HEAD}
-                  rowCount={changeGuestspeechdocs.length}
-                  numSelected={selected.length}
-                  onRequestSort={handleRequestSort}
-                  onSelectAllClick={handleSelectAllClick}
-                />
-                <TableBody>
-                  {filteredGuestspeechdocs
-                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                    .map((row) => {
-                      const { id, speechfile } = row;
-                      const isItemSelected = selected.indexOf(id) !== -1;
-
-                      return (
-                        <TableRow
-                          hover
-                          key={id}
-                          tabIndex={-1}
-                          role="checkbox"
-                          selected={isItemSelected}
-                          aria-checked={isItemSelected}
-                        >
-                          <TableCell padding="checkbox">
-                            <Checkbox
-                              checked={isItemSelected}
-                              onChange={(event) => handleClick(event, id)}
-                            />
-                          </TableCell>
-                          <TableCell align="left">{id}</TableCell>
-                          <TableCell align="left">{speechfile}</TableCell>
-                          <TableCell align="right">
-                            <UserMoreMenu
-                              id={id}
-                              setChangeData={setChangeGuestspeechdocs}
-                              changeData={changeGuestspeechdocs}
-                              editlist={editlist}
-                            />
-                          </TableCell>
-                        </TableRow>
-                      );
-                    })}
-                  {emptyRows > 0 && (
-                    <TableRow style={{ height: 53 * emptyRows }}>
-                      <TableCell colSpan={6} />
-                    </TableRow>
-                  )}
-                </TableBody>
-                {isGuestspeechdocNotFound && (
-                  <TableBody>
-                    <TableRow>
-                      <TableCell align="center" colSpan={6} sx={{ py: 3 }}>
-                        <SearchNotFound searchQuery={filter} />
-                      </TableCell>
-                    </TableRow>
-                  </TableBody>
-                )}
-              </Table>
-            </TableContainer>
-          </Scrollbar>
-
-          <TablePagination
-            rowsPerPageOptions={[5, 10, 25]}
-            component="div"
-            count={filteredGuestspeechdocs.length}
-            rowsPerPage={rowsPerPage}
-            page={page}
-            onPageChange={handleChangePage}
-            onRowsPerPageChange={handleChangeRowsPerPage}
-          />
-        </Card>
-      </Container>
-    </Page>
+        }
+      />
+      <Route
+        path="/view"
+        element={<ViewPage editviewRecord={editviewRecord} editlist={editlist} />}
+      />
+    </Routes>
   );
 }

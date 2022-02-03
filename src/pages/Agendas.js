@@ -1,10 +1,9 @@
+import { Routes, Route, Link } from 'react-router-dom';
 import { filter } from 'lodash';
 import { Icon } from '@iconify/react';
 import { sentenceCase } from 'change-case';
 import { useState } from 'react';
 import plusFill from '@iconify/icons-eva/plus-fill';
-import { Modal } from 'react-bootstrap';
-import closeFill from '@iconify/icons-eva/close-fill';
 // material
 import {
   Card,
@@ -20,9 +19,7 @@ import {
   TableContainer,
   TablePagination,
   Select,
-  MenuItem,
-  TextField,
-  FormGroup
+  MenuItem
 } from '@mui/material';
 // components
 import Page from '../components/Page';
@@ -32,6 +29,10 @@ import SearchNotFound from '../components/SearchNotFound';
 import { UserListHead, UserListToolbar, UserMoreMenu } from '../components/_dashboard/user';
 //
 import AGENDAS from '../_mocks_/agendas';
+import AddAgenda from './add/AddAgenda';
+import EditPage from './EditPage';
+import ViewPage from './ViewPage';
+
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
@@ -44,7 +45,6 @@ const TABLE_HEAD = [
   { id: '' }
 ];
 const statuslist = ['Active', 'Inactive'];
-const speakerslist = ['speaker1', 'speaker2', 'speaker3'];
 const editlist = {
   text: [
     { name: 'Title', id: 'title' },
@@ -119,56 +119,13 @@ export default function Agendas() {
   const [filter, setFilter] = useState('');
   const [filterStatus, setFilterStatus] = useState('');
   const [rowsPerPage, setRowsPerPage] = useState(5);
-  const [show, setShow] = useState(false);
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
   const [changeAgendas, setChangeAgendas] = useState(AGENDAS);
-  const [addagendaerror, setAddagendaerror] = useState('');
+  const [itemId, setItemId] = useState(0);
+  const [editviewRecord, setEditviewRecord] = useState({});
 
-  const [newAgenda, setNewAgenda] = useState({
-    id: 0,
-    title: '',
-    description: '',
-    speakers: '',
-    rating: '',
-    status: ''
-  });
-  const addAgenda = (agenda) => {
-    setChangeAgendas((prevState) => [...prevState, agenda]);
-  };
-  const onAgendaChange = (e) => {
-    let idPlus = Math.max(...changeAgendas.map((e) => e.id));
-    idPlus += 1;
-
-    const { name, value } = e.target;
-    setNewAgenda((prevState) => ({
-      ...prevState,
-      [name]: value,
-      id: idPlus
-    }));
-  };
-  const handleSubmit = () => {
-    if (
-      newAgenda.title !== '' &&
-      newAgenda.description !== '' &&
-      newAgenda.speakers !== '' &&
-      newAgenda.rating !== '' &&
-      newAgenda.status !== ''
-    ) {
-      setAddagendaerror('');
-      addAgenda(newAgenda);
-      setNewAgenda({
-        id: 0,
-        title: '',
-        description: '',
-        speakers: '',
-        rating: '',
-        status: ''
-      });
-      handleClose();
-    } else {
-      setAddagendaerror('Please fill all fields');
-    }
+  const getItem = (id) => {
+    setItemId(id);
+    setEditviewRecord(changeAgendas.find((x) => x.id === id));
   };
 
   const handleRequestSort = (event, property) => {
@@ -243,223 +200,165 @@ export default function Agendas() {
   };
 
   return (
-    <Page title="Agendas">
-      <Container>
-        <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
-          <Typography variant="h4" gutterBottom>
-            Agendas
-          </Typography>
-          <Button variant="contained" startIcon={<Icon icon={plusFill} />} onClick={handleShow}>
-            New Agenda
-          </Button>
-        </Stack>
-        <Modal show={show} onHide={handleClose} size="lg">
-          <Modal.Header>
-            <Modal.Title>NEW AGENDA</Modal.Title>
-            <Button style={{ fontSize: '32px' }} onClick={handleClose}>
-              <Icon icon={closeFill} />
-            </Button>
-          </Modal.Header>
-          <Modal.Body>
-            <FormGroup style={{ display: 'flex', width: '100%' }}>
-              <Stack spacing={3} style={{ flexBasis: '50%', padding: '10px', flexShrink: '0' }}>
-                <Typography>Title</Typography>
-                <TextField
-                  type="text"
-                  placeholder="Title"
-                  onChange={onAgendaChange}
-                  value={newAgenda.title}
-                  name="title"
-                />
-                <Typography>Description</Typography>
-                <TextField
-                  multiline
-                  minRows={6}
-                  maxRows={6}
-                  type="text"
-                  placeholder="Description"
-                  onChange={onAgendaChange}
-                  value={newAgenda.descripton}
-                  name="description"
-                />
+    <Routes>
+      <Route
+        path=""
+        element={
+          <Page title="Agendas">
+            <Container maxWidth="false">
+              <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
+                <Typography variant="h4" gutterBottom>
+                  Agendas
+                </Typography>
+                <Link to="./add">
+                  <Button variant="contained" startIcon={<Icon icon={plusFill} />}>
+                    New Agenda
+                  </Button>
+                </Link>
               </Stack>
-              <Stack spacing={3} style={{ flexBasis: '50%', padding: '10px', flexShrink: '0' }}>
-                <Typography>Speakers</Typography>
-                <Select
-                  displayEmpty
-                  name="speakers"
-                  onChange={onAgendaChange}
-                  value={newAgenda.speakers}
-                >
-                  <MenuItem key="speakers" value="" style={{ color: 'grey' }}>
-                    Select Speaker...
-                  </MenuItem>
-                  {speakerslist.map((speaker) => (
-                    <MenuItem key={speaker} value={speaker}>
-                      {speaker}
-                    </MenuItem>
-                  ))}
-                </Select>
-                <Typography>Rating</Typography>
-                <TextField
-                  type="number"
-                  placeholder="Rating"
-                  onChange={onAgendaChange}
-                  value={newAgenda.rating}
-                  name="rating"
+              <Card>
+                <UserListToolbar
+                  numSelected={selected.length}
+                  filterName={filter}
+                  onFilterName={handleFilter}
+                  selectedItems={selected}
+                  setSelectedItems={setSelected}
+                  setChangeData={setChangeAgendas}
+                  changeData={changeAgendas}
                 />
-                <Typography>Status</Typography>
-                <Select
-                  displayEmpty
-                  name="status"
-                  onChange={onAgendaChange}
-                  value={newAgenda.status}
-                >
-                  <MenuItem key="status" value="" style={{ color: 'grey' }}>
-                    Select Status...
-                  </MenuItem>
-                  {statuslist.map((status) => (
-                    <MenuItem key={status} value={status}>
-                      {status}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </Stack>
-            </FormGroup>
-            <Typography style={{ color: 'red', fontWeight: '700', padding: '10px' }}>
-              {addagendaerror}
-            </Typography>
-          </Modal.Body>
-          <Modal.Footer>
-            <Button variant="outlined" color="error" onClick={handleClose}>
-              Close
-            </Button>
-            <Button variant="contained" onClick={handleSubmit}>
-              Add
-            </Button>
-          </Modal.Footer>
-        </Modal>
-        <Card>
-          <UserListToolbar
-            numSelected={selected.length}
-            filterName={filter}
-            onFilterName={handleFilter}
-            selectedItems={selected}
-            setSelectedItems={setSelected}
+                <div className="filter">
+                  <Stack sx={{ flexBasis: '25%', padding: '0px 10px' }}>
+                    <Select
+                      displayEmpty
+                      size="small"
+                      onChange={handleFilterStatus}
+                      value={filterStatus}
+                      style={{ margin: '5px' }}
+                    >
+                      <MenuItem key="status" value="" style={{ color: 'grey' }}>
+                        All Status
+                      </MenuItem>
+                      {statuslist.map((status) => (
+                        <MenuItem key={status} value={status}>
+                          {status}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </Stack>
+                </div>
+                <Scrollbar>
+                  <TableContainer sx={{ minWidth: 800 }}>
+                    <Table>
+                      <UserListHead
+                        order={order}
+                        orderBy={orderBy}
+                        headLabel={TABLE_HEAD}
+                        rowCount={changeAgendas.length}
+                        numSelected={selected.length}
+                        onRequestSort={handleRequestSort}
+                        onSelectAllClick={handleSelectAllClick}
+                      />
+                      <TableBody>
+                        {filteredAgendas
+                          .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                          .map((row) => {
+                            const { id, title, description, status, rating, speakers } = row;
+                            const isItemSelected = selected.indexOf(id) !== -1;
+
+                            return (
+                              <TableRow
+                                hover
+                                key={id}
+                                tabIndex={-1}
+                                role="checkbox"
+                                selected={isItemSelected}
+                                aria-checked={isItemSelected}
+                              >
+                                <TableCell padding="checkbox">
+                                  <Checkbox
+                                    checked={isItemSelected}
+                                    onChange={(event) => handleClick(event, id)}
+                                  />
+                                </TableCell>
+                                <TableCell align="left">{id}</TableCell>
+                                <TableCell align="left">{title}</TableCell>
+                                <TableCell align="left">{description}</TableCell>
+                                <TableCell align="left">{speakers}</TableCell>
+                                <TableCell align="left">{rating}</TableCell>
+                                <TableCell align="left">
+                                  <Label
+                                    id={id}
+                                    variant="ghost"
+                                    color={status === 'Inactive' ? 'error' : 'success'}
+                                    onClick={toggleStatus}
+                                  >
+                                    {sentenceCase(status)}
+                                  </Label>
+                                </TableCell>
+
+                                <TableCell onClick={() => getItem(id)} align="right">
+                                  <UserMoreMenu
+                                    id={id}
+                                    setChangeData={setChangeAgendas}
+                                    changeData={changeAgendas}
+                                  />
+                                </TableCell>
+                              </TableRow>
+                            );
+                          })}
+                        {emptyRows > 0 && (
+                          <TableRow style={{ height: 53 * emptyRows }}>
+                            <TableCell colSpan={6} />
+                          </TableRow>
+                        )}
+                      </TableBody>
+                      {isAgendaNotFound && (
+                        <TableBody>
+                          <TableRow>
+                            <TableCell align="center" colSpan={6} sx={{ py: 3 }}>
+                              <SearchNotFound searchQuery={filter} />
+                            </TableCell>
+                          </TableRow>
+                        </TableBody>
+                      )}
+                    </Table>
+                  </TableContainer>
+                </Scrollbar>
+
+                <TablePagination
+                  rowsPerPageOptions={[5, 10, 25]}
+                  component="div"
+                  count={filteredAgendas.length}
+                  rowsPerPage={rowsPerPage}
+                  page={page}
+                  onPageChange={handleChangePage}
+                  onRowsPerPageChange={handleChangeRowsPerPage}
+                />
+              </Card>
+            </Container>
+          </Page>
+        }
+      />
+      <Route
+        path="/add"
+        element={<AddAgenda changeAgendas={changeAgendas} setChangeAgendas={setChangeAgendas} />}
+      />
+      <Route
+        path="/edit"
+        element={
+          <EditPage
+            id={itemId}
+            editviewRecord={editviewRecord}
             setChangeData={setChangeAgendas}
             changeData={changeAgendas}
+            editlist={editlist}
           />
-          <div className="filter">
-            <Stack sx={{ flexBasis: '25%', padding: '0px 10px' }}>
-              <Select
-                displayEmpty
-                size="small"
-                onChange={handleFilterStatus}
-                value={filterStatus}
-                style={{ margin: '5px' }}
-              >
-                <MenuItem key="status" value="" style={{ color: 'grey' }}>
-                  All Status
-                </MenuItem>
-                {statuslist.map((status) => (
-                  <MenuItem key={status} value={status}>
-                    {status}
-                  </MenuItem>
-                ))}
-              </Select>
-            </Stack>
-          </div>
-          <Scrollbar>
-            <TableContainer sx={{ minWidth: 800 }}>
-              <Table>
-                <UserListHead
-                  order={order}
-                  orderBy={orderBy}
-                  headLabel={TABLE_HEAD}
-                  rowCount={changeAgendas.length}
-                  numSelected={selected.length}
-                  onRequestSort={handleRequestSort}
-                  onSelectAllClick={handleSelectAllClick}
-                />
-                <TableBody>
-                  {filteredAgendas
-                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                    .map((row) => {
-                      const { id, title, description, status, rating, speakers } = row;
-                      const isItemSelected = selected.indexOf(id) !== -1;
-
-                      return (
-                        <TableRow
-                          hover
-                          key={id}
-                          tabIndex={-1}
-                          role="checkbox"
-                          selected={isItemSelected}
-                          aria-checked={isItemSelected}
-                        >
-                          <TableCell padding="checkbox">
-                            <Checkbox
-                              checked={isItemSelected}
-                              onChange={(event) => handleClick(event, id)}
-                            />
-                          </TableCell>
-                          <TableCell align="left">{id}</TableCell>
-                          <TableCell align="left">{title}</TableCell>
-                          <TableCell align="left">{description}</TableCell>
-                          <TableCell align="left">{speakers}</TableCell>
-                          <TableCell align="left">{rating}</TableCell>
-                          <TableCell align="left">
-                            <Label
-                              id={id}
-                              variant="ghost"
-                              color={status === 'Inactive' ? 'error' : 'success'}
-                              onClick={toggleStatus}
-                            >
-                              {sentenceCase(status)}
-                            </Label>
-                          </TableCell>
-
-                          <TableCell align="right">
-                            <UserMoreMenu
-                              id={id}
-                              setChangeData={setChangeAgendas}
-                              changeData={changeAgendas}
-                              editlist={editlist}
-                            />
-                          </TableCell>
-                        </TableRow>
-                      );
-                    })}
-                  {emptyRows > 0 && (
-                    <TableRow style={{ height: 53 * emptyRows }}>
-                      <TableCell colSpan={6} />
-                    </TableRow>
-                  )}
-                </TableBody>
-                {isAgendaNotFound && (
-                  <TableBody>
-                    <TableRow>
-                      <TableCell align="center" colSpan={6} sx={{ py: 3 }}>
-                        <SearchNotFound searchQuery={filter} />
-                      </TableCell>
-                    </TableRow>
-                  </TableBody>
-                )}
-              </Table>
-            </TableContainer>
-          </Scrollbar>
-
-          <TablePagination
-            rowsPerPageOptions={[5, 10, 25]}
-            component="div"
-            count={filteredAgendas.length}
-            rowsPerPage={rowsPerPage}
-            page={page}
-            onPageChange={handleChangePage}
-            onRowsPerPageChange={handleChangeRowsPerPage}
-          />
-        </Card>
-      </Container>
-    </Page>
+        }
+      />
+      <Route
+        path="/view"
+        element={<ViewPage editviewRecord={editviewRecord} editlist={editlist} />}
+      />
+    </Routes>
   );
 }
