@@ -75,7 +75,7 @@ const sidebarConfig = [
     ]
   },
   {
-    title: 'usermanagement',
+    title: 'User Management',
     path: '/users',
     icon: getIcon(personAddOutline),
     children: [{ title: 'Users', path: 'users' }]
