@@ -65,6 +65,10 @@ export default function EditPage({ id, editviewRecord, changeData, setChangeData
     if (e.target.name === 'subdate') {
       subdatestring = `${e.target.value.slice(0, 10)} ${e.target.value.slice(11, 16)} UTC`;
     }
+    let createddatestring = editRecord.createddate;
+    if (e.target.name === 'createddate') {
+      createddatestring = `${e.target.value.slice(0, 10)} ${e.target.value.slice(11, 16)} UTC`;
+    }
     const { name, value } = e.target;
     setEditRecord((prevState) => ({
       ...prevState,
@@ -77,7 +81,8 @@ export default function EditPage({ id, editviewRecord, changeData, setChangeData
       totime: totimestring,
       sessionstart: sessionstartstring,
       sessionend: sessionendstring,
-      subdate: subdatestring
+      subdate: subdatestring,
+      createddate: createddatestring
     }));
   };
   const addEdit = (record) => {

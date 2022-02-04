@@ -32,6 +32,7 @@ import Changepassword from './pages/Changepassword';
 import LogoOnlyLayout from './layouts/LogoOnlyLayout';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import Users from './pages/Users';
 
 // ----------------------------------------------------------------------
 
@@ -56,20 +57,20 @@ export default function Router() {
       path: '/',
       element: <DashboardLayout />,
       children: [
-        { path: 'aboutadsd', element: <Aboutadsd /> },
-        { path: 'aboutus', element: <Aboutus /> },
-        { path: 'epccontact', element: <Contacts /> },
+        { path: 'aboutadsd/*', element: <Aboutadsd /> },
+        { path: 'aboutus/*', element: <Aboutus /> },
+        { path: 'epccontact/*', element: <Contacts /> },
         { path: 'eventregistration/*', element: <Eventregistration /> },
         { path: 'dinner/*', element: <Dinner /> },
         { path: 'map/*', element: <Maps /> },
         { path: 'abudhabiattractions/*', element: <Attractions /> },
         { path: 'adsdheldesk/*', element: <Helpdesks /> },
         { path: 'wificredentials/*', element: <Wifis /> },
-        { path: 'howtousethemic', element: <Mic /> },
-        { path: 'socialmedialinks', element: <Socialmedia /> },
-        { path: 'codeofconduct', element: <Code /> },
+        { path: 'howtousethemic/*', element: <Mic /> },
+        { path: 'socialmedialinks/*', element: <Socialmedia /> },
+        { path: 'codeofconduct/*', element: <Code /> },
         { path: 'partners/*', element: <Partners /> },
-        { path: 'appversion', element: <Appversion /> }
+        { path: 'appversion/*', element: <Appversion /> }
       ]
     },
     {
@@ -81,6 +82,11 @@ export default function Router() {
         { path: 'mediapartners/*', element: <Mediapartners /> },
         { path: 'guestspeechdocs/*', element: <Guestspeechdocs /> }
       ]
+    },
+    {
+      path: '/',
+      element: <DashboardLayout />,
+      children: [{ path: 'users/*', element: <Users /> }]
     },
     {
       path: '/',

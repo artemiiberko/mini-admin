@@ -6,6 +6,7 @@ import fileTextFill from '@iconify/icons-eva/file-text-fill';
 import bellFill from '@iconify/icons-eva/bell-fill';
 import bellOutline from '@iconify/icons-eva/bell-outline';
 import infoFill from '@iconify/icons-eva/info-fill';
+import personAddOutline from '@iconify/icons-eva/person-add-outline';
 // ----------------------------------------------------------------------
 
 const getIcon = (name) => <Icon icon={name} width={22} height={22} />;
@@ -72,6 +73,12 @@ const sidebarConfig = [
       { title: 'Partners', path: 'partners' },
       { title: 'App Version', path: 'appversion' }
     ]
+  },
+  {
+    title: 'usermanagement',
+    path: '/users',
+    icon: getIcon(personAddOutline),
+    children: [{ title: 'Users', path: 'users' }]
   }
 ];
 

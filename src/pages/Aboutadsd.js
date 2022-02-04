@@ -1,19 +1,15 @@
+import { Routes, Route, Link } from 'react-router-dom';
 import { Icon } from '@iconify/react';
 import { useState } from 'react';
-import plusFill from '@iconify/icons-eva/plus-fill';
-import { Modal } from 'react-bootstrap';
+import edit2Outline from '@iconify/icons-eva/edit-2-outline';
 // material
 import { Card, Stack, Button, Container, Typography, TextField, FormGroup } from '@mui/material';
-import closeFill from '@iconify/icons-eva/close-fill';
 // components
 import Page from '../components/Page';
 import Label from '../components/Label';
 //
 
 export default function Aboutadsd() {
-  const [show, setShow] = useState(false);
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
   const [changeEdits, setChangeEdits] = useState({
     logo: 'logo',
     title: '8th Abu Dhabi Strategic Debate',
@@ -26,6 +22,7 @@ export default function Aboutadsd() {
   });
   const [addediterror, setAddediterror] = useState('');
   const [newEdit, setNewEdit] = useState(changeEdits);
+  const [linkEdit, setLinkEdit] = useState('');
 
   const onEditChange = (e) => {
     const { name, value } = e.target;
@@ -33,6 +30,21 @@ export default function Aboutadsd() {
       ...prevState,
       [name]: value
     }));
+  };
+  const handleLinkEdit = () => {
+    if (
+      newEdit.title !== '' &&
+      newEdit.logo !== '' &&
+      newEdit.year !== '' &&
+      newEdit.fromdate !== '' &&
+      newEdit.todate !== '' &&
+      newEdit.description !== '' &&
+      newEdit.location !== ''
+    ) {
+      setLinkEdit('../');
+    } else {
+      setLinkEdit('');
+    }
   };
   const handleSubmit = () => {
     if (
@@ -46,113 +58,132 @@ export default function Aboutadsd() {
     ) {
       setAddediterror('');
       setChangeEdits(newEdit);
-      setShow(false);
     } else {
       setAddediterror('Please fill all fields');
     }
   };
 
   return (
-    <Page title="About ADSD">
-      <Container maxWidth="false">
-        <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
-          <Typography variant="h4" gutterBottom>
-            About ADSD
-          </Typography>
-          <Button variant="contained" startIcon={<Icon icon={plusFill} />} onClick={handleShow}>
-            Edit
-          </Button>
-        </Stack>
-        <Modal show={show} onHide={handleClose} size="lg">
-          <Modal.Header>
-            <Modal.Title>EDIT</Modal.Title>
-            <Button style={{ fontSize: '32px' }} onClick={handleClose}>
-              <Icon icon={closeFill} />
-            </Button>
-          </Modal.Header>
-          <Modal.Body>
-            <FormGroup style={{ display: 'flex', width: '100%' }}>
-              <Stack spacing={3} style={{ flexBasis: '50%', padding: '10px', flexShrink: '0' }}>
-                <Typography>Title</Typography>
-                <TextField
-                  type="text"
-                  placeholder="Title"
-                  onChange={onEditChange}
-                  value={newEdit.title}
-                  name="title"
-                />
-                <Typography>Year</Typography>
-                <TextField
-                  type="text"
-                  placeholder="Year"
-                  onChange={onEditChange}
-                  value={newEdit.year}
-                  name="year"
-                />
-                <Typography>Location</Typography>
-                <TextField
-                  type="text"
-                  placeholder="Location"
-                  onChange={onEditChange}
-                  value={newEdit.location}
-                  name="location"
-                />
-                <Typography>From Date</Typography>
-                <TextField
-                  type="text"
-                  placeholder="From Date"
-                  onChange={onEditChange}
-                  value={newEdit.fromdate}
-                  name="fromdate"
-                />
-                <Typography>To Date</Typography>
-                <TextField
-                  type="text"
-                  placeholder="To Date"
-                  onChange={onEditChange}
-                  value={newEdit.todate}
-                  name="todate"
-                />
-                <Typography>Description</Typography>
-                <TextField
-                  type="text"
-                  placeholder="Description"
-                  onChange={onEditChange}
-                  value={newEdit.description}
-                  name="description"
-                />
-                <Typography>Logo</Typography>
-                <TextField type="file" placeholder="Logo" onChange={onEditChange} name="logo" />
+    <Routes>
+      <Route
+        path=""
+        element={
+          <Page title="About ADSD">
+            <Container maxWidth="false">
+              <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
+                <Typography variant="h4" gutterBottom>
+                  About ADSD
+                </Typography>
+                <Link to="./edit">
+                  <Button variant="contained" startIcon={<Icon icon={edit2Outline} />}>
+                    Edit
+                  </Button>
+                </Link>
               </Stack>
-            </FormGroup>
-            <Typography style={{ color: 'red', fontWeight: '700', padding: '10px' }}>
-              {addediterror}
-            </Typography>
-          </Modal.Body>
-          <Modal.Footer>
-            <Button variant="outlined" color="error" onClick={handleClose}>
-              Close
-            </Button>
-            <Button variant="contained" onClick={handleSubmit}>
-              Add
-            </Button>
-          </Modal.Footer>
-        </Modal>
-        <Card>
-          <Stack spacing={4} style={{ padding: '20px', maxWidth: '700px' }}>
-            <Label>{changeEdits.logo}</Label>
-            <Typography variant="h5">{changeEdits.title}</Typography>
-            <Typography>{changeEdits.year}</Typography>
-            <Typography>{changeEdits.location}</Typography>
-            <Typography variant="subtitle2">
-              {changeEdits.fromdate} - {changeEdits.todate}
-            </Typography>
-            <Card variant="outlined" style={{ padding: '30px' }}>
-              <Typography>{changeEdits.description}</Typography>
-            </Card>
-          </Stack>
-        </Card>
-      </Container>
-    </Page>
+              <Card>
+                <Stack spacing={4} style={{ padding: '20px', maxWidth: '700px' }}>
+                  <Label>{changeEdits.logo}</Label>
+                  <Typography variant="h5">{changeEdits.title}</Typography>
+                  <Typography>{changeEdits.year}</Typography>
+                  <Typography>{changeEdits.location}</Typography>
+                  <Typography variant="subtitle2">
+                    {changeEdits.fromdate} - {changeEdits.todate}
+                  </Typography>
+                  <Card variant="outlined" style={{ padding: '30px' }}>
+                    <Typography>{changeEdits.description}</Typography>
+                  </Card>
+                </Stack>
+              </Card>
+            </Container>
+          </Page>
+        }
+      />
+      <Route
+        path="/edit"
+        element={
+          <Page title='Edit "About ADSD"'>
+            <Container maxWidth="false">
+              <Card sx={{ padding: '20px' }}>
+                <FormGroup style={{ display: 'flex', maxWidth: '1000px', margin: 'auto' }}>
+                  <Stack spacing={3} style={{ flexBasis: '50%', padding: '10px', flexShrink: '0' }}>
+                    <Typography>Title</Typography>
+                    <TextField
+                      type="text"
+                      placeholder="Title"
+                      onChange={onEditChange}
+                      value={newEdit.title}
+                      name="title"
+                    />
+                    <Typography>Year</Typography>
+                    <TextField
+                      type="text"
+                      placeholder="Year"
+                      onChange={onEditChange}
+                      value={newEdit.year}
+                      name="year"
+                    />
+                    <Typography>Location</Typography>
+                    <TextField
+                      type="text"
+                      placeholder="Location"
+                      onChange={onEditChange}
+                      value={newEdit.location}
+                      name="location"
+                    />
+                    <Typography>From Date</Typography>
+                    <TextField
+                      type="text"
+                      placeholder="From Date"
+                      onChange={onEditChange}
+                      value={newEdit.fromdate}
+                      name="fromdate"
+                    />
+                    <Typography>To Date</Typography>
+                    <TextField
+                      type="text"
+                      placeholder="To Date"
+                      onChange={onEditChange}
+                      value={newEdit.todate}
+                      name="todate"
+                    />
+                    <Typography>Description</Typography>
+                    <TextField
+                      type="text"
+                      placeholder="Description"
+                      onChange={onEditChange}
+                      value={newEdit.description}
+                      name="description"
+                    />
+                    <Typography>Logo</Typography>
+                    <TextField type="file" placeholder="Logo" onChange={onEditChange} name="logo" />
+                  </Stack>
+                </FormGroup>
+                <Typography style={{ color: 'red', fontWeight: '700', padding: '10px' }}>
+                  {addediterror}
+                </Typography>
+                <Stack
+                  spacing={3}
+                  direction="row"
+                  justifyContent="flex-end"
+                  maxWidth="1000px"
+                  margin="auto"
+                >
+                  <Link to="../">
+                    <Button variant="outlined" color="error">
+                      Close
+                    </Button>
+                  </Link>
+                  <Link to={linkEdit} onMouseEnter={handleLinkEdit}>
+                    <Button variant="contained" onClick={handleSubmit}>
+                      Submit
+                    </Button>
+                  </Link>
+                </Stack>
+              </Card>
+            </Container>
+          </Page>
+        }
+      />
+    </Routes>
   );
 }

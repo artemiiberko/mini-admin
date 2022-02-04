@@ -5,7 +5,7 @@ import { alpha, styled } from '@mui/material/styles';
 import { Card, Typography } from '@mui/material';
 // utils
 import { fShortenNumber } from '../../../utils/formatNumber';
-import USERS from '../../../_mocks_/user';
+import USERS from '../../../_mocks_/attendee';
 
 // ----------------------------------------------------------------------
 

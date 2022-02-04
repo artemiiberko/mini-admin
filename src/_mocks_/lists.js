@@ -35,7 +35,18 @@ const lists = {
   transportation: ['Yes', 'No'],
   linkexpire: ['Yes', 'No'],
   nationality: ['Africa', 'Germany', 'Ireland', 'USA', 'Poland', 'Russia'],
-  speakers: ['speaker1', 'speaker2', 'speaker3']
+  speakers: ['speaker1', 'speaker2', 'speaker3'],
+  userrole: [
+    'VIP Guest',
+    'Guest',
+    'Media',
+    'Speakers',
+    'Moderator',
+    'EPC Staff',
+    'Volunteers',
+    'Security',
+    'Administration'
+  ]
 };
 
 export default lists;

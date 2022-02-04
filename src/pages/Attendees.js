@@ -30,7 +30,7 @@ import SearchNotFound from '../components/SearchNotFound';
 import { UserListHead, UserListToolbar, UserMoreMenu } from '../components/_dashboard/user';
 import AddAttendee from './add/AddAttendee';
 //
-import USERLIST from '../_mocks_/user';
+import ATTENDEELIST from '../_mocks_/attendee';
 import EditPage from './EditPage';
 import ViewPage from './ViewPage';
 
@@ -177,19 +177,19 @@ function applySortFilter(
   if (query || status || appstatus || attendeetype || country || city || rsvp || role) {
     return filter(
       array,
-      (_user) =>
-        (_user.lname.toLowerCase().indexOf(query.toLowerCase()) !== -1 ||
-          _user.name.toLowerCase().indexOf(query.toLowerCase()) !== -1 ||
-          _user.title.toLowerCase().indexOf(query.toLowerCase()) !== -1 ||
-          _user.id.toString().indexOf(query.toLowerCase()) !== -1 ||
-          _user.email.toLowerCase().indexOf(query.toLowerCase()) !== -1) &&
-        _user.status.indexOf(status) !== -1 &&
-        _user.attendeetype.indexOf(attendeetype) !== -1 &&
-        _user.role.indexOf(role) !== -1 &&
-        _user.rsvp.indexOf(rsvp) !== -1 &&
-        _user.city.indexOf(city) !== -1 &&
-        _user.country.indexOf(country) !== -1 &&
-        _user.appstatus.indexOf(appstatus) !== -1
+      (_attendee) =>
+        (_attendee.lname.toLowerCase().indexOf(query.toLowerCase()) !== -1 ||
+          _attendee.name.toLowerCase().indexOf(query.toLowerCase()) !== -1 ||
+          _attendee.title.toLowerCase().indexOf(query.toLowerCase()) !== -1 ||
+          _attendee.id.toString().indexOf(query.toLowerCase()) !== -1 ||
+          _attendee.email.toLowerCase().indexOf(query.toLowerCase()) !== -1) &&
+        _attendee.status.indexOf(status) !== -1 &&
+        _attendee.attendeetype.indexOf(attendeetype) !== -1 &&
+        _attendee.role.indexOf(role) !== -1 &&
+        _attendee.rsvp.indexOf(rsvp) !== -1 &&
+        _attendee.city.indexOf(city) !== -1 &&
+        _attendee.country.indexOf(country) !== -1 &&
+        _attendee.appstatus.indexOf(appstatus) !== -1
     );
   }
   return stabilizedThis.map((el) => el[0]);
@@ -209,7 +209,7 @@ export default function Attendees() {
   const [filterRsvp, setFilterRsvp] = useState('');
   const [filterStatus, setFilterStatus] = useState('');
   const [rowsPerPage, setRowsPerPage] = useState(5);
-  const [changeAttendees, setChangeAttendees] = useState(USERLIST);
+  const [changeAttendees, setChangeAttendees] = useState(ATTENDEELIST);
   const [itemId, setItemId] = useState(0);
   const [editviewRecord, setEditviewRecord] = useState({});
 
@@ -226,7 +226,7 @@ export default function Attendees() {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = filteredUsers.map((n) => n.id);
+      const newSelecteds = filteredAttendees.map((n) => n.id);
       setSelected(newSelecteds);
       return;
     }
@@ -285,9 +285,9 @@ export default function Attendees() {
     setFilterRsvp(event.target.value);
   };
 
-  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
+  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - ATTENDEELIST.length) : 0;
 
-  const filteredUsers = applySortFilter(
+  const filteredAttendees = applySortFilter(
     changeAttendees,
     getComparator(order, orderBy),
     filter,
@@ -300,7 +300,7 @@ export default function Attendees() {
     filterRsvp
   );
 
-  const isUserNotFound = filteredUsers.length === 0;
+  const isAttendeeNotFound = filteredAttendees.length === 0;
 
   const toggleStatus = (e) => {
     const objIndex = changeAttendees.findIndex((x) => x.id === parseInt(e.target.id, 10));
@@ -471,13 +471,13 @@ export default function Attendees() {
                         order={order}
                         orderBy={orderBy}
                         headLabel={TABLE_HEAD}
-                        rowCount={USERLIST.length}
+                        rowCount={changeAttendees.length}
                         numSelected={selected.length}
                         onRequestSort={handleRequestSort}
                         onSelectAllClick={handleSelectAllClick}
                       />
                       <TableBody>
-                        {filteredUsers
+                        {filteredAttendees
                           .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                           .map((row) => {
                             const { id, name, title, lname, status, subdate, appstatus, email } =
@@ -533,7 +533,7 @@ export default function Attendees() {
                           </TableRow>
                         )}
                       </TableBody>
-                      {isUserNotFound && (
+                      {isAttendeeNotFound && (
                         <TableBody>
                           <TableRow>
                             <TableCell align="center" colSpan={6} sx={{ py: 3 }}>
@@ -549,7 +549,7 @@ export default function Attendees() {
                 <TablePagination
                   rowsPerPageOptions={[5, 10, 25]}
                   component="div"
-                  count={filteredUsers.length}
+                  count={filteredAttendees.length}
                   rowsPerPage={rowsPerPage}
                   page={page}
                   onPageChange={handleChangePage}

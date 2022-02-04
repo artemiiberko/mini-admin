@@ -1,8 +1,7 @@
+import { Link, Route, Routes } from 'react-router-dom';
 import { Icon } from '@iconify/react';
 import { useState } from 'react';
-import plusFill from '@iconify/icons-eva/plus-fill';
-import { Modal } from 'react-bootstrap';
-import closeFill from '@iconify/icons-eva/close-fill';
+import edit2Outline from '@iconify/icons-eva/edit-2-outline';
 // material
 import { Card, Stack, Button, Container, Typography, TextField, FormGroup } from '@mui/material';
 
@@ -11,9 +10,7 @@ import Page from '../components/Page';
 //
 
 export default function Code() {
-  const [show, setShow] = useState(false);
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
+  const [linkEdit, setLinkEdit] = useState('');
   const [changeEdits, setChangeEdits] = useState({
     title: '.',
     description: ''
@@ -28,77 +25,103 @@ export default function Code() {
       [name]: value
     }));
   };
+  const handleLinkEdit = () => {
+    if (newEdit.title !== '' && newEdit.year !== '' && newEdit.description !== '') {
+      setLinkEdit('../');
+    } else {
+      setLinkEdit('');
+    }
+  };
   const handleSubmit = () => {
     if (newEdit.title !== '' && newEdit.year !== '' && newEdit.description !== '') {
       setAddediterror('');
       setChangeEdits(newEdit);
-      setShow(false);
     } else {
       setAddediterror('Please fill all fields');
     }
   };
 
   return (
-    <Page title="Code of Conduct">
-      <Container maxWidth="false">
-        <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
-          <Typography variant="h4" gutterBottom>
-            Code of Conduct
-          </Typography>
-          <Button variant="contained" startIcon={<Icon icon={plusFill} />} onClick={handleShow}>
-            Edit
-          </Button>
-        </Stack>
-        <Modal show={show} onHide={handleClose} size="lg">
-          <Modal.Header>
-            <Modal.Title>EDIT</Modal.Title>
-            <Button style={{ fontSize: '32px' }} onClick={handleClose}>
-              <Icon icon={closeFill} />
-            </Button>
-          </Modal.Header>
-          <Modal.Body>
-            <FormGroup style={{ display: 'flex', width: '100%' }}>
-              <Stack spacing={3} style={{ flexBasis: '50%', padding: '10px', flexShrink: '0' }}>
-                <Typography>Title</Typography>
-                <TextField
-                  type="text"
-                  placeholder="Title"
-                  onChange={onEditChange}
-                  value={newEdit.title}
-                  name="title"
-                />
-                <Typography>Description</Typography>
-                <TextField
-                  type="text"
-                  placeholder="Description"
-                  onChange={onEditChange}
-                  value={newEdit.description}
-                  name="description"
-                />
+    <Routes>
+      <Route
+        path=""
+        element={
+          <Page title="Code of Conduct">
+            <Container maxWidth="false">
+              <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
+                <Typography variant="h4" gutterBottom>
+                  Code of Conduct
+                </Typography>
+                <Link to="./edit">
+                  <Button variant="contained" startIcon={<Icon icon={edit2Outline} />}>
+                    Edit
+                  </Button>
+                </Link>
               </Stack>
-            </FormGroup>
-            <Typography style={{ color: 'red', fontWeight: '700', padding: '10px' }}>
-              {addediterror}
-            </Typography>
-          </Modal.Body>
-          <Modal.Footer>
-            <Button variant="outlined" color="error" onClick={handleClose}>
-              Close
-            </Button>
-            <Button variant="contained" onClick={handleSubmit}>
-              Add
-            </Button>
-          </Modal.Footer>
-        </Modal>
-        <Card>
-          <Stack spacing={4} style={{ padding: '20px', maxWidth: '700px' }}>
-            <Typography variant="h5">{changeEdits.title}</Typography>
-            <Card variant="outlined" style={{ padding: '20px' }}>
-              <Typography>{changeEdits.description}</Typography>
-            </Card>
-          </Stack>
-        </Card>
-      </Container>
-    </Page>
+              <Card>
+                <Stack spacing={4} style={{ padding: '20px', maxWidth: '700px' }}>
+                  <Typography variant="h5">{changeEdits.title}</Typography>
+                  <Card variant="outlined" style={{ padding: '20px' }}>
+                    <Typography>{changeEdits.description}</Typography>
+                  </Card>
+                </Stack>
+              </Card>
+            </Container>
+          </Page>
+        }
+      />
+      <Route
+        path="/edit"
+        element={
+          <Page title='Edit "About ADSD"'>
+            <Container maxWidth="false">
+              <Card sx={{ padding: '20px' }}>
+                <FormGroup style={{ display: 'flex', maxWidth: '1000px', margin: 'auto' }}>
+                  <Stack spacing={3} style={{ flexBasis: '50%', padding: '10px', flexShrink: '0' }}>
+                    <Typography>Title</Typography>
+                    <TextField
+                      type="text"
+                      placeholder="Title"
+                      onChange={onEditChange}
+                      value={newEdit.title}
+                      name="title"
+                    />
+                    <Typography>Description</Typography>
+                    <TextField
+                      type="text"
+                      placeholder="Description"
+                      onChange={onEditChange}
+                      value={newEdit.description}
+                      name="description"
+                    />
+                  </Stack>
+                </FormGroup>
+                <Typography style={{ color: 'red', fontWeight: '700', padding: '10px' }}>
+                  {addediterror}
+                </Typography>
+                <Stack
+                  spacing={3}
+                  direction="row"
+                  justifyContent="flex-end"
+                  maxWidth="1000px"
+                  margin="auto"
+                >
+                  <Link to="../">
+                    <Button variant="outlined" color="error">
+                      Close
+                    </Button>
+                  </Link>
+                  <Link to={linkEdit} onMouseEnter={handleLinkEdit}>
+                    <Button variant="contained" onClick={handleSubmit}>
+                      Submit
+                    </Button>
+                  </Link>
+                </Stack>
+              </Card>
+            </Container>
+          </Page>
+        }
+      />
+    </Routes>
   );
 }
