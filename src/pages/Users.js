@@ -66,6 +66,43 @@ const editlist = {
     { name: 'User Role', id: 'userrole' },
     { name: 'Status', id: 'status' }
   ],
+  checkbox: [
+    {
+      name: 'Manage Attendees',
+      id: 'manageattendees',
+      properties: ['create', 'delete', 'edit', 'export', 'view']
+    },
+    {
+      name: 'Manage Informations',
+      id: 'manageinformations',
+      properties: ['create', 'delete', 'edit', 'export', 'view']
+    },
+    {
+      name: 'Manage Users',
+      id: 'manageusers',
+      properties: ['create', 'delete', 'edit', 'export', 'view']
+    },
+    {
+      name: 'Manage Agenda',
+      id: 'manageagenda',
+      properties: ['create', 'delete', 'edit', 'export', 'view']
+    },
+    {
+      name: 'Manage Polls',
+      id: 'managepolls',
+      properties: ['create', 'delete', 'edit', 'export', 'view']
+    },
+    {
+      name: 'Manage Notification',
+      id: 'managenotification',
+      properties: ['create', 'delete', 'edit', 'export', 'view']
+    },
+    {
+      name: 'Manage Workshop',
+      id: 'manageworkshop',
+      properties: ['create', 'delete', 'edit', 'export', 'view']
+    }
+  ],
   file: [],
   date: [],
   time: [],

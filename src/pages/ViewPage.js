@@ -2,7 +2,17 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 // material
-import { Button, FormGroup, Stack, Typography, TextField, Card, Container } from '@mui/material';
+import {
+  Button,
+  FormGroup,
+  Stack,
+  Typography,
+  TextField,
+  Card,
+  Container,
+  FormControlLabel,
+  Checkbox
+} from '@mui/material';
 import Page from '../components/Page';
 // ----------------------------------------------------------------------
 ViewPage.propTypes = {
@@ -87,6 +97,29 @@ export default function ViewPage({ editviewRecord, editlist }) {
                     value={viewRecord[edititem.id]}
                     maxRows={5}
                   />
+                </Stack>
+              ))}
+              {editlist.checkbox.map((edititem) => (
+                <Stack
+                  key={edititem.id}
+                  style={{ flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap' }}
+                >
+                  <Typography style={{ flexBasis: '20%' }}>{edititem.name}</Typography>
+                  {edititem.properties.map((property) => (
+                    <FormControlLabel
+                      style={{ textTransform: 'capitalize' }}
+                      key={property}
+                      control={
+                        <Checkbox
+                          checked={viewRecord[edititem.id][property]}
+                          disabled
+                          id={edititem.id}
+                          name={property}
+                        />
+                      }
+                      label={property}
+                    />
+                  ))}
                 </Stack>
               ))}
               {editlist.textmb.map((edititem) => (

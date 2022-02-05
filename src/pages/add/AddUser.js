@@ -11,7 +11,9 @@ import {
   Select,
   MenuItem,
   TextField,
-  FormGroup
+  FormGroup,
+  FormControlLabel,
+  Checkbox
 } from '@mui/material';
 // components
 import Page from '../../components/Page';
@@ -42,18 +44,67 @@ AddUser.propTypes = {
 export default function AddUser({ setChangeUsers, changeUsers }) {
   const [addusererror, setAddusererror] = useState('');
   const [linkAdd, setLinkAdd] = useState('');
-
-  function emailExists(email) {
-    return changeUsers.some((e) => e.email === email);
-  }
-  const [newUser, setNewUser] = useState({
+  const userobj = {
     id: 0,
     name: '',
     email: '',
     createddate: '',
     status: '',
-    userrole: ''
-  });
+    userrole: '',
+    manageattendees: {
+      create: false,
+      delete: false,
+      edit: false,
+      export: false,
+      view: false
+    },
+    manageinformations: {
+      create: false,
+      delete: false,
+      edit: false,
+      export: false,
+      view: false
+    },
+    manageusers: {
+      create: false,
+      delete: false,
+      edit: false,
+      export: false,
+      view: false
+    },
+    manageagenda: {
+      create: false,
+      delete: false,
+      edit: false,
+      export: false,
+      view: false
+    },
+    managepolls: {
+      create: false,
+      delete: false,
+      edit: false,
+      export: false,
+      view: false
+    },
+    managenotification: {
+      create: false,
+      delete: false,
+      edit: false,
+      export: false,
+      view: false
+    },
+    manageworkshop: {
+      create: false,
+      delete: false,
+      edit: false,
+      export: false,
+      view: false
+    }
+  };
+  function emailExists(email) {
+    return changeUsers.some((e) => e.email === email);
+  }
+  const [newUser, setNewUser] = useState(userobj);
   const addUser = (user) => {
     setChangeUsers((prevState) => [...prevState, user]);
   };
@@ -71,6 +122,17 @@ export default function AddUser({ setChangeUsers, changeUsers }) {
       [name]: value,
       id: idPlus,
       createddate: datestring
+    }));
+    console.log(newUser);
+  };
+  const onUserChangeCheckbox = (e) => {
+    const { name, id, checked } = e.target;
+    setNewUser((prevState) => ({
+      ...prevState,
+      [id]: {
+        ...prevState[id],
+        [name]: checked
+      }
     }));
   };
   const handleLinkAdd = () => {
@@ -99,14 +161,7 @@ export default function AddUser({ setChangeUsers, changeUsers }) {
       } else {
         setAddusererror('');
         addUser(newUser);
-        setNewUser({
-          id: 0,
-          name: '',
-          email: '',
-          createddate: '',
-          status: '',
-          userrole: ''
-        });
+        setNewUser(userobj);
       }
     } else {
       setAddusererror('Please fill all fields');
@@ -171,6 +226,261 @@ export default function AddUser({ setChangeUsers, changeUsers }) {
                   </MenuItem>
                 ))}
               </Select>
+              <Stack style={{ flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap' }}>
+                <Typography style={{ flexBasis: '20%' }}>Manage Attendees</Typography>
+                <FormControlLabel
+                  control={
+                    <Checkbox id="manageattendees" name="create" onChange={onUserChangeCheckbox} />
+                  }
+                  label="Create"
+                />
+                <FormControlLabel
+                  control={
+                    <Checkbox id="manageattendees" name="delete" onChange={onUserChangeCheckbox} />
+                  }
+                  label="Delete"
+                />
+                <FormControlLabel
+                  control={
+                    <Checkbox id="manageattendees" name="edit" onChange={onUserChangeCheckbox} />
+                  }
+                  label="Edit"
+                />
+                <FormControlLabel
+                  control={
+                    <Checkbox id="manageattendees" name="export" onChange={onUserChangeCheckbox} />
+                  }
+                  label="Export"
+                />
+                <FormControlLabel
+                  control={
+                    <Checkbox id="manageattendees" name="view" onChange={onUserChangeCheckbox} />
+                  }
+                  label="View"
+                />
+              </Stack>
+              <Stack style={{ flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap' }}>
+                <Typography style={{ flexBasis: '20%' }}>Manage Informations</Typography>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      id="manageinformations"
+                      name="create"
+                      onChange={onUserChangeCheckbox}
+                    />
+                  }
+                  label="Create"
+                />
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      id="manageinformations"
+                      name="delete"
+                      onChange={onUserChangeCheckbox}
+                    />
+                  }
+                  label="Delete"
+                />
+                <FormControlLabel
+                  control={
+                    <Checkbox id="manageinformations" name="edit" onChange={onUserChangeCheckbox} />
+                  }
+                  label="Edit"
+                />
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      id="manageinformations"
+                      name="export"
+                      onChange={onUserChangeCheckbox}
+                    />
+                  }
+                  label="Export"
+                />
+                <FormControlLabel
+                  control={
+                    <Checkbox id="manageinformations" name="view" onChange={onUserChangeCheckbox} />
+                  }
+                  label="View"
+                />
+              </Stack>
+              <Stack style={{ flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap' }}>
+                <Typography style={{ flexBasis: '20%' }}>Manage Users</Typography>
+                <FormControlLabel
+                  control={
+                    <Checkbox id="manageusers" name="create" onChange={onUserChangeCheckbox} />
+                  }
+                  label="Create"
+                />
+                <FormControlLabel
+                  control={
+                    <Checkbox id="manageusers" name="delete" onChange={onUserChangeCheckbox} />
+                  }
+                  label="Delete"
+                />
+                <FormControlLabel
+                  control={
+                    <Checkbox id="manageusers" name="edit" onChange={onUserChangeCheckbox} />
+                  }
+                  label="Edit"
+                />
+                <FormControlLabel
+                  control={
+                    <Checkbox id="manageusers" name="export" onChange={onUserChangeCheckbox} />
+                  }
+                  label="Export"
+                />
+                <FormControlLabel
+                  control={
+                    <Checkbox id="manageusers" name="view" onChange={onUserChangeCheckbox} />
+                  }
+                  label="View"
+                />
+              </Stack>
+              <Stack style={{ flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap' }}>
+                <Typography style={{ flexBasis: '20%' }}>Manage Agenda</Typography>
+                <FormControlLabel
+                  control={
+                    <Checkbox id="manageagenda" name="create" onChange={onUserChangeCheckbox} />
+                  }
+                  label="Create"
+                />
+                <FormControlLabel
+                  control={
+                    <Checkbox id="manageagenda" name="delete" onChange={onUserChangeCheckbox} />
+                  }
+                  label="Delete"
+                />
+                <FormControlLabel
+                  control={
+                    <Checkbox id="manageagenda" name="edit" onChange={onUserChangeCheckbox} />
+                  }
+                  label="Edit"
+                />
+                <FormControlLabel
+                  control={
+                    <Checkbox id="manageagenda" name="export" onChange={onUserChangeCheckbox} />
+                  }
+                  label="Export"
+                />
+                <FormControlLabel
+                  control={
+                    <Checkbox id="manageagenda" name="view" onChange={onUserChangeCheckbox} />
+                  }
+                  label="View"
+                />
+              </Stack>
+              <Stack style={{ flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap' }}>
+                <Typography style={{ flexBasis: '20%' }}>Manage Polls</Typography>
+                <FormControlLabel
+                  control={
+                    <Checkbox id="managepolls" name="create" onChange={onUserChangeCheckbox} />
+                  }
+                  label="Create"
+                />
+                <FormControlLabel
+                  control={
+                    <Checkbox id="managepolls" name="delete" onChange={onUserChangeCheckbox} />
+                  }
+                  label="Delete"
+                />
+                <FormControlLabel
+                  control={
+                    <Checkbox id="managepolls" name="edit" onChange={onUserChangeCheckbox} />
+                  }
+                  label="Edit"
+                />
+                <FormControlLabel
+                  control={
+                    <Checkbox id="managepolls" name="export" onChange={onUserChangeCheckbox} />
+                  }
+                  label="Export"
+                />
+                <FormControlLabel
+                  control={
+                    <Checkbox id="managepolls" name="view" onChange={onUserChangeCheckbox} />
+                  }
+                  label="View"
+                />
+              </Stack>
+              <Stack style={{ flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap' }}>
+                <Typography style={{ flexBasis: '20%' }}>Manage Notification</Typography>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      id="managenotification"
+                      name="create"
+                      onChange={onUserChangeCheckbox}
+                    />
+                  }
+                  label="Create"
+                />
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      id="managenotification"
+                      name="delete"
+                      onChange={onUserChangeCheckbox}
+                    />
+                  }
+                  label="Delete"
+                />
+                <FormControlLabel
+                  control={
+                    <Checkbox id="managenotification" name="edit" onChange={onUserChangeCheckbox} />
+                  }
+                  label="Edit"
+                />
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      id="managenotification"
+                      name="export"
+                      onChange={onUserChangeCheckbox}
+                    />
+                  }
+                  label="Export"
+                />
+                <FormControlLabel
+                  control={
+                    <Checkbox id="managenotification" name="view" onChange={onUserChangeCheckbox} />
+                  }
+                  label="View"
+                />
+              </Stack>
+              <Stack style={{ flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap' }}>
+                <Typography style={{ flexBasis: '20%' }}>Manage Workshop</Typography>
+                <FormControlLabel
+                  control={
+                    <Checkbox id="manageworkshop" name="create" onChange={onUserChangeCheckbox} />
+                  }
+                  label="Create"
+                />
+                <FormControlLabel
+                  control={
+                    <Checkbox id="manageworkshop" name="delete" onChange={onUserChangeCheckbox} />
+                  }
+                  label="Delete"
+                />
+                <FormControlLabel
+                  control={
+                    <Checkbox id="manageworkshop" name="edit" onChange={onUserChangeCheckbox} />
+                  }
+                  label="Edit"
+                />
+                <FormControlLabel
+                  control={
+                    <Checkbox id="manageworkshop" name="export" onChange={onUserChangeCheckbox} />
+                  }
+                  label="Export"
+                />
+                <FormControlLabel
+                  control={
+                    <Checkbox id="manageworkshop" name="view" onChange={onUserChangeCheckbox} />
+                  }
+                  label="View"
+                />
+              </Stack>
             </Stack>
           </FormGroup>
           <Typography style={{ color: 'red', fontWeight: '700', padding: '10px' }}>

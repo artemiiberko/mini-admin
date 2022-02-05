@@ -11,7 +11,9 @@ import {
   Select,
   TextField,
   Card,
-  Container
+  Container,
+  FormControlLabel,
+  Checkbox
 } from '@mui/material';
 import lists from '../_mocks_/lists';
 import Page from '../components/Page';
@@ -84,6 +86,17 @@ export default function EditPage({ id, editviewRecord, changeData, setChangeData
       subdate: subdatestring,
       createddate: createddatestring
     }));
+  };
+  const onEditChangeCheckbox = (e) => {
+    const { name, id, checked } = e.target;
+    setEditRecord((prevState) => ({
+      ...prevState,
+      [id]: {
+        ...prevState[id],
+        [name]: checked
+      }
+    }));
+    console.log(editRecord.manageattendees.create);
   };
   const addEdit = (record) => {
     const objIndex = changeData.findIndex((x) => x.id === id);
@@ -206,6 +219,29 @@ export default function EditPage({ id, editviewRecord, changeData, setChangeData
                     name={edititem.id}
                   />
                 </>
+              ))}
+              {editlist.checkbox.map((edititem) => (
+                <Stack
+                  key={edititem.id}
+                  style={{ flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap' }}
+                >
+                  <Typography style={{ flexBasis: '20%' }}>{edititem.name}</Typography>
+                  {edititem.properties.map((property) => (
+                    <FormControlLabel
+                      style={{ textTransform: 'capitalize' }}
+                      key={property}
+                      control={
+                        <Checkbox
+                          checked={editRecord[edititem.id][property]}
+                          id={edititem.id}
+                          name={property}
+                          onChange={onEditChangeCheckbox}
+                        />
+                      }
+                      label={property}
+                    />
+                  ))}
+                </Stack>
               ))}
               {editlist.file.map((edititem) => (
                 <>

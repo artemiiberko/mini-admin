@@ -7,7 +7,56 @@ const users = [
     email: 'john.smith@mail.com',
     createddate: '2022-01-16 18:47 UTC',
     status: 'Active',
-    userrole: 'VIP Guest'
+    userrole: 'VIP Guest',
+    manageattendees: {
+      create: true,
+      delete: false,
+      edit: true,
+      export: false,
+      view: true
+    },
+    manageinformations: {
+      create: true,
+      delete: false,
+      edit: true,
+      export: false,
+      view: true
+    },
+    manageusers: {
+      create: false,
+      delete: true,
+      edit: true,
+      export: true,
+      view: false
+    },
+    manageagenda: {
+      create: true,
+      delete: false,
+      edit: true,
+      export: true,
+      view: true
+    },
+    managepolls: {
+      create: false,
+      delete: true,
+      edit: true,
+      export: false,
+      view: true
+    },
+    managenotification: {
+      create: false,
+      delete: false,
+      edit: true,
+      export: true,
+      view: true
+    },
+    manageworkshop: {
+      create: false,
+      delete: false,
+      edit: true,
+      export: false,
+      view: false
+    }
   },
   {
     id: 2,
@@ -15,7 +64,56 @@ const users = [
     email: 'johnn.smith@mail.com',
     createddate: '2022-02-10 12:13 UTC',
     status: 'Inactive',
-    userrole: 'Guest'
+    userrole: 'Guest',
+    manageattendees: {
+      create: true,
+      delete: false,
+      edit: true,
+      export: false,
+      view: true
+    },
+    manageinformations: {
+      create: false,
+      delete: false,
+      edit: true,
+      export: false,
+      view: true
+    },
+    manageusers: {
+      create: false,
+      delete: true,
+      edit: false,
+      export: true,
+      view: false
+    },
+    manageagenda: {
+      create: true,
+      delete: false,
+      edit: true,
+      export: true,
+      view: true
+    },
+    managepolls: {
+      create: false,
+      delete: true,
+      edit: true,
+      export: false,
+      view: false
+    },
+    managenotification: {
+      create: false,
+      delete: false,
+      edit: true,
+      export: false,
+      view: true
+    },
+    manageworkshop: {
+      create: false,
+      delete: false,
+      edit: true,
+      export: false,
+      view: false
+    }
   },
   {
     id: 3,
@@ -23,7 +121,56 @@ const users = [
     email: 'johnnn.smith@mail.com',
     createddate: '2022-02-10 12:13 UTC',
     status: 'Active',
-    userrole: 'Guest'
+    userrole: 'Guest',
+    manageattendees: {
+      create: true,
+      delete: false,
+      edit: true,
+      export: false,
+      view: true
+    },
+    manageinformations: {
+      create: true,
+      delete: true,
+      edit: true,
+      export: false,
+      view: true
+    },
+    manageusers: {
+      create: false,
+      delete: true,
+      edit: true,
+      export: true,
+      view: false
+    },
+    manageagenda: {
+      create: true,
+      delete: true,
+      edit: true,
+      export: true,
+      view: true
+    },
+    managepolls: {
+      create: true,
+      delete: true,
+      edit: true,
+      export: false,
+      view: true
+    },
+    managenotification: {
+      create: false,
+      delete: true,
+      edit: true,
+      export: true,
+      view: true
+    },
+    manageworkshop: {
+      create: false,
+      delete: false,
+      edit: true,
+      export: false,
+      view: false
+    }
   }
 ];
 export default users;
