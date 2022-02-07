@@ -61,6 +61,7 @@ const editlist = {
     { name: 'From Time', id: 'fromtime' },
     { name: 'To Time', id: 'totime' }
   ],
+  checkbox: [],
   datetime: [],
   textmb: [],
   selectmb: [],

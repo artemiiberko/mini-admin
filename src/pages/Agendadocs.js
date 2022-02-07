@@ -45,6 +45,7 @@ const editlist = {
     { name: 'Agenda Detail File', id: 'detailfile' },
     { name: 'Agenda Speech File', id: 'speechfile' }
   ],
+  checkbox: [],
   date: [],
   time: [],
   datetime: [],

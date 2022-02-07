@@ -62,6 +62,7 @@ const editlist = {
     { name: 'To Time', id: 'totime' }
   ],
   datetime: [],
+  checkbox: [],
   textmb: [],
   selectmb: [],
   filemb: [],

@@ -54,6 +54,7 @@ const editlist = {
   date: [],
   time: [],
   datetime: [{ name: 'Date', id: 'datefull' }],
+  checkbox: [],
   textmb: [],
   selectmb: [],
   filemb: [],

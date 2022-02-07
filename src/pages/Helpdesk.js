@@ -51,6 +51,7 @@ const editlist = {
   ],
   select: [{ name: 'Status', id: 'status' }],
   file: [],
+  checkbox: [],
   date: [],
   time: [],
   datetime: [],

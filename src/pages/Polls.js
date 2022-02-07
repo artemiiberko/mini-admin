@@ -73,6 +73,7 @@ const editlist = {
     { name: 'Survey Start Time', id: 'starttime' },
     { name: 'Survey End Time', id: 'endtime' }
   ],
+  checkbox: [],
   textmb: [],
   selectmb: [],
   filemb: [],

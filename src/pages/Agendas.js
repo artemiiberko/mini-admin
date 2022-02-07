@@ -58,6 +58,7 @@ const editlist = {
   file: [],
   date: [],
   time: [],
+  checkbox: [],
   datetime: [],
   textmb: [],
   selectmb: [],

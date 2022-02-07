@@ -43,6 +43,7 @@ const editlist = {
   date: [],
   time: [],
   datetime: [],
+  checkbox: [],
   textmb: [],
   selectmb: [],
   filemb: [],

@@ -87,6 +87,7 @@ const editlist = {
     { name: 'Attendee Type', id: 'attendeetype' }
   ],
   file: [],
+  checkbox: [],
   date: [],
   time: [],
   datetime: [{ name: 'Submitted Date', id: 'subdate' }],
