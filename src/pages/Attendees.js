@@ -1,7 +1,8 @@
 import { filter } from 'lodash';
 import { Icon } from '@iconify/react';
-import { sentenceCase } from 'change-case';
+// import { sentenceCase } from 'change-case';
 import { useState } from 'react';
+import axios from 'axios';
 import plusFill from '@iconify/icons-eva/plus-fill';
 import { Link, Routes, Route } from 'react-router-dom';
 
@@ -30,7 +31,7 @@ import SearchNotFound from '../components/SearchNotFound';
 import { UserListHead, UserListToolbar, UserMoreMenu } from '../components/_dashboard/user';
 import AddAttendee from './add/AddAttendee';
 //
-import ATTENDEELIST from '../_mocks_/attendee';
+// import ATTENDEELIST from '../_mocks_/attendee';
 import EditPage from './EditPage';
 import ViewPage from './ViewPage';
 
@@ -45,7 +46,7 @@ const TABLE_HEAD = [
   { id: 'lname', label: 'Last Name', alignRight: false },
   { id: 'email', label: 'Email Address', alignRight: false },
   { id: 'appstatus', label: 'Application Status', alignRight: false },
-  { id: 'subdate', label: 'Submitted Date', alignRight: false },
+  /* { id: 'subdate', label: 'Submitted Date', alignRight: false }, */
   { id: 'status', label: 'Status', alignRight: false },
   { id: '' }
 ];
@@ -75,27 +76,29 @@ const rolelist = [
 const rsvplist = ['Open', 'Attended', 'Not Attended', 'Remind'];
 const editlist = {
   text: [
-    { name: 'First Name', id: 'name' },
-    { name: 'Last Name', id: 'lname' },
-    { name: 'Password', id: 'password' },
+    { name: 'First Name', id: 'firstName' },
+    { name: 'Last Name', id: 'lastName' },
+    /* { name: 'Password', id: 'password' }, */
     { name: 'Email', id: 'email' }
   ],
   select: [
-    { name: 'Title', id: 'title' },
-    { name: 'Status', id: 'status' },
-    { name: 'Application Status', id: 'appstatus' },
-    { name: 'Attendee Type', id: 'attendeetype' }
+    { name: 'Title', id: 'prefix' },
+    /* { name: 'Status', id: 'isActive' }, */
+    { name: 'Application Status', id: 'applicationStatus' }
+    /* { name: 'Attendee Type', id: 'attendeetype' } */
   ],
   file: [],
   checkbox: [],
   date: [],
   time: [],
-  datetime: [{ name: 'Submitted Date', id: 'subdate' }],
+  datetime: [
+    /* { name: 'Submitted Date', id: 'subdate' } */
+  ],
   textmb: [
-    { name: 'First Name (Arabic)', id: 'namearabic' },
-    { name: 'Last Name (Arabic)', id: 'lnamearabic' },
-    { name: 'Organization Name', id: 'organizationname' },
-    { name: 'Job Title', id: 'jobtitle' },
+    /* { name: 'First Name (Arabic)', id: 'namearabic' },
+    { name: 'Last Name (Arabic)', id: 'lnamearabic' }, */
+    { name: 'Organization Name', id: 'organization' }
+    /* { name: 'Job Title', id: 'jobtitle' },
     { name: 'Country Code', id: 'countrycode' },
     { name: 'Contact Number', id: 'contactnumber' },
     { name: 'Full Name', id: 'fullname' },
@@ -110,30 +113,30 @@ const editlist = {
     { name: 'Airline BK Number', id: 'airlinebknumber' },
     { name: 'Hotel BK Number', id: 'hotelbknumber' },
     { name: 'Country Of Departure', id: 'countryofdeparture' },
-    { name: 'Passport Number', id: 'passportnumber' }
+    { name: 'Passport Number', id: 'passportnumber' } */
   ],
   selectmb: [
-    { name: 'Visa', id: 'visa' },
+    /* { name: 'Visa', id: 'visa' },
     { name: 'Nationality', id: 'nationality' },
     { name: 'Resident Country', id: 'country' },
     { name: 'Resident City', id: 'city' },
-    { name: 'Role', id: 'role' },
+    { name: 'Role', id: 'roles' },
     { name: 'RSVP', id: 'rsvp' },
     { name: 'Invitation Type', id: 'invitationtype' },
     { name: 'Registration Type', id: 'registrationtype' },
     { name: 'Link Expire', id: 'linkexpire' },
     { name: 'Transportation', id: 'transportation' },
-    { name: 'Smoking Required', id: 'smokingrequired' }
+    { name: 'Smoking Required', id: 'smokingrequired' } */
   ],
   filemb: [
-    { name: 'Passport Doc', id: 'passportdoc' },
-    { name: 'Passport Photo', id: 'passportphoto' }
+    /* { name: 'Passport Doc', id: 'passportdoc' },
+    { name: 'Passport Photo', id: 'passportphoto' } */
   ],
   datemb: [
-    { name: 'Date Of Issue', id: 'dateofissue' },
+    /* { name: 'Date Of Issue', id: 'dateofissue' },
     { name: 'Date Of Expire', id: 'dateofexpire' },
     { name: 'Checkin', id: 'checkin' },
-    { name: 'Checkout', id: 'checkout' }
+    { name: 'Checkout', id: 'checkout' } */
   ],
   timemb: [],
   datetimemb: []
@@ -160,14 +163,14 @@ function getComparator(order, orderBy) {
 function applySortFilter(
   array,
   comparator,
-  query,
-  status,
+  query
+  /* status,
   appstatus,
   attendeetype,
   city,
   country,
-  role,
-  rsvp
+  rsvp 
+  role */
 ) {
   const stabilizedThis = array.map((el, index) => [el, index]);
   stabilizedThis.sort((a, b) => {
@@ -175,7 +178,7 @@ function applySortFilter(
     if (order !== 0) return order;
     return a[1] - b[1];
   });
-  if (query || status || appstatus || attendeetype || country || city || rsvp || role) {
+  if (query /* || status || appstatus || attendeetype || country || city || rsvp || role */) {
     return filter(
       array,
       (_attendee) =>
@@ -183,14 +186,14 @@ function applySortFilter(
           _attendee.name.toLowerCase().indexOf(query.toLowerCase()) !== -1 ||
           _attendee.title.toLowerCase().indexOf(query.toLowerCase()) !== -1 ||
           _attendee.id.toString().indexOf(query.toLowerCase()) !== -1 ||
-          _attendee.email.toLowerCase().indexOf(query.toLowerCase()) !== -1) &&
+          _attendee.email.toLowerCase().indexOf(query.toLowerCase()) !== -1) /* &&
         _attendee.status.indexOf(status) !== -1 &&
-        _attendee.attendeetype.indexOf(attendeetype) !== -1 &&
-        _attendee.role.indexOf(role) !== -1 &&
+        (_attendee.role.indexOf(role) !== -1)&&
+         _attendee.attendeetype.indexOf(attendeetype) !== -1 &&
         _attendee.rsvp.indexOf(rsvp) !== -1 &&
         _attendee.city.indexOf(city) !== -1 &&
         _attendee.country.indexOf(country) !== -1 &&
-        _attendee.appstatus.indexOf(appstatus) !== -1
+        _attendee.appstatus.indexOf(appstatus) */ !== -1
     );
   }
   return stabilizedThis.map((el) => el[0]);
@@ -210,9 +213,13 @@ export default function Attendees() {
   const [filterRsvp, setFilterRsvp] = useState('');
   const [filterStatus, setFilterStatus] = useState('');
   const [rowsPerPage, setRowsPerPage] = useState(5);
-  const [changeAttendees, setChangeAttendees] = useState(ATTENDEELIST);
+  const [changeAttendees, setChangeAttendees] = useState([]);
   const [itemId, setItemId] = useState(0);
   const [editviewRecord, setEditviewRecord] = useState({});
+
+  axios.get(`https://wr.raneddo.ml/api/User`).then((res) => {
+    setChangeAttendees(res.data);
+  });
 
   const getItem = (id) => {
     setItemId(id);
@@ -286,32 +293,43 @@ export default function Attendees() {
     setFilterRsvp(event.target.value);
   };
 
-  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - ATTENDEELIST.length) : 0;
+  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - changeAttendees.length) : 0;
 
   const filteredAttendees = applySortFilter(
     changeAttendees,
     getComparator(order, orderBy),
     filter,
     filterStatus,
-    filterAppStatus,
+    filterRole
+    /* filterAppStatus,
     filterAttendeeType,
     filterCity,
     filterCountry,
-    filterRole,
-    filterRsvp
+    filterRsvp */
   );
 
   const isAttendeeNotFound = filteredAttendees.length === 0;
 
   const toggleStatus = (e) => {
     const objIndex = changeAttendees.findIndex((x) => x.id === parseInt(e.target.id, 10));
-    const newArr = [...changeAttendees];
-    if (changeAttendees[objIndex].status === 'Active') {
+    /* const newArr = [...changeAttendees]; */
+    const record = changeAttendees[objIndex];
+    record.isActive = !record.isActive;
+    axios
+      .put(`https://wr.raneddo.ml/api/User/${e.target.id}`, record, {
+        headers: {
+          'Content-Type': 'application/json; charset=utf-8'
+        }
+      })
+      .then((res) => {
+        console.log(res);
+      });
+    /* if (changeAttendees[objIndex].isActivate) {
       newArr[objIndex].status = 'Inactive';
     } else {
       newArr[objIndex].status = 'Active';
     }
-    setChangeAttendees(newArr);
+    setChangeAttendees(newArr); */
   };
 
   return (
@@ -481,8 +499,15 @@ export default function Attendees() {
                         {filteredAttendees
                           .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                           .map((row) => {
-                            const { id, name, title, lname, status, subdate, appstatus, email } =
-                              row;
+                            const {
+                              id,
+                              firstName,
+                              prefix,
+                              lastName,
+                              isActive,
+                              /* subdate, */ applicationStatus,
+                              email
+                            } = row;
                             const isItemSelected = selected.indexOf(id) !== -1;
 
                             return (
@@ -501,23 +526,23 @@ export default function Attendees() {
                                   />
                                 </TableCell>
                                 <TableCell align="left">{id}</TableCell>
-                                <TableCell align="left">{title}</TableCell>
-                                <TableCell align="left">{name}</TableCell>
-                                <TableCell align="left">{lname}</TableCell>
+                                <TableCell align="left">{prefix}</TableCell>
+                                <TableCell align="left">{firstName}</TableCell>
+                                <TableCell align="left">{lastName}</TableCell>
                                 <TableCell align="left">{email}</TableCell>
-                                <TableCell align="left">{appstatus}</TableCell>
-                                <TableCell align="left">{subdate}</TableCell>
+                                <TableCell align="left">{applicationStatus}</TableCell>
+                                {/* <TableCell align="left">{subdate}</TableCell> */}
                                 <TableCell align="left">
                                   <Label
+                                    style={{ cursor: 'pointer' }}
                                     id={id}
                                     onClick={toggleStatus}
                                     variant="ghost"
-                                    color={status === 'Inactive' ? 'error' : 'success'}
+                                    color={isActive === false ? 'error' : 'success'}
                                   >
-                                    {sentenceCase(status)}
+                                    {isActive ? 'Active' : 'Not Active'}
                                   </Label>
                                 </TableCell>
-
                                 <TableCell onClick={() => getItem(id)} align="right">
                                   <UserMoreMenu
                                     id={id}

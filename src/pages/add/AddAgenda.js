@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { PropTypes } from 'prop-types';
+// import { PropTypes } from 'prop-types';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
 // material
 import {
   Card,
@@ -18,47 +19,67 @@ import Page from '../../components/Page';
 //
 
 // ----------------------------------------------------------------------
-const statuslist = ['Active', 'Inactive'];
-const speakerslist = ['speaker1', 'speaker2', 'speaker3'];
+/* const statuslist = ['Active', 'Inactive']; */
+const speakerslist = [1, 2, 3, 4, 5];
 // ----------------------------------------------------------------------
 
-AddAgenda.propTypes = {
-  setChangeAgendas: PropTypes.func,
-  changeAgendas: PropTypes.array
-};
+/* AddAgenda.propTypes = {
+  setChangeAgendas: PropTypes.func
+   changeAgendas: PropTypes.array 
+}; */
 
-export default function AddAgenda({ setChangeAgendas, changeAgendas }) {
+export default function AddAgenda() {
+  /* {
+     setChangeAgendas
+    changeAgendas 
+  } */
   const [addagendaerror, setAddagendaerror] = useState('');
   const [linkAdd, setLinkAdd] = useState('');
   const [newAgenda, setNewAgenda] = useState({
     id: 0,
     title: '',
     description: '',
-    speakers: '',
-    rating: '',
-    status: ''
+    speakers: [],
+    polls: [],
+    startDate: '2022-01-01T00:00',
+    endDate: '2022-01-01T00:00'
+    /*    rating: '',
+    status: '' */
   });
   const addAgenda = (agenda) => {
-    setChangeAgendas((prevState) => [...prevState, agenda]);
+    const agendajson = JSON.stringify(agenda);
+    axios
+      .post(`https://wr.raneddo.ml/api/Agenda`, agendajson, {
+        headers: {
+          'Content-Type': 'application/json; charset=utf-8'
+        }
+      })
+      .then((res) => {
+        console.log(res);
+      });
   };
   const onAgendaChange = (e) => {
-    let idPlus = Math.max(...changeAgendas.map((e) => e.id));
-    idPlus += 1;
-
+    /*  let idPlus = Math.max(...changeAgendas.map((e) => e.id));
+    idPlus += 1; */
+    let speakersarray = newAgenda.speakers;
+    if (e.target.name === 'speakers') {
+      speakersarray = [parseInt(e.target.value, 10)];
+    }
     const { name, value } = e.target;
     setNewAgenda((prevState) => ({
       ...prevState,
       [name]: value,
-      id: idPlus
+      speakers: speakersarray
+      /* id: idPlus */
     }));
   };
   const handleLinkAdd = () => {
     if (
       newAgenda.title !== '' &&
       newAgenda.description !== '' &&
-      newAgenda.speakers !== '' &&
+      newAgenda.speakers.length !== 0 /* &&
       newAgenda.rating !== '' &&
-      newAgenda.status !== ''
+      newAgenda.status !== '' */
     ) {
       setLinkAdd('../');
     } else {
@@ -69,19 +90,23 @@ export default function AddAgenda({ setChangeAgendas, changeAgendas }) {
     if (
       newAgenda.title !== '' &&
       newAgenda.description !== '' &&
-      newAgenda.speakers !== '' &&
+      newAgenda.speakers.length !== 0 /* &&
       newAgenda.rating !== '' &&
-      newAgenda.status !== ''
+      newAgenda.status !== '' */
     ) {
       setAddagendaerror('');
+      console.log(newAgenda);
       addAgenda(newAgenda);
       setNewAgenda({
         id: 0,
         title: '',
         description: '',
-        speakers: '',
-        rating: '',
-        status: ''
+        speakers: [],
+        polls: [],
+        startDate: '2022-01-01T00:00',
+        endDate: '2022-01-01T00:00'
+        /*    rating: '',
+        status: '' */
       });
     } else {
       setAddagendaerror('Please fill all fields');
@@ -136,7 +161,7 @@ export default function AddAgenda({ setChangeAgendas, changeAgendas }) {
                   </MenuItem>
                 ))}
               </Select>
-              <Typography>Rating</Typography>
+              {/* }<Typography>Rating</Typography>
               <TextField
                 type="number"
                 placeholder="Rating"
@@ -154,7 +179,7 @@ export default function AddAgenda({ setChangeAgendas, changeAgendas }) {
                     {status}
                   </MenuItem>
                 ))}
-              </Select>
+                </Select> { */}
             </Stack>
           </FormGroup>
           <Typography style={{ color: 'red', fontWeight: '700', padding: '10px' }}>

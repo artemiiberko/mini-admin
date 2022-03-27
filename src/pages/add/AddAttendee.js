@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { PropTypes } from 'prop-types';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
 // material
 import {
   Card,
@@ -19,7 +20,7 @@ import Page from '../../components/Page';
 
 // ----------------------------------------------------------------------
 
-const statuslist = ['Active', 'Inactive'];
+const statuslist = [true, false];
 const titlelist = ['Mr.', 'Mrs.'];
 const appstatuslist = [
   'Entered',
@@ -30,18 +31,20 @@ const appstatuslist = [
   'Hotel Booked',
   'Completed',
   'Cancelled',
-  'No Reply'
+  'No Reply',
+  'not activated',
+  'deactivated'
 ];
-const attendeetypelist = ['Local', 'International', 'VIP Local', 'VIP International'];
+/* const attendeetypelist = ['Local', 'International', 'VIP Local', 'VIP International']; */
 
 // ----------------------------------------------------------------------
 
 AddAttendee.propTypes = {
-  setChangeAttendees: PropTypes.func,
+  /* setChangeAttendees: PropTypes.func, */
   changeAttendees: PropTypes.array
 };
 
-export default function AddAttendee({ setChangeAttendees, changeAttendees }) {
+export default function AddAttendee({ /* setChangeAttendees, */ changeAttendees }) {
   const [addattendeeerror, setAddattendeeerror] = useState('');
   const [linkAdd, setLinkAdd] = useState('');
 
@@ -50,17 +53,18 @@ export default function AddAttendee({ setChangeAttendees, changeAttendees }) {
   }
   const [newAttendee, setNewAttendee] = useState({
     id: 0,
-    title: '',
-    name: '',
-    lname: '',
-    attendeetype: '',
+    prefix: '',
+    fullName: '',
+    firstName: '',
+    lastName: '',
     email: '',
+    isActive: false,
     subdate: '',
-    status: '',
-    appstatus: '',
+    applicationStatus: '',
+    attendeetype: '',
     namearabic: '',
     lnamearabic: '',
-    organizationname: '',
+    organization: '',
     jobtitle: '',
     countrycode: '',
     contactnumber: '',
@@ -80,7 +84,7 @@ export default function AddAttendee({ setChangeAttendees, changeAttendees }) {
     twitter: '',
     country: '',
     city: '',
-    role: '',
+    roles: [],
     rsvp: '',
     rsvpcomments: '',
     statusremark: '',
@@ -96,11 +100,22 @@ export default function AddAttendee({ setChangeAttendees, changeAttendees }) {
     linkexpire: ''
   });
   const addAttendee = (attendee) => {
-    setChangeAttendees((prevState) => [...prevState, attendee]);
+    const attendeejson = JSON.stringify(attendee);
+    console.log(attendeejson);
+    axios
+      .post(`https://wr.raneddo.ml/api/User`, attendeejson, {
+        headers: {
+          'Content-Type': 'application/json; charset=utf-8'
+        }
+      })
+      .then((res) => {
+        console.log(res);
+      });
+    /* setChangeAttendees((prevState) => [...prevState, attendee]); */
   };
 
   const onAttendeeChange = (e) => {
-    let idPlus = Math.max(...changeAttendees.map((e) => e.id));
+    /* let idPlus = Math.max(...changeAttendees.map((e) => e.id));
     idPlus += 1;
     const nowdate = new Date(Date.now());
     const nowdateyear = nowdate.getUTCFullYear();
@@ -114,24 +129,23 @@ export default function AddAttendee({ setChangeAttendees, changeAttendees }) {
     }-${nowdateday > 9 ? nowdateday.toString() : `0${nowdateday.toString()}`} ${
       nowdatehours > 9 ? nowdatehours.toString() : `0${nowdatehours.toString()}`
     }:${nowdateminutes > 9 ? nowdateminutes.toString() : `0${nowdateminutes.toString()}`}
-     UTC`;
+     UTC`; */
     const { name, value } = e.target;
     setNewAttendee((prevState) => ({
       ...prevState,
-      [name]: value,
-      id: idPlus,
-      subdate: nowdatestring
+      [name]: value
+      /* id: idPlus,
+      subdate: nowdatestring */
     }));
   };
   const handleLinkAdd = () => {
     if (
-      newAttendee.name !== '' &&
-      newAttendee.lname !== '' &&
+      newAttendee.firstName !== '' &&
+      newAttendee.lastName !== '' &&
       newAttendee.email !== '' &&
-      newAttendee.attendeetype !== '' &&
-      newAttendee.title !== '' &&
-      newAttendee.status !== '' &&
-      newAttendee.appstatus !== ''
+      /* newAttendee.attendeetype !== '' && */
+      newAttendee.prefix !== '' &&
+      newAttendee.applicationStatus !== ''
     ) {
       if (!emailExists(newAttendee.email)) {
         setLinkAdd('..');
@@ -142,13 +156,12 @@ export default function AddAttendee({ setChangeAttendees, changeAttendees }) {
   };
   const handleSubmit = () => {
     if (
-      newAttendee.name !== '' &&
-      newAttendee.lname !== '' &&
+      newAttendee.firstName !== '' &&
+      newAttendee.lastName !== '' &&
       newAttendee.email !== '' &&
-      newAttendee.attendeetype !== '' &&
-      newAttendee.title !== '' &&
-      newAttendee.status !== '' &&
-      newAttendee.appstatus !== ''
+      /* newAttendee.attendeetype !== '' && */
+      newAttendee.prefix !== '' &&
+      newAttendee.applicationStatus !== ''
     ) {
       if (emailExists(newAttendee.email)) {
         setAddattendeeerror('Email is already exists');
@@ -157,17 +170,18 @@ export default function AddAttendee({ setChangeAttendees, changeAttendees }) {
         addAttendee(newAttendee);
         setNewAttendee({
           id: 0,
-          title: '',
-          name: '',
-          lname: '',
-          attendeetype: '',
+          prefix: '',
+          fullName: '',
+          firstName: '',
+          lastName: '',
           email: '',
+          isActive: false,
           subdate: '',
-          status: '',
-          appstatus: '',
+          applicationStatus: '',
+          attendeetype: '',
           namearabic: '',
           lnamearabic: '',
-          organizationname: '',
+          organization: '',
           jobtitle: '',
           countrycode: '',
           contactnumber: '',
@@ -187,7 +201,7 @@ export default function AddAttendee({ setChangeAttendees, changeAttendees }) {
           twitter: '',
           country: '',
           city: '',
-          role: '',
+          roles: [],
           rsvp: '',
           rsvpcomments: '',
           statusremark: '',
@@ -223,8 +237,8 @@ export default function AddAttendee({ setChangeAttendees, changeAttendees }) {
               <Select
                 displayEmpty
                 onChange={onAttendeeChange}
-                value={newAttendee.title}
-                name="title"
+                value={newAttendee.prefix}
+                name="prefix"
               >
                 <MenuItem key="title" value="" style={{ color: 'grey' }}>
                   Select title...
@@ -240,16 +254,16 @@ export default function AddAttendee({ setChangeAttendees, changeAttendees }) {
                 type="text"
                 placeholder="First Name"
                 onChange={onAttendeeChange}
-                value={newAttendee.name}
-                name="name"
+                value={newAttendee.firstName}
+                name="firstName"
               />
               <Typography>Last Name</Typography>
               <TextField
                 type="text"
                 placeholder="Last Name"
                 onChange={onAttendeeChange}
-                value={newAttendee.lname}
-                name="lname"
+                value={newAttendee.lastName}
+                name="lastName"
               />
             </Stack>
             <Stack spacing={3} style={{ flexBasis: '50%', padding: '10px', flexShrink: '0' }}>
@@ -261,7 +275,7 @@ export default function AddAttendee({ setChangeAttendees, changeAttendees }) {
                 value={newAttendee.email}
                 name="email"
               />
-              <Typography>Attendee Type</Typography>
+              {/* <Typography>Attendee Type</Typography>
               <Select
                 displayEmpty
                 name="attendeetype"
@@ -276,13 +290,13 @@ export default function AddAttendee({ setChangeAttendees, changeAttendees }) {
                     {attendeetype}
                   </MenuItem>
                 ))}
-              </Select>
+                </Select> */}
               <Typography>Application Status</Typography>
               <Select
                 displayEmpty
-                name="appstatus"
+                name="applicationStatus"
                 onChange={onAttendeeChange}
-                value={newAttendee.appstatus}
+                value={newAttendee.applicationStatus}
               >
                 <MenuItem key="appstatus" value="" style={{ color: 'grey' }}>
                   Select Application Status...
@@ -296,16 +310,16 @@ export default function AddAttendee({ setChangeAttendees, changeAttendees }) {
               <Typography>Status</Typography>
               <Select
                 displayEmpty
-                name="status"
+                name="isActive"
                 onChange={onAttendeeChange}
-                value={newAttendee.status}
+                value={newAttendee.isActive}
               >
                 <MenuItem key="status" value="" style={{ color: 'grey' }}>
                   Select Status...
                 </MenuItem>
                 {statuslist.map((status) => (
                   <MenuItem key={status} value={status}>
-                    {status}
+                    {status ? 'Active' : 'Inactive'}
                   </MenuItem>
                 ))}
               </Select>

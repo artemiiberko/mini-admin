@@ -2,8 +2,8 @@ const lists = {
   country: ['Africa', 'Germany', 'Ireland', 'USA', 'Poland', 'Russia'],
   city: ['Berlin', 'Washington', 'Sydney', 'London'],
   status: ['Active', 'Inactive'],
-  title: ['Mr.', 'Mrs.'],
-  appstatus: [
+  prefix: ['Mr.', 'Mrs.'],
+  applicationStatus: [
     'Entered',
     'Link Sent',
     'Form Submitted',
@@ -12,7 +12,9 @@ const lists = {
     'Hotel Booked',
     'Completed',
     'Cancelled',
-    'No Reply'
+    'No Reply',
+    'not activated',
+    'deactivated'
   ],
   attendeetype: ['Local', 'International', 'VIP Local', 'VIP International'],
   role: [
@@ -35,7 +37,7 @@ const lists = {
   transportation: ['Yes', 'No'],
   linkexpire: ['Yes', 'No'],
   nationality: ['Africa', 'Germany', 'Ireland', 'USA', 'Poland', 'Russia'],
-  speakers: ['speaker1', 'speaker2', 'speaker3'],
+  speakers: ['1', '2', '3', '4', '5'],
   userrole: [
     'VIP Guest',
     'Guest',

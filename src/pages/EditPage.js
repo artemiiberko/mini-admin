@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
+import axios from 'axios';
 // material
 import {
   MenuItem,
@@ -20,18 +21,22 @@ import Page from '../components/Page';
 // ----------------------------------------------------------------------
 EditPage.propTypes = {
   id: PropTypes.number,
-  changeData: PropTypes.array,
-  setChangeData: PropTypes.func,
+  /* changeData: PropTypes.array,
+  setChangeData: PropTypes.func, */
   editlist: PropTypes.object,
   editviewRecord: PropTypes.object
 };
-export default function EditPage({ id, editviewRecord, changeData, setChangeData, editlist }) {
+export default function EditPage({
+  id,
+  editviewRecord,
+  /* changeData, setChangeData, */ editlist
+}) {
   const [editRecord, setEditRecord] = useState(editviewRecord);
   const [editerror, setEditerror] = useState('');
   const [linkEdit, setLinkEdit] = useState('');
 
   const onEditChange = (e) => {
-    let starttimestring = editRecord.starttime;
+    /* let starttimestring = editRecord.starttime;
     if (e.target.name === 'starttime') {
       starttimestring = `${e.target.value.slice(0, 10)} ${e.target.value.slice(11, 16)} UTC`;
     }
@@ -70,21 +75,37 @@ export default function EditPage({ id, editviewRecord, changeData, setChangeData
     let createddatestring = editRecord.createddate;
     if (e.target.name === 'createddate') {
       createddatestring = `${e.target.value.slice(0, 10)} ${e.target.value.slice(11, 16)} UTC`;
+    }  */
+    let speakersarray = editRecord.speakers;
+    if (e.target.name === 'speakers') {
+      speakersarray = [parseInt(e.target.value, 10)];
+    }
+    let enddate = editRecord.endDate;
+    if (e.target.name === 'end_date') {
+      enddate = e.target.value;
+    }
+    let startdate = editRecord.startDate;
+    if (e.target.name === 'start_date') {
+      startdate = e.target.value;
     }
     const { name, value } = e.target;
     setEditRecord((prevState) => ({
       ...prevState,
       [name]: value,
-      starttime: starttimestring,
+      test: 'test',
+      speakers: speakersarray,
+      endDate: enddate,
+      startDate: startdate
+      /* starttime: starttimestring,
       endtime: endtimestring,
       datefull: datefullstring,
       date: datestring,
       fromtime: fromtimestring,
       totime: totimestring,
       sessionstart: sessionstartstring,
-      sessionend: sessionendstring,
+      sessionend: sessionendstring, 
       subdate: subdatestring,
-      createddate: createddatestring
+      createddate: createddatestring */
     }));
   };
   const onEditChangeCheckbox = (e) => {
@@ -99,10 +120,20 @@ export default function EditPage({ id, editviewRecord, changeData, setChangeData
     console.log(editRecord.manageattendees.create);
   };
   const addEdit = (record) => {
-    const objIndex = changeData.findIndex((x) => x.id === id);
+    axios
+      .put(`https://wr.raneddo.ml/api/Agenda/${id}`, record, {
+        headers: {
+          'Content-Type': 'application/json; charset=utf-8'
+        }
+      })
+      .then((res) => {
+        console.log(res);
+      });
+
+    /* const objIndex = changeData.findIndex((x) => x.id === id);
     const newArr = [...changeData];
     newArr[objIndex] = record;
-    setChangeData(newArr);
+    setChangeData(newArr); */
   };
   const handleLinkEdit = () => {
     const asArray = Object.entries(editRecord);
@@ -142,6 +173,7 @@ export default function EditPage({ id, editviewRecord, changeData, setChangeData
     } else {
       setEditerror('');
       addEdit(editRecord);
+      console.log(editRecord);
     }
   };
   return (
@@ -195,6 +227,7 @@ export default function EditPage({ id, editviewRecord, changeData, setChangeData
                     placeholder={edititem.name}
                     onChange={onEditChange}
                     name={edititem.id}
+                    value={editRecord[edititem.id]}
                   />
                 </>
               ))}
@@ -206,6 +239,7 @@ export default function EditPage({ id, editviewRecord, changeData, setChangeData
                     placeholder={edititem.name}
                     onChange={onEditChange}
                     name={edititem.id}
+                    value={editRecord[edititem.id]}
                   />
                 </>
               ))}
@@ -217,6 +251,7 @@ export default function EditPage({ id, editviewRecord, changeData, setChangeData
                     placeholder={edititem.name}
                     onChange={onEditChange}
                     name={edititem.id}
+                    value={editRecord[edititem.id]}
                   />
                 </>
               ))}
@@ -296,6 +331,7 @@ export default function EditPage({ id, editviewRecord, changeData, setChangeData
                     placeholder={edititem.name}
                     onChange={onEditChange}
                     name={edititem.id}
+                    value={editRecord[edititem.id].slice(0, 19)}
                   />
                 </>
               ))}
@@ -307,6 +343,7 @@ export default function EditPage({ id, editviewRecord, changeData, setChangeData
                     placeholder={edititem.name}
                     onChange={onEditChange}
                     name={edititem.id}
+                    value={editRecord[edititem.id]}
                   />
                 </>
               ))}
@@ -318,6 +355,7 @@ export default function EditPage({ id, editviewRecord, changeData, setChangeData
                     placeholder={edititem.name}
                     onChange={onEditChange}
                     name={edititem.id}
+                    value={editRecord[edititem.id]}
                   />
                 </>
               ))}

@@ -18,7 +18,7 @@ import { LoadingButton } from '@mui/lab';
 
 // ----------------------------------------------------------------------
 
-export default function LoginForm() {
+export default function LoginForm({ setLogin, login, tokenRequest }) {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
 
@@ -44,7 +44,18 @@ export default function LoginForm() {
   const handleShowPassword = () => {
     setShowPassword((show) => !show);
   };
-
+  const usernameOnChange = (e) => {
+    setLogin((prevstate) => ({
+      ...prevstate,
+      userName: e.target.value
+    }));
+  };
+  const passwordOnChange = (e) => {
+    setLogin((prevstate) => ({
+      ...prevstate,
+      password: e.target.value
+    }));
+  };
   return (
     <FormikProvider value={formik}>
       <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
@@ -55,8 +66,10 @@ export default function LoginForm() {
             type="email"
             label="Email address"
             {...getFieldProps('email')}
-            error={Boolean(touched.email && errors.email)}
-            helperText={touched.email && errors.email}
+            onChange={usernameOnChange}
+            value={login.userName}
+            /* error={Boolean(touched.email && errors.email)}
+            helperText={touched.email && errors.email} */
           />
 
           <TextField
@@ -65,6 +78,8 @@ export default function LoginForm() {
             type={showPassword ? 'text' : 'password'}
             label="Password"
             {...getFieldProps('password')}
+            onChange={passwordOnChange}
+            value={login.password}
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">
@@ -74,8 +89,8 @@ export default function LoginForm() {
                 </InputAdornment>
               )
             }}
-            error={Boolean(touched.password && errors.password)}
-            helperText={touched.password && errors.password}
+            /* error={Boolean(touched.password && errors.password)}
+            helperText={touched.password && errors.password} */
           />
         </Stack>
 
@@ -92,6 +107,7 @@ export default function LoginForm() {
           type="submit"
           variant="contained"
           loading={isSubmitting}
+          onClick={tokenRequest}
         >
           Login
         </LoadingButton>

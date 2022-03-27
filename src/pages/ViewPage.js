@@ -21,7 +21,7 @@ ViewPage.propTypes = {
 };
 export default function ViewPage({ editviewRecord, editlist }) {
   const [viewRecord] = useState(editviewRecord);
-
+  const space = ' ';
   return (
     <Page title="View">
       <Container maxWidth="false">
@@ -183,7 +183,11 @@ export default function ViewPage({ editviewRecord, editlist }) {
                   <TextField
                     multiline
                     name={edititem.id}
-                    value={viewRecord[edititem.id]}
+                    value={
+                      viewRecord[edititem.id].slice(0, 10) +
+                      space +
+                      viewRecord[edititem.id].slice(11, 16)
+                    }
                     maxRows={5}
                   />
                 </Stack>

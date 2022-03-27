@@ -1,6 +1,7 @@
 import { Icon } from '@iconify/react';
 import React, { useRef, useState } from 'react';
-import PropTypes from 'prop-types';
+// import axios from 'axios';
+// import PropTypes from 'prop-types';
 import editFill from '@iconify/icons-eva/edit-fill';
 import { Link as RouterLink } from 'react-router-dom';
 import trash2Outline from '@iconify/icons-eva/trash-2-outline';
@@ -9,17 +10,20 @@ import eyeFill from '@iconify/icons-eva/eye-fill';
 // material
 import { Menu, MenuItem, IconButton, ListItemIcon, ListItemText } from '@mui/material';
 // ----------------------------------------------------------------------
-UserMoreMenu.propTypes = {
-  id: PropTypes.number,
+/* UserMoreMenu.propTypes = {
+  id: PropTypes.number
   changeData: PropTypes.array,
-  setChangeData: PropTypes.func
-};
-export default function UserMoreMenu({ id, changeData, setChangeData }) {
+  setChangeData: PropTypes.func 
+}; */
+export default function UserMoreMenu() {
+  /* {
+     id,  changeData, setChangeData 
+  } */
   const [isOpen, setIsOpen] = useState(false);
 
   const ref = useRef(null);
   const handleDeleteItem = () => {
-    setChangeData(changeData.filter((el) => el.id !== id));
+    /* setChangeData(changeData.filter((el) => el.id !== id)); */
     setIsOpen(false);
   };
 

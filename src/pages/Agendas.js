@@ -1,8 +1,9 @@
 import { Routes, Route, Link } from 'react-router-dom';
 import { filter } from 'lodash';
 import { Icon } from '@iconify/react';
-import { sentenceCase } from 'change-case';
-import { useState } from 'react';
+// import { sentenceCase } from 'change-case';
+import { useState, useEffect } from 'react';
+import axios from 'axios';
 import plusFill from '@iconify/icons-eva/plus-fill';
 // material
 import {
@@ -17,18 +18,18 @@ import {
   Container,
   Typography,
   TableContainer,
-  TablePagination,
-  Select,
-  MenuItem
+  TablePagination
+  // Select,
+  // MenuItem
 } from '@mui/material';
 // components
 import Page from '../components/Page';
-import Label from '../components/Label';
+// import Label from '../components/Label';
 import Scrollbar from '../components/Scrollbar';
 import SearchNotFound from '../components/SearchNotFound';
 import { UserListHead, UserListToolbar, UserMoreMenu } from '../components/_dashboard/user';
 //
-import AGENDAS from '../_mocks_/agendas';
+// import AGENDAS from '../_mocks_/agendas';
 import AddAgenda from './add/AddAgenda';
 import EditPage from './EditPage';
 import ViewPage from './ViewPage';
@@ -40,19 +41,19 @@ const TABLE_HEAD = [
   { id: 'title', label: 'Title', alignRight: false },
   { id: 'description', label: 'Description', alignRight: false },
   { id: 'speakers', label: 'Speakers', alignRight: false },
-  { id: 'rating', label: 'Rating', alignRight: false },
-  { id: 'status', label: 'Status', alignRight: false },
+  /* { id: 'rating', label: 'Rating', alignRight: false },
+  { id: 'status', label: 'Status', alignRight: false }, */
   { id: '' }
 ];
-const statuslist = ['Active', 'Inactive'];
+// const statuslist = ['Active', 'Inactive'];
 const editlist = {
   text: [
     { name: 'Title', id: 'title' },
-    { name: 'Description', id: 'description' },
-    { name: 'Rating', id: 'rating' }
+    { name: 'Description', id: 'description' }
+    /* { name: 'Rating', id: 'rating' } */
   ],
   select: [
-    { name: 'Status', id: 'status' },
+    /* { name: 'Status', id: 'status' }, */
     { name: 'Speakers', id: 'speakers' }
   ],
   file: [],
@@ -63,14 +64,14 @@ const editlist = {
   textmb: [],
   selectmb: [],
   filemb: [
-    { name: 'Upload Agenda Details', id: 'agendadetailsfile' },
-    { name: 'Upload Agenda Speech', id: 'agendaspeechfile' }
+    /* { name: 'Upload Agenda Details', id: 'agendadetailsfile' },
+    { name: 'Upload Agenda Speech', id: 'agendaspeechfile' } */
   ],
   datemb: [],
   timemb: [],
   datetimemb: [
-    { name: 'Session Start', id: 'sessionstart' },
-    { name: 'Session End', id: 'sessionend' }
+    { name: 'Session Start', id: 'start_date' },
+    { name: 'Session End', id: 'end_date' }
   ]
 };
 
@@ -105,8 +106,8 @@ function applySortFilter(array, comparator, query, status) {
       (agenda) =>
         (agenda.title.toLowerCase().indexOf(query.toLowerCase()) !== -1 ||
           agenda.id.toString().indexOf(query.toLowerCase()) !== -1 ||
-          agenda.description.toLowerCase().indexOf(query.toLowerCase()) !== -1) &&
-        agenda.status.indexOf(status) !== -1
+          agenda.description.toLowerCase().indexOf(query.toLowerCase()) !== -1) /* && 
+         agenda.status.indexOf(status) */ !== -1
     );
   }
   return stabilizedThis.map((el) => el[0]);
@@ -118,11 +119,17 @@ export default function Agendas() {
   const [selected, setSelected] = useState([]);
   const [orderBy, setOrderBy] = useState('id');
   const [filter, setFilter] = useState('');
-  const [filterStatus, setFilterStatus] = useState('');
+  /* const [filterStatus, setFilterStatus] = useState(''); */
   const [rowsPerPage, setRowsPerPage] = useState(5);
-  const [changeAgendas, setChangeAgendas] = useState(AGENDAS);
+  const [changeAgendas, setChangeAgendas] = useState([]);
   const [itemId, setItemId] = useState(0);
   const [editviewRecord, setEditviewRecord] = useState({});
+
+  useEffect(() => {
+    axios.get(`https://wr.raneddo.ml/api/Agenda`).then((res) => {
+      setChangeAgendas(res.data);
+    });
+  }, []);
 
   const getItem = (id) => {
     setItemId(id);
@@ -174,22 +181,22 @@ export default function Agendas() {
   const handleFilter = (event) => {
     setFilter(event.target.value);
   };
-  const handleFilterStatus = (event) => {
+  /* const handleFilterStatus = (event) => {
     setFilterStatus(event.target.value);
-  };
+  }; */
 
-  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - AGENDAS.length) : 0;
+  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - changeAgendas.length) : 0;
 
   const filteredAgendas = applySortFilter(
     changeAgendas,
     getComparator(order, orderBy),
-    filter,
-    filterStatus
+    filter
+    /* filterStatus */
   );
 
   const isAgendaNotFound = filteredAgendas.length === 0;
 
-  const toggleStatus = (e) => {
+  /* const toggleStatus = (e) => {
     const objIndex = changeAgendas.findIndex((x) => x.id === parseInt(e.target.id, 10));
     const newArr = [...changeAgendas];
     if (changeAgendas[objIndex].status === 'Active') {
@@ -198,7 +205,7 @@ export default function Agendas() {
       newArr[objIndex].status = 'Active';
     }
     setChangeAgendas(newArr);
-  };
+  }; */
 
   return (
     <Routes>
@@ -227,7 +234,7 @@ export default function Agendas() {
                   setChangeData={setChangeAgendas}
                   changeData={changeAgendas}
                 />
-                <div className="filter">
+                {/* }<div className="filter">
                   <Stack sx={{ flexBasis: '25%', padding: '0px 10px' }}>
                     <Select
                       displayEmpty
@@ -246,7 +253,7 @@ export default function Agendas() {
                       ))}
                     </Select>
                   </Stack>
-                </div>
+                </div> { */}
                 <Scrollbar>
                   <TableContainer sx={{ minWidth: 800 }}>
                     <Table>
@@ -263,7 +270,7 @@ export default function Agendas() {
                         {filteredAgendas
                           .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                           .map((row) => {
-                            const { id, title, description, status, rating, speakers } = row;
+                            const { id, title, description, /* status, rating, */ speakers } = row;
                             const isItemSelected = selected.indexOf(id) !== -1;
 
                             return (
@@ -284,8 +291,8 @@ export default function Agendas() {
                                 <TableCell align="left">{id}</TableCell>
                                 <TableCell align="left">{title}</TableCell>
                                 <TableCell align="left">{description}</TableCell>
-                                <TableCell align="left">{speakers}</TableCell>
-                                <TableCell align="left">{rating}</TableCell>
+                                <TableCell align="left">{speakers[0]}</TableCell>
+                                {/* } <TableCell align="left">{rating}</TableCell> 
                                 <TableCell align="left">
                                   <Label
                                     id={id}
@@ -295,7 +302,7 @@ export default function Agendas() {
                                   >
                                     {sentenceCase(status)}
                                   </Label>
-                                </TableCell>
+                                </TableCell> { */}
 
                                 <TableCell onClick={() => getItem(id)} align="right">
                                   <UserMoreMenu

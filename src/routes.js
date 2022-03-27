@@ -36,11 +36,16 @@ import Users from './pages/Users';
 
 // ----------------------------------------------------------------------
 
-export default function Router() {
+export default function Router({ setLogin, login, tokenRequest, token, userName, setToken }) {
   return useRoutes([
     {
       path: '/',
-      element: <DashboardLayout />,
+      element:
+        token === '' ? (
+          <Navigate to="/login" />
+        ) : (
+          <DashboardLayout userName={userName} setToken={setToken} />
+        ),
       children: [
         { path: '/', element: <Navigate to="/login" /> },
         { path: 'dashboard', element: <DashboardApp /> },
@@ -100,7 +105,14 @@ export default function Router() {
       path: '/',
       element: <LogoOnlyLayout />,
       children: [
-        { path: 'login', element: <Login /> },
+        {
+          path: 'login',
+          element: token ? (
+            <Navigate to="/dashboard" />
+          ) : (
+            <Login setLogin={setLogin} login={login} tokenRequest={tokenRequest} />
+          )
+        },
         { path: 'register', element: <Register /> },
         { path: '404', element: <NotFound /> },
         { path: '/', element: <Navigate to="/login" /> },
