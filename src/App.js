@@ -19,7 +19,7 @@ export default function App() {
   axios.defaults.withCredentials = true;
   const tokenRequest = () => {
     axios
-      .post(`https://wr.raneddo.ml/login`, JSON.stringify(login), {
+      .post(`https://wr.raneddo.ml/api/Auth/login`, JSON.stringify(login), {
         headers: {
           'Content-Type': 'application/json; charset=utf-8'
         }

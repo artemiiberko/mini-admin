@@ -29,7 +29,9 @@ EditPage.propTypes = {
 export default function EditPage({
   id,
   editviewRecord,
-  /* changeData, setChangeData, */ editlist
+  /* changeData, */ setChangeData,
+  editlist,
+  pagePath
 }) {
   const [editRecord, setEditRecord] = useState(editviewRecord);
   const [editerror, setEditerror] = useState('');
@@ -121,12 +123,15 @@ export default function EditPage({
   };
   const addEdit = (record) => {
     axios
-      .put(`https://wr.raneddo.ml/api/Agenda/${id}`, record, {
+      .put(`https://wr.raneddo.ml/api/${pagePath}/${id}`, record, {
         headers: {
           'Content-Type': 'application/json; charset=utf-8'
         }
       })
       .then((res) => {
+        axios.get(`https://wr.raneddo.ml/api/${pagePath}`).then((res) => {
+          setChangeData(res.data);
+        });
         console.log(res);
       });
 

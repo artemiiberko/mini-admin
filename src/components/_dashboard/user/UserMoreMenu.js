@@ -1,4 +1,5 @@
 import { Icon } from '@iconify/react';
+import axios from 'axios';
 import React, { useRef, useState } from 'react';
 // import axios from 'axios';
 // import PropTypes from 'prop-types';
@@ -15,7 +16,7 @@ import { Menu, MenuItem, IconButton, ListItemIcon, ListItemText } from '@mui/mat
   changeData: PropTypes.array,
   setChangeData: PropTypes.func 
 }; */
-export default function UserMoreMenu() {
+export default function UserMoreMenu({ id, setChangeData }) {
   /* {
      id,  changeData, setChangeData 
   } */
@@ -23,6 +24,12 @@ export default function UserMoreMenu() {
 
   const ref = useRef(null);
   const handleDeleteItem = () => {
+    axios.delete(`https://wr.raneddo.ml/api/Agenda/${id}`).then((res) => {
+      console.log(res);
+    });
+    axios.get(`https://wr.raneddo.ml/api/Agenda`).then((res) => {
+      setChangeData(res.data);
+    });
     /* setChangeData(changeData.filter((el) => el.id !== id)); */
     setIsOpen(false);
   };

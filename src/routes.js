@@ -49,7 +49,7 @@ export default function Router({ setLogin, login, tokenRequest, token, userName,
       children: [
         { path: '/', element: <Navigate to="/login" /> },
         { path: 'dashboard', element: <DashboardApp /> },
-        { path: 'attendees/*', element: <Attendees /> },
+        { path: 'attendees/*', element: <Attendees token={token} /> },
         { path: 'agendas/*', element: <Agendas /> },
         { path: 'polls/*', element: <Polls /> },
         { path: 'notification/*', element: <Notification /> },

@@ -28,11 +28,10 @@ const speakerslist = [1, 2, 3, 4, 5];
    changeAgendas: PropTypes.array 
 }; */
 
-export default function AddAgenda() {
-  /* {
-     setChangeAgendas
-    changeAgendas 
-  } */
+export default function AddAgenda({
+  setChangeAgendas
+  /* changeAgendas */
+}) {
   const [addagendaerror, setAddagendaerror] = useState('');
   const [linkAdd, setLinkAdd] = useState('');
   const [newAgenda, setNewAgenda] = useState({
@@ -55,6 +54,9 @@ export default function AddAgenda() {
         }
       })
       .then((res) => {
+        axios.get(`https://wr.raneddo.ml/api/Agenda`).then((res) => {
+          setChangeAgendas(res.data);
+        });
         console.log(res);
       });
   };
@@ -77,10 +79,13 @@ export default function AddAgenda() {
     if (
       newAgenda.title !== '' &&
       newAgenda.description !== '' &&
+      newAgenda.speakers[0] !== 0 &&
       newAgenda.speakers.length !== 0 /* &&
       newAgenda.rating !== '' &&
       newAgenda.status !== '' */
     ) {
+      console.log(newAgenda.speakers[0]);
+      console.log(newAgenda);
       setLinkAdd('../');
     } else {
       setLinkAdd('');
@@ -90,6 +95,7 @@ export default function AddAgenda() {
     if (
       newAgenda.title !== '' &&
       newAgenda.description !== '' &&
+      newAgenda.speakers[0] !== 0 &&
       newAgenda.speakers.length !== 0 /* &&
       newAgenda.rating !== '' &&
       newAgenda.status !== '' */
@@ -152,7 +158,7 @@ export default function AddAgenda() {
                 onChange={onAgendaChange}
                 value={newAgenda.speakers}
               >
-                <MenuItem key="speakers" value="" style={{ color: 'grey' }}>
+                <MenuItem key="speakers" value={0} style={{ color: 'grey' }}>
                   Select Speaker...
                 </MenuItem>
                 {speakerslist.map((speaker) => (

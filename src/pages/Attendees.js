@@ -1,7 +1,7 @@
 import { filter } from 'lodash';
 import { Icon } from '@iconify/react';
 // import { sentenceCase } from 'change-case';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 import plusFill from '@iconify/icons-eva/plus-fill';
 import { Link, Routes, Route } from 'react-router-dom';
@@ -41,13 +41,13 @@ const countrylist = ['Africa', 'Germany', 'Ireland', 'USA', 'Poland', 'Russia'];
 const citylist = ['Berlin', 'Washington', 'Sydney', 'London'];
 const TABLE_HEAD = [
   { id: 'id', label: 'ID', alignRight: false },
-  { id: 'title', label: 'Title', alignRight: false },
-  { id: 'name', label: 'First Name', alignRight: false },
-  { id: 'lname', label: 'Last Name', alignRight: false },
+  { id: 'prefix', label: 'Title', alignRight: false },
+  { id: 'firstName', label: 'First Name', alignRight: false },
+  { id: 'lastName', label: 'Last Name', alignRight: false },
   { id: 'email', label: 'Email Address', alignRight: false },
-  { id: 'appstatus', label: 'Application Status', alignRight: false },
+  { id: 'applicationStatus', label: 'Application Status', alignRight: false },
   /* { id: 'subdate', label: 'Submitted Date', alignRight: false }, */
-  { id: 'status', label: 'Status', alignRight: false },
+  { id: 'isActive', label: 'Status', alignRight: false },
   { id: '' }
 ];
 const statuslist = ['Active', 'Inactive'];
@@ -141,7 +141,7 @@ const editlist = {
   timemb: [],
   datetimemb: []
 };
-
+const pagePath = 'User';
 // ----------------------------------------------------------------------
 
 function descendingComparator(a, b, orderBy) {
@@ -181,25 +181,25 @@ function applySortFilter(
   if (query /* || status || appstatus || attendeetype || country || city || rsvp || role */) {
     return filter(
       array,
-      (_attendee) =>
-        (_attendee.lname.toLowerCase().indexOf(query.toLowerCase()) !== -1 ||
-          _attendee.name.toLowerCase().indexOf(query.toLowerCase()) !== -1 ||
-          _attendee.title.toLowerCase().indexOf(query.toLowerCase()) !== -1 ||
-          _attendee.id.toString().indexOf(query.toLowerCase()) !== -1 ||
-          _attendee.email.toLowerCase().indexOf(query.toLowerCase()) !== -1) /* &&
+      (attendee) =>
+        attendee.lastName.toLowerCase().indexOf(query.toLowerCase()) !== -1 ||
+        attendee.firstName.toLowerCase().indexOf(query.toLowerCase()) !== -1 ||
+        attendee.prefix.toLowerCase().indexOf(query.toLowerCase()) !== -1 ||
+        attendee.id.toString().indexOf(query.toLowerCase()) !== -1 ||
+        attendee.email.toLowerCase().indexOf(query.toLowerCase()) !== -1 /* &&
         _attendee.status.indexOf(status) !== -1 &&
         (_attendee.role.indexOf(role) !== -1)&&
          _attendee.attendeetype.indexOf(attendeetype) !== -1 &&
         _attendee.rsvp.indexOf(rsvp) !== -1 &&
         _attendee.city.indexOf(city) !== -1 &&
         _attendee.country.indexOf(country) !== -1 &&
-        _attendee.appstatus.indexOf(appstatus) */ !== -1
+        _attendee.appstatus.indexOf(appstatus)  !== -1 */
     );
   }
   return stabilizedThis.map((el) => el[0]);
 }
 
-export default function Attendees() {
+export default function Attendees({ token }) {
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc');
   const [selected, setSelected] = useState([]);
@@ -217,9 +217,11 @@ export default function Attendees() {
   const [itemId, setItemId] = useState(0);
   const [editviewRecord, setEditviewRecord] = useState({});
 
-  axios.get(`https://wr.raneddo.ml/api/User`).then((res) => {
-    setChangeAttendees(res.data);
-  });
+  useEffect(() => {
+    axios.get(`https://wr.raneddo.ml/api/User`).then((res) => {
+      setChangeAttendees(res.data);
+    });
+  }, []);
 
   const getItem = (id) => {
     setItemId(id);
@@ -298,10 +300,10 @@ export default function Attendees() {
   const filteredAttendees = applySortFilter(
     changeAttendees,
     getComparator(order, orderBy),
-    filter,
-    filterStatus,
-    filterRole
-    /* filterAppStatus,
+    filter
+    /* filterStatus,
+    filterRole,
+    filterAppStatus,
     filterAttendeeType,
     filterCity,
     filterCountry,
@@ -315,14 +317,17 @@ export default function Attendees() {
     /* const newArr = [...changeAttendees]; */
     const record = changeAttendees[objIndex];
     record.isActive = !record.isActive;
+    const recordjson = JSON.stringify(record);
     axios
-      .put(`https://wr.raneddo.ml/api/User/${e.target.id}`, record, {
+      .put(`https://wr.raneddo.ml/api/User/${e.target.id}`, recordjson, {
         headers: {
           'Content-Type': 'application/json; charset=utf-8'
         }
       })
       .then((res) => {
-        console.log(res);
+        axios.get(`https://wr.raneddo.ml/api/User`).then((res) => {
+          setChangeAttendees(res.data);
+        });
       });
     /* if (changeAttendees[objIndex].isActivate) {
       newArr[objIndex].status = 'Inactive';
@@ -356,7 +361,6 @@ export default function Attendees() {
                   onFilterName={handleFilter}
                   filterStatus={filterStatus}
                   onfilterStatus={handleFilterStatus}
-                  selectedItems={selected}
                   setSelectedItems={setSelected}
                   setChangeData={setChangeAttendees}
                   changeData={changeAttendees}
@@ -596,6 +600,7 @@ export default function Attendees() {
         path="/edit"
         element={
           <EditPage
+            pagePath={pagePath}
             id={itemId}
             editviewRecord={editviewRecord}
             setChangeData={setChangeAttendees}

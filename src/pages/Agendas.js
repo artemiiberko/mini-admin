@@ -74,7 +74,7 @@ const editlist = {
     { name: 'Session End', id: 'end_date' }
   ]
 };
-
+const pagePath = 'Agenda';
 // ----------------------------------------------------------------------
 
 function descendingComparator(a, b, orderBy) {
@@ -100,14 +100,15 @@ function applySortFilter(array, comparator, query, status) {
     if (order !== 0) return order;
     return a[1] - b[1];
   });
-  if (query || status) {
+  if (query /* || status */) {
+    console.log(query);
     return filter(
       array,
       (agenda) =>
-        (agenda.title.toLowerCase().indexOf(query.toLowerCase()) !== -1 ||
-          agenda.id.toString().indexOf(query.toLowerCase()) !== -1 ||
-          agenda.description.toLowerCase().indexOf(query.toLowerCase()) !== -1) /* && 
-         agenda.status.indexOf(status) */ !== -1
+        agenda.title.toLowerCase().indexOf(query.toLowerCase()) !== -1 ||
+        agenda.id.toString().indexOf(query.toLowerCase()) !== -1 ||
+        agenda.description.toLowerCase().indexOf(query.toLowerCase()) !== -1 /* && 
+         agenda.status.indexOf(status)  !== -1 */
     );
   }
   return stabilizedThis.map((el) => el[0]);
@@ -360,6 +361,7 @@ export default function Agendas() {
             setChangeData={setChangeAgendas}
             changeData={changeAgendas}
             editlist={editlist}
+            pagePath={pagePath}
           />
         }
       />

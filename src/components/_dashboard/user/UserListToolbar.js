@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types';
+import axios from 'axios';
 import { Icon } from '@iconify/react';
 import searchFill from '@iconify/icons-eva/search-fill';
 import trash2Fill from '@iconify/icons-eva/trash-2-fill';
@@ -58,9 +59,17 @@ export default function UserListToolbar({
   setSelectedItems
 }) {
   const deleteSelected = () => {
-    setChangeData(
-      changeData.filter((data) => selectedItems.filter((item) => item === data.id).length === 0)
+    selectedItems.map((i) =>
+      axios.delete(`https://wr.raneddo.ml/api/Agenda/${i}`).then((res) => {
+        console.log(res);
+      })
     );
+    axios.get(`https://wr.raneddo.ml/api/Agenda`).then((res) => {
+      setChangeData(res.data);
+    });
+    /* setChangeData(
+      changeData.filter((data) => selectedItems.filter((item) => item === data.id).length === 0)
+    ); */
     setSelectedItems([]);
   };
 
