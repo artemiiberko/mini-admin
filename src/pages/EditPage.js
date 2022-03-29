@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import axios from 'axios';
+import { BallTriangle } from 'react-loader-spinner';
 // material
 import {
   MenuItem,
@@ -27,6 +28,7 @@ EditPage.propTypes = {
   editviewRecord: PropTypes.object
 };
 export default function EditPage({
+  setEditLoading,
   id,
   editviewRecord,
   /* changeData, */ setChangeData,
@@ -36,6 +38,15 @@ export default function EditPage({
   const [editRecord, setEditRecord] = useState(editviewRecord);
   const [editerror, setEditerror] = useState('');
   const [linkEdit, setLinkEdit] = useState('');
+  const [users, setUsers] = useState([]);
+  const [isLoading, setLoading] = useState(true);
+
+  useEffect(() => {
+    axios.get(`https://wr.raneddo.ml/api/User`).then((res) => {
+      setUsers(res.data);
+      setLoading(false);
+    });
+  }, []);
 
   const onEditChange = (e) => {
     /* let starttimestring = editRecord.starttime;
@@ -122,6 +133,7 @@ export default function EditPage({
     console.log(editRecord.manageattendees.create);
   };
   const addEdit = (record) => {
+    setEditLoading(true);
     axios
       .put(`https://wr.raneddo.ml/api/${pagePath}/${id}`, record, {
         headers: {
@@ -131,8 +143,8 @@ export default function EditPage({
       .then((res) => {
         axios.get(`https://wr.raneddo.ml/api/${pagePath}`).then((res) => {
           setChangeData(res.data);
+          setEditLoading(false);
         });
-        console.log(res);
       });
 
     /* const objIndex = changeData.findIndex((x) => x.id === id);
@@ -178,7 +190,6 @@ export default function EditPage({
     } else {
       setEditerror('');
       addEdit(editRecord);
-      console.log(editRecord);
     }
   };
   return (
@@ -190,6 +201,22 @@ export default function EditPage({
           </Typography>
         </Stack>
         <Card sx={{ padding: '20px' }}>
+          <BallTriangle
+            wrapperStyle={{
+              position: 'absolute',
+              width: '100%',
+              height: '100%',
+              justifyContent: 'center',
+              alignItems: 'center',
+              backgroundColor: 'rgba(255,255,255,0.5)',
+              zIndex: 1
+            }}
+            height="100"
+            width="100"
+            color="grey"
+            ariaLabel="loading"
+            visible={isLoading}
+          />
           <FormGroup style={{ display: 'flex', width: '100%' }}>
             <Stack spacing={3} style={{ flexBasis: '100%', padding: '10px', flexShrink: '0' }}>
               {editlist.text.map((edititem) => (
@@ -204,26 +231,47 @@ export default function EditPage({
                   />
                 </>
               ))}
-              {editlist.select.map((edititem) => (
-                <>
-                  <Typography>{`${edititem.name}*`}</Typography>
-                  <Select
-                    displayEmpty
-                    onChange={onEditChange}
-                    value={editRecord[edititem.id]}
-                    name={edititem.id}
-                  >
-                    <MenuItem key={edititem.id} value="" style={{ color: 'grey' }}>
-                      Select...
-                    </MenuItem>
-                    {lists[edititem.id].map((listitem) => (
-                      <MenuItem key={listitem} value={listitem}>
-                        {listitem}
+              {editlist.select.map((edititem) =>
+                edititem.id === 'speakers' ? (
+                  <>
+                    <Typography>{`${edititem.name}*`}</Typography>
+                    <Select
+                      displayEmpty
+                      onChange={onEditChange}
+                      value={editRecord[edititem.id][0]}
+                      name={edititem.id}
+                    >
+                      <MenuItem key={edititem.id} value="" style={{ color: 'grey' }}>
+                        Select...
                       </MenuItem>
-                    ))}
-                  </Select>
-                </>
-              ))}
+                      {users.map((user) => (
+                        <MenuItem key={user.id} value={user.id}>
+                          {user.firstName}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </>
+                ) : (
+                  <>
+                    <Typography>{`${edititem.name}*`}</Typography>
+                    <Select
+                      displayEmpty
+                      onChange={onEditChange}
+                      value={editRecord[edititem.id]}
+                      name={edititem.id}
+                    >
+                      <MenuItem key={edititem.id} value="" style={{ color: 'grey' }}>
+                        Select...
+                      </MenuItem>
+                      {lists[edititem.id].map((listitem) => (
+                        <MenuItem key={listitem} value={listitem}>
+                          {listitem}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </>
+                )
+              )}
               {editlist.datetime.map((edititem) => (
                 <>
                   <Typography>{`${edititem.name}*`}</Typography>
@@ -380,9 +428,6 @@ export default function EditPage({
               {editerror}
             </Typography>
           </FormGroup>
-          <Typography style={{ color: 'red', fontWeight: '700', padding: '10px' }}>
-            {editerror}
-          </Typography>
           <Stack
             spacing={3}
             direction="row"

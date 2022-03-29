@@ -1,5 +1,6 @@
 import { Routes, Route, Link } from 'react-router-dom';
 import { filter } from 'lodash';
+import { BallTriangle } from 'react-loader-spinner';
 import { Icon } from '@iconify/react';
 // import { sentenceCase } from 'change-case';
 import { useState, useEffect } from 'react';
@@ -125,10 +126,17 @@ export default function Agendas() {
   const [changeAgendas, setChangeAgendas] = useState([]);
   const [itemId, setItemId] = useState(0);
   const [editviewRecord, setEditviewRecord] = useState({});
+  const [users, setUsers] = useState([]);
+  const [isLoading, setLoading] = useState(true);
+  const [isEditLoading, setEditLoading] = useState(false);
 
   useEffect(() => {
-    axios.get(`https://wr.raneddo.ml/api/Agenda`).then((res) => {
-      setChangeAgendas(res.data);
+    axios.get(`https://wr.raneddo.ml/api/User`).then((res) => {
+      setUsers(res.data);
+      axios.get(`https://wr.raneddo.ml/api/Agenda`).then((res) => {
+        setChangeAgendas(res.data);
+        setLoading(false);
+      });
     });
   }, []);
 
@@ -225,8 +233,26 @@ export default function Agendas() {
                   </Button>
                 </Link>
               </Stack>
+              <BallTriangle
+                wrapperStyle={{
+                  position: 'absolute',
+                  width: 'calc(100% - 279px)',
+                  height: '100%',
+                  justifyContent: 'center',
+                  paddingTop: '100px',
+                  backgroundColor: 'white',
+                  zIndex: 1
+                }}
+                height="100"
+                width="100"
+                color="grey"
+                ariaLabel="loading"
+                visible={isLoading}
+              />
               <Card>
                 <UserListToolbar
+                  pagePath={pagePath}
+                  setEditLoading={setEditLoading}
                   numSelected={selected.length}
                   filterName={filter}
                   onFilterName={handleFilter}
@@ -256,6 +282,22 @@ export default function Agendas() {
                   </Stack>
                 </div> { */}
                 <Scrollbar>
+                  <BallTriangle
+                    wrapperStyle={{
+                      position: 'absolute',
+                      height: '100%',
+                      width: '100%',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      backgroundColor: 'rgba(255,255,255,0.5)',
+                      zIndex: 1
+                    }}
+                    height="100"
+                    width="100"
+                    color="grey"
+                    ariaLabel="loading"
+                    visible={isEditLoading}
+                  />
                   <TableContainer sx={{ minWidth: 800 }}>
                     <Table>
                       <UserListHead
@@ -292,7 +334,14 @@ export default function Agendas() {
                                 <TableCell align="left">{id}</TableCell>
                                 <TableCell align="left">{title}</TableCell>
                                 <TableCell align="left">{description}</TableCell>
-                                <TableCell align="left">{speakers[0]}</TableCell>
+                                <TableCell
+                                  sx={speakers[0] ? {} : { fontStyle: 'italic' }}
+                                  align="left"
+                                >
+                                  {speakers[0]
+                                    ? users.find((x) => x.id === speakers[0]).firstName
+                                    : 'No speakers'}
+                                </TableCell>
                                 {/* } <TableCell align="left">{rating}</TableCell> 
                                 <TableCell align="left">
                                   <Label
@@ -307,6 +356,8 @@ export default function Agendas() {
 
                                 <TableCell onClick={() => getItem(id)} align="right">
                                   <UserMoreMenu
+                                    setEditLoading={setEditLoading}
+                                    pagePath={pagePath}
                                     id={id}
                                     setChangeData={setChangeAgendas}
                                     changeData={changeAgendas}
@@ -356,6 +407,7 @@ export default function Agendas() {
         path="/edit"
         element={
           <EditPage
+            setEditLoading={setEditLoading}
             id={itemId}
             editviewRecord={editviewRecord}
             setChangeData={setChangeAgendas}
@@ -367,7 +419,14 @@ export default function Agendas() {
       />
       <Route
         path="/view"
-        element={<ViewPage editviewRecord={editviewRecord} editlist={editlist} />}
+        element={
+          <ViewPage
+            recordid={itemId}
+            pagePath={pagePath}
+            editviewRecord={editviewRecord}
+            editlist={editlist}
+          />
+        }
       />
     </Routes>
   );

@@ -50,23 +50,29 @@ UserListToolbar.propTypes = {
 };
 
 export default function UserListToolbar({
+  setEditLoading,
   numSelected,
   filterName,
   onFilterName,
   selectedItems,
   changeData,
   setChangeData,
-  setSelectedItems
+  setSelectedItems,
+  pagePath
 }) {
   const deleteSelected = () => {
-    selectedItems.map((i) =>
-      axios.delete(`https://wr.raneddo.ml/api/Agenda/${i}`).then((res) => {
-        console.log(res);
-      })
-    );
-    axios.get(`https://wr.raneddo.ml/api/Agenda`).then((res) => {
-      setChangeData(res.data);
-    });
+    if (pagePath === 'Agenda') {
+      setEditLoading(true);
+      selectedItems.map((i) =>
+        axios.delete(`https://wr.raneddo.ml/api/Agenda/${i}`).then((res) => {
+          console.log(res);
+          axios.get(`https://wr.raneddo.ml/api/Agenda`).then((res) => {
+            setChangeData(res.data);
+            setEditLoading(false);
+          });
+        })
+      );
+    }
     /* setChangeData(
       changeData.filter((data) => selectedItems.filter((item) => item === data.id).length === 0)
     ); */

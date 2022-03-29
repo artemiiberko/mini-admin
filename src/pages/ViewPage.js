@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
+import { BallTriangle } from 'react-loader-spinner';
 // material
 import {
   Button,
@@ -19,9 +21,19 @@ ViewPage.propTypes = {
   editlist: PropTypes.object,
   editviewRecord: PropTypes.object
 };
-export default function ViewPage({ editviewRecord, editlist }) {
+export default function ViewPage({ editviewRecord, editlist, recordid, pagePath }) {
   const [viewRecord] = useState(editviewRecord);
+  const [users, setUsers] = useState([]);
   const space = ' ';
+  const [isLoading, setLoading] = useState(true);
+
+  useEffect(() => {
+    axios.get(`https://wr.raneddo.ml/api/User`).then((res) => {
+      setUsers(res.data);
+      setLoading(false);
+    });
+  }, []);
+
   return (
     <Page title="View">
       <Container maxWidth="false">
@@ -31,6 +43,22 @@ export default function ViewPage({ editviewRecord, editlist }) {
           </Typography>
         </Stack>
         <Card sx={{ padding: '20px' }}>
+          <BallTriangle
+            wrapperStyle={{
+              position: 'absolute',
+              width: '100%',
+              height: '100%',
+              justifyContent: 'center',
+              alignItems: 'center',
+              backgroundColor: 'rgba(255,255,255,0.5)',
+              zIndex: 1
+            }}
+            height="100"
+            width="100"
+            color="grey"
+            ariaLabel="loading"
+            visible={isLoading}
+          />
           <FormGroup style={{ display: 'flex', width: '100%' }}>
             <Stack spacing={3} style={{ flexBasis: '100%', padding: '10px', flexShrink: '0' }}>
               {editlist.text.map((edititem) => (
@@ -44,17 +72,29 @@ export default function ViewPage({ editviewRecord, editlist }) {
                   />
                 </Stack>
               ))}
-              {editlist.select.map((edititem) => (
-                <Stack key={edititem.id} spacing={1}>
-                  <Typography variant="overline">{edititem.name}</Typography>
-                  <TextField
-                    multiline
-                    name={edititem.id}
-                    value={viewRecord[edititem.id]}
-                    maxRows={5}
-                  />
-                </Stack>
-              ))}
+              {editlist.select.map((edititem) =>
+                edititem.id === 'speakers' ? (
+                  <Stack key={edititem.id} spacing={1}>
+                    <Typography variant="overline">{edititem.name}</Typography>
+                    <TextField
+                      multiline
+                      name={edititem.id}
+                      value={users.length !== 0 ? users[viewRecord[edititem.id][0]].firstName : ''}
+                      maxRows={5}
+                    />
+                  </Stack>
+                ) : (
+                  <Stack key={edititem.id} spacing={1}>
+                    <Typography variant="overline">{edititem.name}</Typography>
+                    <TextField
+                      multiline
+                      name={edititem.id}
+                      value={viewRecord[edititem.id]}
+                      maxRows={5}
+                    />
+                  </Stack>
+                )
+              )}
               {editlist.file.map((edititem) => (
                 <Stack key={edititem.id} spacing={1}>
                   <Typography variant="overline">{edititem.name}</Typography>

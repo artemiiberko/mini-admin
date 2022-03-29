@@ -1,3 +1,5 @@
+import axios from 'axios';
+import { useState, useEffect } from 'react';
 import { Icon } from '@iconify/react';
 import peopleFill from '@iconify/icons-eva/people-fill';
 // material
@@ -5,7 +7,7 @@ import { alpha, styled } from '@mui/material/styles';
 import { Card, Typography } from '@mui/material';
 // utils
 import { fShortenNumber } from '../../../utils/formatNumber';
-import USERS from '../../../_mocks_/attendee';
+// import USERS from '../../../_mocks_/attendee';
 
 // ----------------------------------------------------------------------
 
@@ -36,12 +38,18 @@ const IconWrapperStyle = styled('div')(({ theme }) => ({
 // ----------------------------------------------------------------------
 
 export default function AppNewUsers() {
+  const [users, setUsers] = useState([]);
+  useEffect(() => {
+    axios.get(`https://wr.raneddo.ml/api/User`).then((res) => {
+      setUsers(res.data);
+    });
+  }, []);
   return (
     <RootStyle>
       <IconWrapperStyle>
         <Icon icon={peopleFill} width={24} height={24} />
       </IconWrapperStyle>
-      <Typography variant="h3">{fShortenNumber(USERS.length)}</Typography>
+      <Typography variant="h3">{fShortenNumber(users.length)}</Typography>
       <Typography variant="subtitle2" sx={{ opacity: 0.72 }}>
         Total Attendees
       </Typography>

@@ -16,7 +16,7 @@ import { Menu, MenuItem, IconButton, ListItemIcon, ListItemText } from '@mui/mat
   changeData: PropTypes.array,
   setChangeData: PropTypes.func 
 }; */
-export default function UserMoreMenu({ id, setChangeData }) {
+export default function UserMoreMenu({ id, setChangeData, pagePath, setEditLoading }) {
   /* {
      id,  changeData, setChangeData 
   } */
@@ -24,12 +24,15 @@ export default function UserMoreMenu({ id, setChangeData }) {
 
   const ref = useRef(null);
   const handleDeleteItem = () => {
-    axios.delete(`https://wr.raneddo.ml/api/Agenda/${id}`).then((res) => {
+    setEditLoading(true);
+    axios.delete(`https://wr.raneddo.ml/api/${pagePath}/${id}`).then((res) => {
       console.log(res);
+      axios.get(`https://wr.raneddo.ml/api/${pagePath}`).then((res) => {
+        setChangeData(res.data);
+        setEditLoading(false);
+      });
     });
-    axios.get(`https://wr.raneddo.ml/api/Agenda`).then((res) => {
-      setChangeData(res.data);
-    });
+
     /* setChangeData(changeData.filter((el) => el.id !== id)); */
     setIsOpen(false);
   };

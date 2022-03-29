@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import validator from 'validator';
 import { PropTypes } from 'prop-types';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
@@ -47,6 +48,7 @@ AddAttendee.propTypes = {
 export default function AddAttendee({ /* setChangeAttendees, */ changeAttendees }) {
   const [addattendeeerror, setAddattendeeerror] = useState('');
   const [linkAdd, setLinkAdd] = useState('');
+  const [emailerror, setEmailerror] = useState('');
 
   function emailExists(email) {
     return changeAttendees.some((e) => e.email === email);
@@ -155,6 +157,11 @@ export default function AddAttendee({ /* setChangeAttendees, */ changeAttendees 
     }
   };
   const handleSubmit = () => {
+    if (validator.isEmail(newAttendee.email)) {
+      setEmailerror('');
+    } else {
+      setEmailerror('Please enter an email address');
+    }
     if (
       newAttendee.firstName !== '' &&
       newAttendee.lastName !== '' &&
@@ -163,59 +170,63 @@ export default function AddAttendee({ /* setChangeAttendees, */ changeAttendees 
       newAttendee.prefix !== '' &&
       newAttendee.applicationStatus !== ''
     ) {
-      if (emailExists(newAttendee.email)) {
-        setAddattendeeerror('Email is already exists');
+      if (validator.isEmail(newAttendee.email)) {
+        if (emailExists(newAttendee.email)) {
+          setEmailerror('Email is already exists');
+        } else {
+          setAddattendeeerror('');
+          addAttendee(newAttendee);
+          setNewAttendee({
+            id: 0,
+            prefix: '',
+            fullName: '',
+            firstName: '',
+            lastName: '',
+            email: '',
+            isActive: false,
+            subdate: '',
+            applicationStatus: '',
+            attendeetype: '',
+            namearabic: '',
+            lnamearabic: '',
+            organization: '',
+            jobtitle: '',
+            countrycode: '',
+            contactnumber: '',
+            fullname: '',
+            bio: '',
+            nationality: '',
+            passportnumber: '',
+            dateofissue: '',
+            dateofexpire: '',
+            passportdoc: '',
+            passportphoto: '',
+            airportofdeparture: '',
+            countryofdeparture: '',
+            preference: '',
+            visa: '',
+            smokingrequired: '',
+            twitter: '',
+            country: '',
+            city: '',
+            roles: [],
+            rsvp: '',
+            rsvpcomments: '',
+            statusremark: '',
+            invitationtype: '',
+            registrationtype: '',
+            transportation: '',
+            transportcomments: '',
+            airlinename: '',
+            airlinebknumber: '',
+            hotelbknumber: '',
+            chekin: '',
+            checkout: '',
+            linkexpire: ''
+          });
+        }
       } else {
-        setAddattendeeerror('');
-        addAttendee(newAttendee);
-        setNewAttendee({
-          id: 0,
-          prefix: '',
-          fullName: '',
-          firstName: '',
-          lastName: '',
-          email: '',
-          isActive: false,
-          subdate: '',
-          applicationStatus: '',
-          attendeetype: '',
-          namearabic: '',
-          lnamearabic: '',
-          organization: '',
-          jobtitle: '',
-          countrycode: '',
-          contactnumber: '',
-          fullname: '',
-          bio: '',
-          nationality: '',
-          passportnumber: '',
-          dateofissue: '',
-          dateofexpire: '',
-          passportdoc: '',
-          passportphoto: '',
-          airportofdeparture: '',
-          countryofdeparture: '',
-          preference: '',
-          visa: '',
-          smokingrequired: '',
-          twitter: '',
-          country: '',
-          city: '',
-          roles: [],
-          rsvp: '',
-          rsvpcomments: '',
-          statusremark: '',
-          invitationtype: '',
-          registrationtype: '',
-          transportation: '',
-          transportcomments: '',
-          airlinename: '',
-          airlinebknumber: '',
-          hotelbknumber: '',
-          chekin: '',
-          checkout: '',
-          linkexpire: ''
-        });
+        return true;
       }
     } else {
       setAddattendeeerror('Please fill all fields');
@@ -275,6 +286,9 @@ export default function AddAttendee({ /* setChangeAttendees, */ changeAttendees 
                 value={newAttendee.email}
                 name="email"
               />
+              <Typography style={{ color: 'red', fontWeight: '700', padding: '10px' }}>
+                {emailerror}
+              </Typography>
               {/* <Typography>Attendee Type</Typography>
               <Select
                 displayEmpty

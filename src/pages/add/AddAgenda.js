@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 // import { PropTypes } from 'prop-types';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
@@ -45,6 +45,12 @@ export default function AddAgenda({
     /*    rating: '',
     status: '' */
   });
+  const [users, setUsers] = useState([]);
+  useEffect(() => {
+    axios.get(`https://wr.raneddo.ml/api/User`).then((res) => {
+      setUsers(res.data);
+    });
+  }, []);
   const addAgenda = (agenda) => {
     const agendajson = JSON.stringify(agenda);
     axios
@@ -161,9 +167,9 @@ export default function AddAgenda({
                 <MenuItem key="speakers" value={0} style={{ color: 'grey' }}>
                   Select Speaker...
                 </MenuItem>
-                {speakerslist.map((speaker) => (
-                  <MenuItem key={speaker} value={speaker}>
-                    {speaker}
+                {users.map((speaker) => (
+                  <MenuItem key={speaker.id} value={speaker.id}>
+                    {speaker.firstName}
                   </MenuItem>
                 ))}
               </Select>

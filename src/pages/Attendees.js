@@ -1,4 +1,5 @@
 import { filter } from 'lodash';
+import { BallTriangle } from 'react-loader-spinner';
 import { Icon } from '@iconify/react';
 // import { sentenceCase } from 'change-case';
 import { useState, useEffect } from 'react';
@@ -216,10 +217,13 @@ export default function Attendees({ token }) {
   const [changeAttendees, setChangeAttendees] = useState([]);
   const [itemId, setItemId] = useState(0);
   const [editviewRecord, setEditviewRecord] = useState({});
+  const [isLoading, setLoading] = useState(true);
+  const [isEditLoading, setEditLoading] = useState(false);
 
   useEffect(() => {
     axios.get(`https://wr.raneddo.ml/api/User`).then((res) => {
       setChangeAttendees(res.data);
+      setLoading(false);
     });
   }, []);
 
@@ -318,6 +322,7 @@ export default function Attendees({ token }) {
     const record = changeAttendees[objIndex];
     record.isActive = !record.isActive;
     const recordjson = JSON.stringify(record);
+    setEditLoading(true);
     axios
       .put(`https://wr.raneddo.ml/api/User/${e.target.id}`, recordjson, {
         headers: {
@@ -327,6 +332,7 @@ export default function Attendees({ token }) {
       .then((res) => {
         axios.get(`https://wr.raneddo.ml/api/User`).then((res) => {
           setChangeAttendees(res.data);
+          setEditLoading(false);
         });
       });
     /* if (changeAttendees[objIndex].isActivate) {
@@ -354,8 +360,26 @@ export default function Attendees({ token }) {
                   </Button>
                 </Link>
               </Stack>
+              <BallTriangle
+                wrapperStyle={{
+                  position: 'absolute',
+                  width: 'calc(100% - 279px)',
+                  height: '100%',
+                  justifyContent: 'center',
+                  paddingTop: '100px',
+                  backgroundColor: 'white',
+                  zIndex: 1
+                }}
+                height="100"
+                width="100"
+                color="grey"
+                ariaLabel="loading"
+                visible={isLoading}
+              />
               <Card>
                 <UserListToolbar
+                  pagePath={pagePath}
+                  setEditLoading={setEditLoading}
                   numSelected={selected.length}
                   filterName={filter}
                   onFilterName={handleFilter}
@@ -488,6 +512,22 @@ export default function Attendees({ token }) {
                   </Stack>
                 </div>
                 <Scrollbar>
+                  <BallTriangle
+                    wrapperStyle={{
+                      position: 'absolute',
+                      width: '100%',
+                      height: '100%',
+                      justifyContent: 'center',
+                      paddingTop: '50px',
+                      backgroundColor: 'rgba(255,255,255,0.5)',
+                      zIndex: 1
+                    }}
+                    height="100"
+                    width="100"
+                    color="grey"
+                    ariaLabel="loading"
+                    visible={isEditLoading}
+                  />
                   <TableContainer sx={{ minWidth: 800 }}>
                     <Table>
                       <UserListHead
@@ -549,6 +589,8 @@ export default function Attendees({ token }) {
                                 </TableCell>
                                 <TableCell onClick={() => getItem(id)} align="right">
                                   <UserMoreMenu
+                                    setEditLoading={setEditLoading}
+                                    pagePath={pagePath}
                                     id={id}
                                     setChangeData={setChangeAttendees}
                                     changeData={changeAttendees}
@@ -600,6 +642,7 @@ export default function Attendees({ token }) {
         path="/edit"
         element={
           <EditPage
+            setEditLoading={setEditLoading}
             pagePath={pagePath}
             id={itemId}
             editviewRecord={editviewRecord}

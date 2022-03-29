@@ -64,7 +64,7 @@ export default function LoginForm({ setLogin, login, tokenRequest }) {
             fullWidth
             autoComplete="username"
             type="email"
-            label="Email address"
+            label="Login"
             {...getFieldProps('email')}
             onChange={usernameOnChange}
             value={login.userName}
